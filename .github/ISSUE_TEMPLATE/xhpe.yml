@@ -1,6 +1,6 @@
 name: New XHPE submission
 description: 提交一个新的学海特性/故障追踪条目
-title: "XHPE-申请: 简洁描述"
+title: "XHPE-添加: 简洁描述"
 labels: ["xhpe"]
 body:
   - type: markdown
@@ -11,7 +11,7 @@ body:
     id: type
     attributes:
       label: Type
-      description: 这是特性还是故障？
+      description: 这是特性还是bug？
       options:
         - Feature
         - Bug
@@ -21,7 +21,7 @@ body:
     id: status
     attributes:
       label: Status
-      description: 你对该条目的确信程度。一般作者选 MIGHT 或 PARTLY VALID。
+      description: 对该条目的确信程度。无法稳定复现：MIGHT,需要特定学校/条件:PARTLY VALID,确认通用:VALID,已被修复的特性:FIXED。
       options:
         - MIGHT
         - PARTLY VALID
@@ -34,7 +34,7 @@ body:
     id: app-name
     attributes:
       label: APP Name
-      description: 应用名称，如 云课堂 / 智通云
+      description: 应用名称，如 云课堂 / 智通平台
       placeholder: 云课堂
     validations:
       required: true
@@ -42,7 +42,7 @@ body:
     id: app-version
     attributes:
       label: APP Version
-      description: 应用版本号
+      description: 确认特性存在的应用版本号
       placeholder: v6.16.18.20260409(1213)
     validations:
       required: true
@@ -54,8 +54,8 @@ body:
       options:
         - "1 - 效果弱 / 触发难"
         - "2 - 效果一般 / 触发一般"
-        - "3 - 效果明显 / 触发一般"
-        - "4 - 效果明显 / 触发容易"
+        - "3 - 效果强 / 触发一般"
+        - "4 - 效果强 / 触发容易"
         - "5 - 效果极强 / 触发极易"
     validations:
       required: true
@@ -64,14 +64,13 @@ body:
     attributes:
       label: Reporter
       description: 可选。留空则匿名。
-      placeholder: 匿名社区成员
     validations:
       required: false
   - type: textarea
     id: desc
     attributes:
       label: Desc
-      description: 详细描述。多行 Markdown，尽量具体、克制。
+      description: 详细描述。多行 Markdown。
       placeholder: 描述现象、复现步骤、影响等……
     validations:
       required: true
