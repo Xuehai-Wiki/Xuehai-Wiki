@@ -19,16 +19,23 @@ const wikiEdges = graph.edges ?? [];
 ---
 
 <BaseLayout
-	title="Wiki 链接图 | Xuehai Wiki"
+	title="Graph | Xuehai Wiki"
 	description="学海 Wiki 的文档链接关系图"
 >
 	<section class="container" style="padding-block: 2.5rem 2rem;">
-		<h1 style="margin-bottom: 0.4rem;">Wiki 链接图</h1>
+		<h1 style="margin-bottom: 0.4rem;">Graph</h1>
 		<p class="muted" style="margin: 0 0 1.25rem; font-size: 0.92rem;">
 			{wikiNodes.length} 个页面 · {wikiEdges.length} 条链接。节点大小代表被引用/引用次数，悬停高亮关联。
 		</p>
 		<div class="graph-wrap">
 			<svg id="wiki-graph" viewBox="0 0 960 640" preserveAspectRatio="xMidYMid meet" role="img" aria-label="wiki 链接图">
+				<defs>
+					<filter id="graph-glow" x="-60%" y="-60%" width="220%" height="220%">
+						<feGaussianBlur stdDeviation="6" result="blur"/>
+						<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+					</filter>
+				</defs>
+				<rect id="graph-bg" x="0" y="0" width="960" height="640" fill="transparent"/>
 				<g id="graph-edges"></g>
 				<g id="graph-nodes"></g>
 			</svg>
@@ -90,8 +97,8 @@ const wikiEdges = graph.edges ?? [];
     for (const n of nodes) {
       n.vx *= 0.8; n.vy *= 0.8;
       n.x += n.vx; n.y += n.vy;
-      n.x = Math.max(18, Math.min(W - 18, n.x));
-      n.y = Math.max(18, Math.min(H - 18, n.y));
+      n.x = Math.max(56, Math.min(W - 56, n.x));
+      n.y = Math.max(40, Math.min(H - 56, n.y));
     }
   }
 
@@ -107,15 +114,20 @@ const wikiEdges = graph.edges ?? [];
     const g = document.createElementNS(NS, 'g');
     g.setAttribute('class', 'graph-node');
     g.setAttribute('data-id', n.id);
-    const circle = document.createElementNS(NS, 'circle');
-    circle.setAttribute('r', radius(n));
+    const halo = document.createElementNS(NS, 'circle');
+    halo.setAttribute('class', 'graph-halo');
+    halo.setAttribute('r', radius(n) + 3);
+    const core = document.createElementNS(NS, 'circle');
+    core.setAttribute('class', 'graph-core');
+    core.setAttribute('r', radius(n));
     const label = document.createElementNS(NS, 'text');
     label.setAttribute('class', 'graph-label');
     label.textContent = n.title || n.id;
     const link = document.createElementNS(NS, 'a');
     link.setAttribute('href', n.url || '#');
     link.setAttribute('target', '_self');
-    g.appendChild(circle);
+    g.appendChild(halo);
+    g.appendChild(core);
     g.appendChild(label);
     link.appendChild(g);
     gNodes.appendChild(link);
@@ -153,43 +165,125 @@ const wikiEdges = graph.edges ?? [];
 
 <style>
 	.graph-wrap {
+		/* 科技感主题变量(亮色默认) */
+		--graph-accent: #0891b2;
+		--graph-accent-bright: #06b6d4;
+		--graph-accent-soft: rgba(8, 145, 178, 0.14);
+		--graph-accent-faint: rgba(8, 145, 178, 0.08);
+		--graph-bg-glow: rgba(8, 145, 178, 0.16);
+		--graph-grid: rgba(9, 9, 11, 0.035);
+		--graph-line: var(--line);
+
+		position: relative;
 		border: 1px solid var(--line);
 		border-radius: var(--radius-lg);
 		background: var(--bg);
-		box-shadow: var(--shadow);
+		box-shadow: var(--shadow-md), inset 0 0 60px var(--graph-accent-faint);
 		padding: 1rem;
+		overflow: hidden;
 	}
+
+	/* 深色主题:显式深色 */
+	html[data-theme='dark'] .graph-wrap {
+		--graph-accent: #22d3ee;
+		--graph-accent-bright: #a5f3fc;
+		--graph-accent-soft: rgba(34, 211, 238, 0.16);
+		--graph-accent-faint: rgba(34, 211, 238, 0.07);
+		--graph-bg-glow: rgba(34, 211, 238, 0.15);
+		--graph-grid: rgba(255, 255, 255, 0.045);
+	}
+
+	/* 深色主题:跟随系统(未手动设置时) */
+	@media (prefers-color-scheme: dark) {
+		html:not([data-theme]) .graph-wrap {
+			--graph-accent: #22d3ee;
+			--graph-accent-bright: #a5f3fc;
+			--graph-accent-soft: rgba(34, 211, 238, 0.16);
+			--graph-accent-faint: rgba(34, 211, 238, 0.07);
+			--graph-bg-glow: rgba(34, 211, 238, 0.15);
+			--graph-grid: rgba(255, 255, 255, 0.045);
+		}
+	}
+
 	#wiki-graph {
 		width: 100%;
 		height: auto;
 		display: block;
+		border-radius: calc(var(--radius-lg) - 4px);
+		background-image: radial-gradient(120% 90% at 50% 38%, var(--graph-bg-glow), transparent 72%);
 	}
+	html[data-theme='dark'] #wiki-graph {
+		background-image:
+			radial-gradient(120% 90% at 50% 38%, var(--graph-bg-glow), transparent 72%),
+			linear-gradient(var(--graph-grid) 1px, transparent 1px),
+			linear-gradient(90deg, var(--graph-grid) 1px, transparent 1px);
+	}
+	@media (prefers-color-scheme: dark) {
+		html:not([data-theme]) #wiki-graph {
+			background-image:
+				radial-gradient(120% 90% at 50% 38%, var(--graph-bg-glow), transparent 72%),
+				linear-gradient(var(--graph-grid) 1px, transparent 1px),
+				linear-gradient(90deg, var(--graph-grid) 1px, transparent 1px);
+		}
+	}
+
+	/* 链接细线:纤细 + 冷色微光 */
 	#wiki-graph .graph-edge {
-		stroke: var(--line);
-		stroke-width: 1.2;
-		transition: opacity 0.15s ease;
+		stroke: var(--graph-accent);
+		stroke-width: 0.8;
+		stroke-opacity: 0.5;
+		stroke-linecap: round;
+		filter: drop-shadow(0 0 1.5px var(--graph-accent));
+		transition: stroke-opacity 0.18s ease, stroke-width 0.18s ease;
 	}
-	#wiki-graph .graph-node circle {
+
+	/* 节点 */
+	#wiki-graph .graph-halo {
+		fill: var(--graph-accent-soft);
+		stroke: none;
+		opacity: 0;
+		transition: opacity 0.2s ease;
+	}
+	#wiki-graph .graph-core {
 		fill: var(--bg-raise);
-		stroke: var(--fg-muted);
+		stroke: var(--graph-accent);
 		stroke-width: 1.4;
+		transition: fill 0.18s ease, stroke 0.18s ease, stroke-width 0.18s ease;
+	}
+	#wiki-graph .graph-node {
 		cursor: pointer;
-		transition: fill 0.15s ease;
 	}
-	#wiki-graph .graph-node:hover circle {
-		fill: var(--fg);
-		stroke: var(--fg);
+	#wiki-graph .graph-node:hover .graph-halo {
+		opacity: 1;
+		filter: drop-shadow(0 0 8px var(--graph-accent));
 	}
+	#wiki-graph .graph-node:hover .graph-core {
+		fill: var(--graph-accent-soft);
+		stroke: var(--graph-accent-bright);
+		stroke-width: 2;
+		filter: drop-shadow(0 0 7px var(--graph-accent-bright));
+	}
+
+	/* 标签:置于节点上方,带描边形成可读光环 */
 	#wiki-graph .graph-label {
 		fill: var(--fg-muted);
-		font-size: 11px;
+		font-size: 10.5px;
+		font-weight: 600;
+		letter-spacing: 0.03em;
 		pointer-events: none;
 		text-anchor: middle;
-		transform: translateY(20px);
+		transform: translateY(-22px);
+		paint-order: stroke;
+		stroke: var(--bg);
+		stroke-width: 3px;
+		stroke-linejoin: round;
+		transition: fill 0.18s ease;
+		font-family: var(--font);
 	}
 	#wiki-graph .graph-node:hover .graph-label {
-		fill: var(--fg);
+		fill: var(--graph-accent-bright);
 	}
+
 	.graph-legend {
 		margin-top: 0.75rem;
 		font-size: 0.8rem;
@@ -203,6 +297,7 @@ const wikiEdges = graph.edges ?? [];
 		height: 0.6rem;
 		border-radius: 50%;
 		background: var(--bg-raise);
-		border: 1px solid var(--fg-muted);
+		border: 1px solid var(--graph-accent);
+		box-shadow: 0 0 6px var(--graph-accent);
 	}
 </style>
