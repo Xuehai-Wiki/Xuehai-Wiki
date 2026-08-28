@@ -11,12 +11,10 @@
     "preview": "astro preview",
     "astro": "astro",
     "deploy": "wrangler deploy",
-    "check": "astro check",
-    "wiki:install": "npm --prefix wiki-app install",
-    "wiki:build": "npm --prefix wiki-app run build",
-    "wiki:dev": "npm --prefix wiki-app run dev"
+    "check": "astro check"
   },
   "dependencies": {
+    "@astrojs/starlight": "^0.41.9",
     "astro": "^7.2.8"
   },
   "allowScripts": {
