@@ -1,10 +1,15 @@
 # internal project files (never uploaded)
 devdoc/
 
-# node / astro build
+# dependencies
 node_modules/
+
+# build output
 dist/
 .astro/
+
+# generated types
+.astro/types.d.ts
 
 # cloudflare / deployment
 .wrangler/
@@ -13,9 +18,18 @@ dist/
 # env & secrets
 .env
 .env.*
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # OS
 .DS_Store
+Thumbs.db
 
-# log
-*.log
+# editor
+.idea/
