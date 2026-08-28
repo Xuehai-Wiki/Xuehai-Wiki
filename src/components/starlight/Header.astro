@@ -1,9 +1,10 @@
 ---
 // Starlight /docs 页面的顶栏 override:
-// 与全站导航统一(品牌 Xuehai Wiki + 链接 + 主题切换),同时保留 Starlight 右侧
-// 功能控件(搜索 + 主题选择)。移动端折叠菜单仍由 Starlight PageFrame 提供。
+// 与全站导航统一(品牌 Xuehai Wiki + 链接 + ThemeToggle),同时保留 Starlight 搜索。
+// 关键:外层 <header class="header"> 由 PageFrame 渲染(fixed + 固定高度),不含布局;
+// 原 Starlight 默认 Header 的 grid 布局被此组件替换,因此这里必须自带一个
+// flex 根容器 .xhs-root,否则三个子元素会垂直堆叠挤出 header(布局错乱)。
 import Search from 'virtual:starlight/components/Search';
-import ThemeSelect from 'virtual:starlight/components/ThemeSelect';
 import ThemeToggle from '../ThemeToggle.astro';
 
 interface Props {
@@ -23,15 +24,13 @@ const isActive = (href: string) =>
 	href === '/' ? currentPath === '/' : currentPath.startsWith(href);
 ---
 
-<div class="header">
-	<div class="title-wrapper sl-flex">
-		<a class="xh-nav-brand" href="/" aria-label="Xuehai Wiki 首页">
-			<span>Xuehai Wiki</span>
-			<small>学海 Wiki</small>
-		</a>
-	</div>
+<div class="xhs-root">
+	<a class="xhs-brand xh-nav-brand" href="/" aria-label="Xuehai Wiki 首页">
+		<span>Xuehai Wiki</span>
+		<small>学海 Wiki</small>
+	</a>
 
-	<nav class="xh-nav-links sl-flex" aria-label="主导航">
+	<nav class="xhs-links" aria-label="主导航">
 		{
 			links.map((link) => (
 				<a
@@ -45,31 +44,47 @@ const isActive = (href: string) =>
 		}
 	</nav>
 
-	<div class="sl-flex print:hidden xh-starlight-right">
+	<div class="xhs-right">
 		<Search />
 		<ThemeToggle />
-		<ThemeSelect class="sl-hidden xh-theme-select" />
 	</div>
 </div>
 
 <style>
-	/* 让 docs 顶栏看起来与全站 Nav 一致,同时不破坏 Starlight 布局。 */
-	.xh-nav-links {
-		flex: 1;
+	/* 根容器:横排 + 垂直居中 + 撑满外层 header 的固定高度 */
+	.xhs-root {
+		display: flex;
+		align-items: center;
+		height: 100%;
+		gap: 1.25rem;
+		min-width: 0;
+	}
+	.xhs-brand {
+		flex: 0 0 auto;
+	}
+	.xhs-links {
+		flex: 1 1 auto;
+		display: flex;
+		align-items: center;
 		justify-content: center;
 		gap: 0.25rem;
-		margin-inline: 1rem;
 		min-width: 0;
-		overflow: clip;
+		padding-inline: 1rem;
+		white-space: nowrap;
 	}
-	.xh-starlight-right {
-		gap: 0.75rem;
+	.xhs-right {
+		flex: 0 0 auto;
+		display: flex;
 		align-items: center;
-		margin-inline-start: auto;
+		gap: 0.75rem;
 	}
-	/* 移动端:隐藏我们的主题按钮,保留 Starlight 自带的(它更适配窄屏) */
+	/* 搜索按钮在右组内略收窄,避免与主题切换并排过宽 */
+	.xhs-right site-search button[data-open-modal] {
+		max-width: 14rem;
+	}
+	/* 窄屏:隐藏导航链接(此时 Starlight 自带左侧 sidebar 菜单按钮提供导航) */
 	@media (max-width: 50rem) {
-		.xh-nav-links {
+		.xhs-links {
 			display: none;
 		}
 	}

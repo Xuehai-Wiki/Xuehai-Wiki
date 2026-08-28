@@ -1,6 +1,9 @@
 # xuehai-wiki
+[xh.asxz.one](https://xh.asxz.one) 
 
-学海 / 智通云非官方社区 wiki。记录状态、特性追踪与文档。
+学海平板 / 智通云非官方社区 wiki。记录状态、特性追踪与文档。
+
+此项目非学海官方项目,与学海教育及智通云亦不存在从属关系
 
 ## 模块
 
@@ -8,9 +11,8 @@
 - [文档](/docs/) —— 使用技巧与已知行为记录等说明文档。
 - [首页](/index) —— 站点入口。
 
-## 免责声明
 
-本项目为**非官方**社区项目，与学海 / 智通云及其开发方**无任何从属关系**。所有内容由社区成员整理，仅供参考，不代表官方立场。
+
 
 ## 开发
 
@@ -22,7 +24,7 @@ npm run preview  # 预览构建产物
 
 ## 内容贡献
 
-- **XHPE 提交**：通过 [GitHub Issue 模板](.github/ISSUE_TEMPLATE/xhpe.yml) 提交新的特性/故障追踪条目，由维护者审核后合入。
+- **XHPE 提交**：通过 [GitHub Issue 模板](.github/ISSUE_TEMPLATE/xhpe.yml) 提交新的特性/故障追踪条目。
 - **Tracker 内容**：位于 `src/content/tracker/`，每个条目一个 Markdown 文件（XHPE-XXXX.md）。
 - **文档内容**：位于 `src/content/docs/`。
 

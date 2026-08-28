@@ -1743,3 +1743,11 @@ html:not([data-theme='dark']) .theme-toggle .icon-moon {
 	--sl-color-bg-sidebar: var(--bg);
 	--sl-color-bg-inline-code: var(--bg-raise);
 }
+
+/* 侧边栏当前页条目:Starlight 默认用 --sl-color-text-accent 做实心反色块,
+   在全站黑白灰设计下变成突兀的纯黑白矩形。改为与头部导航当前项一致的
+   微凸面(bg-raise)强调,保持黑白灰层次。 */
+nav.sidebar [aria-current='page'] {
+	color: var(--fg);
+	background-color: var(--bg-raise);
+}
