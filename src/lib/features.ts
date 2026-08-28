@@ -8,9 +8,9 @@ export const features = {
 		enabled: false,
 		workerUrl: '', // 例如 https://xuehai-like.<account>.workers.dev
 	},
-	/** 评论:Twikoo 占位。enabled 时详情页注入 twikoo 评论框。 */
+	/** 评论:Twikoo。enabled 时详情页注入 twikoo 评论框。 */
 	comments: {
-		enabled: false,
-		twikooEnvId: '', // Twikoo 环境 ID / 后端地址
+		enabled: true,
+		twikooEnvId: 'https://xuehai-wiki.netlify.app/.netlify/functions/twikoo',
 	},
 } as const;

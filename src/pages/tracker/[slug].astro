@@ -39,11 +39,29 @@ const detailCfg = JSON.stringify({
 	likesWorkerUrl,
 }).replace(/</g, '\\u003c');
 
-// Twikoo 初始化脚本(默认关闭不渲染;enabled 时才注入,用 set:html 避免脚本内 {} 被 Astro 解析)
-const twikooInitScript = `twikoo.init({
-  envId: ${JSON.stringify(twikooEnvId)},
-  el: '#tcomment',
-});`;
+// Twikoo 初始化脚本(默认关闭不渲染;enabled 时才注入;等 #tcomment 与 twikoo 库就绪后 init)
+const twikooInitScript = `(function () {
+  function init() {
+    var el = document.getElementById('tcomment');
+    if (!el || typeof twikoo === 'undefined') return;
+    twikoo.init({
+      envId: ${JSON.stringify(twikooEnvId)},
+      el: '#tcomment',
+      path: location.pathname,
+    });
+  }
+  var tries = 0;
+  var timer = setInterval(function () {
+    tries++;
+    var el = document.getElementById('tcomment');
+    if (el && typeof twikoo !== 'undefined') {
+      clearInterval(timer);
+      init();
+    } else if (tries > 100) {
+      clearInterval(timer); // 10s 超时,静默放弃
+    }
+  }, 100);
+})();`;
 ---
 
 <BaseLayout
@@ -126,12 +144,12 @@ const twikooInitScript = `twikoo.init({
 				<span class="tracker-like-todo">(TODO)</span>
 			</button>
 			<span class="tracker-like-note">
-				点赞与评论功能暂未开放,敬请期待。
+				点赞功能暂未开放,敬请期待。
 			</span>
 		</footer>
 
 		{
-			/* 评论(Twikoo):默认关闭,enabled 时才渲染并加载外部脚本 */
+			/* 评论(Twikoo):enabled 时渲染并加载外部脚本 */
 			commentsEnabled && (
 				<div class="tracker-comments">
 					<div id="tcomment"></div>
