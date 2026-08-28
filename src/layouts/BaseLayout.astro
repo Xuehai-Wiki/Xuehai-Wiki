@@ -32,6 +32,17 @@ const showBanner = true;
 		<meta name="description" content={description} />
 		<!-- 主题初始化:放 head 紧前,防 FOUC -->
 		<script is:inline src="/theme-init.js"></script>
+		<!-- 免责 banner 防闪:head 同步读 localStorage,已关闭则在 <html> 上加
+		     data-banner-hidden,由 CSS 先行隐藏(.xh-banner display:none),避免首帧闪现 -->
+		<script is:inline>
+			try {
+				if (localStorage.getItem('xh-disclaimer-seen')) {
+					document.documentElement.setAttribute('data-banner-hidden', '');
+				}
+			} catch {
+				/* 隐私模式等异常忽略 */
+			}
+		</script>
 	</head>
 	<body>
 		<Nav currentPath={Astro.url.pathname} />

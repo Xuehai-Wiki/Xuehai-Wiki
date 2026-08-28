@@ -1,14 +1,27 @@
-// Starlight 页面没有自定义 BaseLayout,此脚本在 starlight 页面注入:
+// Starlight 页面没有自定义 BaseLayout,此脚本在 starlight 页面 head 注入
+// (defer:false,同步执行,早于 body 解析):
 // 1) 主题初始化(theme-init.js 逻辑,head 前已执行,此处不需要重复);
 // 2) 顶部黄色免责 banner(带 X,可关闭,只显示一次);
 // 3) 页脚免责声明。样式见 src/styles/global.css 中 banner/footer 段。
 // 此文件由 designer A 维护,与 src/pages/404.astro、BaseLayout 中的逻辑保持一致。
+// 防闪机制与 BaseLayout 一致:head 同步读 localStorage,已关闭则在 <html> 上加
+// data-banner-hidden,由 CSS 先行隐藏(.xh-banner display:none),避免首帧闪现。
 (() => {
 	const KEY = 'xh-disclaimer-seen';
 
+	// 已关闭过:给 <html> 加标记,CSS 先行隐藏 banner(不渲染也不闪)
+	let seen = false;
+	try {
+		seen = !!localStorage.getItem(KEY);
+	} catch {
+		/* ignore */
+	}
+	if (seen) {
+		document.documentElement.setAttribute('data-banner-hidden', '');
+	}
+
 	function addBanner() {
-		const MAX = localStorage.getItem(KEY);
-		if (MAX) return;
+		if (seen) return;
 		const bar = document.createElement('div');
 		bar.className = 'xh-banner';
 		bar.setAttribute('role', 'status');
@@ -25,6 +38,7 @@
 			} catch {
 				/* ignore */
 			}
+			document.documentElement.setAttribute('data-banner-hidden', '');
 			bar.remove();
 		});
 		bar.appendChild(close);

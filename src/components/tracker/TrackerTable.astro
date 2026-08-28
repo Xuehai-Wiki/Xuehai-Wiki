@@ -42,34 +42,28 @@ function searchText(e: Entry): string {
 				<th class="th-tip" data-tip="XHPE 编号,按从大到小排列">编号</th>
 				<th
 					class="th-tip"
-					data-tip="类型:特性(Feature)指对用户有用/预期的行为,Bug 指有害/异常的行为"
+					data-tip="该特性/bug 所属的应用(如云课堂、智通云)"
 				>
-					Type
+					APP Name
 				</th>
-				<th
-					class="th-tip"
-					data-tip="状态六态:可能是(MIGHT) / 部分成立(PARTLY VALID) / 成立(VALID) / 已变更(CHANGED) / 已修复(FIXED)"
-				>
-					Status
-				</th>
+				<th class="th-tip" data-tip="该特性/bug 的标题">Title</th>
 				<th
 					class="th-tip"
 					data-tip="XHCS = 学海草台班子评分,1-5 分,越高越'草台'(实现越随意/越不可靠)"
 				>
 					XHCS
 				</th>
-				<th class="th-tip" data-tip="该特性/bug 的标题">Title</th>
 				<th
 					class="th-tip"
-					data-tip="涉及的应用版本号,便于对照复现"
+					data-tip="状态五态:可能有效(MIGHT) / 部分有效(PARTLY VALID) / 有效(VALID) / 已变更(CHANGED) / 已修复(FIXED)"
 				>
-					APP Version
+					Status
 				</th>
 				<th
 					class="th-tip"
-					data-tip="提交者;留空显示为匿名"
+					data-tip="类型:特性(Feature)指对用户有用/预期的行为,Bug 指有害/异常的行为"
 				>
-					Reporter
+					Type
 				</th>
 			</tr>
 		</thead>
@@ -91,19 +85,11 @@ sorted.map((e, i) => {
 								{cid}
 							</a>
 						</td>
-						<td><TypeBadge type={e.data.type} /></td>
-						<td><StatusBadge status={e.data.status} /></td>
-						<td class="tracker-xhcs">{e.data.xhcs}</td>
+						<td class="tracker-appname">{e.data.appName}</td>
 						<td class="tracker-title-cell">{e.data.title}</td>
-						<td class="tracker-appver">{e.data.appVersion}</td>
-						<td
-							class:list={[
-								'tracker-reporter',
-								e.data.reporter ? '' : 'is-anon',
-							]}
-						>
-							{e.data.reporter ?? '匿名'}
-						</td>
+						<td class="tracker-xhcs">{e.data.xhcs}</td>
+						<td><StatusBadge status={e.data.status} /></td>
+						<td><TypeBadge type={e.data.type} /></td>
 					</tr>
 					);
 				})

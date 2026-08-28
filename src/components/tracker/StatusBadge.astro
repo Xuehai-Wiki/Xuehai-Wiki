@@ -1,5 +1,5 @@
 ---
-// 状态徽章:黑白灰深浅区分 V 系列,绿色仅用于 FIXED(语义:已修复)。
+// 状态徽章:彩色点缀(黄→深绿→绿→黄→红,MIGHT→FIXED)。
 // 文案映射 + 对应 CSS 类名(空格转连字符)。
 interface Props {
 	status: string;
@@ -8,9 +8,9 @@ interface Props {
 const { status } = Astro.props;
 
 const LABELS: Record<string, string> = {
-	MIGHT: '可能是',
-	'PARTLY VALID': '部分成立',
-	VALID: '成立',
+	MIGHT: '可能有效',
+	'PARTLY VALID': '部分有效',
+	VALID: '有效',
 	CHANGED: '已变更',
 	FIXED: '已修复',
 };

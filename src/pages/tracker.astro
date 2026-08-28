@@ -23,6 +23,19 @@ const cardData = all.map((e) => ({
 const cardJson = JSON.stringify(cardData).replace(/</g, '\\u003c');
 
 const ADD_URL = 'https://github.com/Auratik/xuehai-wiki/issues/new/choose';
+
+// 筛选面板选项(状态/类型),供服务端渲染复选框。
+const STATUS_OPTIONS = [
+	{ value: 'MIGHT', label: '可能有效' },
+	{ value: 'PARTLY VALID', label: '部分有效' },
+	{ value: 'VALID', label: '有效' },
+	{ value: 'CHANGED', label: '已变更' },
+	{ value: 'FIXED', label: '已修复' },
+];
+const TYPE_OPTIONS = [
+	{ value: 'Feature', label: '特性' },
+	{ value: 'Bug', label: 'Bug' },
+];
 ---
 
 <BaseLayout title="学海特性(bug)追踪" description="记录学海的奇奇怪怪的特性/bug —— 学海特性(bug)追踪器">
@@ -51,19 +64,59 @@ const ADD_URL = 'https://github.com/Auratik/xuehai-wiki/issues/new/choose';
 				autocomplete="off"
 				spellcheck="false"
 			/>
-			<select id="tracker-type" class="tracker-select" aria-label="按类型筛选">
-				<option value="">全部类型</option>
-				<option value="Feature">特性</option>
-				<option value="Bug">Bug</option>
-			</select>
-			<select id="tracker-status" class="tracker-select" aria-label="按状态筛选">
-				<option value="">全部状态</option>
-				<option value="MIGHT">可能是</option>
-				<option value="PARTLY VALID">部分成立</option>
-				<option value="VALID">成立</option>
-				<option value="CHANGED">已变更</option>
-				<option value="FIXED">已修复</option>
-			</select>
+
+			<!-- 筛选面板:状态 + 类型 多选,点"筛选"展开 -->
+			<div class="tracker-filter" id="tracker-filter">
+				<button
+					type="button"
+					class="tracker-filter-toggle"
+					id="tracker-filter-toggle"
+					aria-expanded="false"
+					aria-haspopup="true"
+					aria-controls="tracker-filter-panel"
+				>
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+						<path d="M4 6h16M7 12h10M10 18h4" />
+					</svg>
+					筛选
+					<span class="tracker-filter-count" id="tracker-filter-count" hidden>0</span>
+				</button>
+
+				<div class="tracker-filter-panel" id="tracker-filter-panel" hidden>
+					<div class="tracker-filter-group">
+						<span class="tracker-filter-label">状态</span>
+						<div class="tracker-filter-options">
+							{
+								STATUS_OPTIONS.map((o) => (
+									<label class="tracker-filter-option">
+										<input type="checkbox" value={o.value} data-filter="status" />
+										<span>{o.label}</span>
+									</label>
+								))
+							}
+						</div>
+					</div>
+					<div class="tracker-filter-group">
+						<span class="tracker-filter-label">类型</span>
+						<div class="tracker-filter-options">
+							{
+								TYPE_OPTIONS.map((o) => (
+									<label class="tracker-filter-option">
+										<input type="checkbox" value={o.value} data-filter="type" />
+										<span>{o.label}</span>
+									</label>
+								))
+							}
+						</div>
+					</div>
+					<div class="tracker-filter-actions">
+						<button type="button" class="tracker-filter-clear" id="tracker-filter-clear">
+							清空筛选
+						</button>
+					</div>
+				</div>
+			</div>
+
 			<span class="spacer"></span>
 			<a
 				class="tracker-add"
@@ -119,21 +172,67 @@ const ADD_URL = 'https://github.com/Auratik/xuehai-wiki/issues/new/choose';
 			const PER = 20;
 			const rows = Array.from(document.querySelectorAll('.tracker-row'));
 			const searchInput = document.getElementById('tracker-search');
-			const typeSel = document.getElementById('tracker-type');
-			const statusSel = document.getElementById('tracker-status');
 			const pagNav = document.getElementById('tracker-pagination');
 			const pageInfo = document.getElementById('tracker-pageinfo');
 			const emptyEl = document.getElementById('tracker-empty');
+
+			// ---- 筛选面板(状态 + 类型 多选) ----
+			const filterToggle = document.getElementById('tracker-filter-toggle');
+			const filterPanel = document.getElementById('tracker-filter-panel');
+			const filterCount = document.getElementById('tracker-filter-count');
+			const filterClear = document.getElementById('tracker-filter-clear');
+			const filterBoxes = Array.from(
+				document.querySelectorAll('#tracker-filter-panel input[type="checkbox"]'),
+			);
+			// 选中集合:status / type
+			const sel = { status: new Set(), type: new Set() };
+
+			function currentCount() {
+				return sel.status.size + sel.type.size;
+			}
+
+			function syncCount() {
+				if (!filterCount) return;
+				const n = currentCount();
+				filterCount.hidden = n === 0;
+				filterCount.textContent = String(n);
+			}
+
+			filterToggle?.addEventListener('click', () => {
+				const open = filterPanel.hidden;
+				filterPanel.hidden = !open;
+				filterToggle.setAttribute('aria-expanded', String(!open));
+			});
+
+			filterClear?.addEventListener('click', () => {
+				filterBoxes.forEach((b) => {
+					b.checked = false;
+				});
+				sel.status.clear();
+				sel.type.clear();
+				syncCount();
+				apply();
+			});
+
+			filterBoxes.forEach((box) => {
+				box.addEventListener('change', () => {
+					const kind = box.dataset.filter;
+					const v = box.value;
+					if (box.checked) sel[kind].add(v);
+					else sel[kind].delete(v);
+					syncCount();
+					apply();
+				});
+			});
+
 			let page = 1;
 			let filtered = rows;
 
 			function apply() {
 				const q = (searchInput?.value || '').trim().toLowerCase();
-				const t = typeSel?.value || '';
-				const s = statusSel?.value || '';
 				filtered = rows.filter((r) => {
-					if (t && r.dataset.type !== t) return false;
-					if (s && r.dataset.status !== s) return false;
+					if (sel.status.size && !sel.status.has(r.dataset.status)) return false;
+					if (sel.type.size && !sel.type.has(r.dataset.type)) return false;
 					if (q && !(r.dataset.search || '').includes(q)) return false;
 					return true;
 				});
@@ -191,9 +290,9 @@ const ADD_URL = 'https://github.com/Auratik/xuehai-wiki/issues/new/choose';
 				if (!box || !items.length) return;
 				const e = items[Math.floor(Math.random() * items.length)];
 				const statusLabel = {
-					MIGHT: '可能是',
-					'PARTLY VALID': '部分成立',
-					VALID: '成立',
+					MIGHT: '可能有效',
+					'PARTLY VALID': '部分有效',
+					VALID: '有效',
 					CHANGED: '已变更',
 					FIXED: '已修复',
 				}[e.status] || e.status;
@@ -222,9 +321,18 @@ const ADD_URL = 'https://github.com/Auratik/xuehai-wiki/issues/new/choose';
 			});
 
 			searchInput?.addEventListener('input', apply);
-			typeSel?.addEventListener('change', apply);
-			statusSel?.addEventListener('change', apply);
 
+			// 点击面板外部时收起
+			document.addEventListener('click', (ev) => {
+				if (!filterPanel || filterPanel.hidden) return;
+				const wrap = document.getElementById('tracker-filter');
+				if (wrap && !wrap.contains(ev.target)) {
+					filterPanel.hidden = true;
+					filterToggle?.setAttribute('aria-expanded', 'false');
+				}
+			});
+
+			syncCount();
 			render();
 			renderRandom();
 		})();

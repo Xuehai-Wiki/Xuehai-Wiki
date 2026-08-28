@@ -23,6 +23,23 @@
 	--go-ink: #ffffff;
 	--danger: #b91c1c;
 	--ok: #15803d;
+
+	/* 彩色徽章标签色(designer B 维护,仅 tracker 徽章用)。
+	   亮色主题:浅底 + 深字 + 同色相描边,保证对比度可读。
+	   不占用 --accent/--go 语义(它们仍只服务 banner 与 Add New Feature)。 */
+	--tag-yellow-bg: #fef3c7;
+	--tag-yellow-fg: #8a5a00;
+	--tag-yellow-line: #f0b429;
+	--tag-green-bg: #e3f7e9;
+	--tag-green-fg: #14602e;
+	--tag-green-line: #34b45f;
+	--tag-deepgreen-bg: #d6f3e6;
+	--tag-deepgreen-fg: #0b5c43;
+	--tag-deepgreen-line: #12a371;
+	--tag-red-bg: #fde8e8;
+	--tag-red-fg: #a01a1a;
+	--tag-red-line: #ef5350;
+
 	--radius: 8px;
 	--radius-sm: 6px;
 	--radius-lg: 14px;
@@ -54,6 +71,20 @@
 	--accent-ink: #16160a;
 	--shadow: 0 1px 3px rgb(0 0 0 / 0.5);
 	--shadow-md: 0 4px 14px rgb(0 0 0 / 0.45);
+
+	/* 深色主题彩色徽章:深底 + 亮字 + 同色相半透明描边 */
+	--tag-yellow-bg: rgb(250 204 21 / 0.14);
+	--tag-yellow-fg: #fde68a;
+	--tag-yellow-line: rgb(250 204 21 / 0.45);
+	--tag-green-bg: rgb(52 180 95 / 0.14);
+	--tag-green-fg: #9fe6b6;
+	--tag-green-line: rgb(52 180 95 / 0.45);
+	--tag-deepgreen-bg: rgb(18 163 113 / 0.16);
+	--tag-deepgreen-fg: #7fe0bd;
+	--tag-deepgreen-line: rgb(18 163 113 / 0.45);
+	--tag-red-bg: rgb(239 83 80 / 0.14);
+	--tag-red-fg: #f6b0ae;
+	--tag-red-line: rgb(239 83 80 / 0.45);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -68,6 +99,19 @@
 		--accent-ink: #16160a;
 		--shadow: 0 1px 3px rgb(0 0 0 / 0.5);
 		--shadow-md: 0 4px 14px rgb(0 0 0 / 0.45);
+
+		--tag-yellow-bg: rgb(250 204 21 / 0.14);
+		--tag-yellow-fg: #fde68a;
+		--tag-yellow-line: rgb(250 204 21 / 0.45);
+		--tag-green-bg: rgb(52 180 95 / 0.14);
+		--tag-green-fg: #9fe6b6;
+		--tag-green-line: rgb(52 180 95 / 0.45);
+		--tag-deepgreen-bg: rgb(18 163 113 / 0.16);
+		--tag-deepgreen-fg: #7fe0bd;
+		--tag-deepgreen-line: rgb(18 163 113 / 0.45);
+		--tag-red-bg: rgb(239 83 80 / 0.14);
+		--tag-red-fg: #f6b0ae;
+		--tag-red-line: rgb(239 83 80 / 0.45);
 	}
 }
 
@@ -283,8 +327,18 @@ kbd {
 	border-color: var(--fg-muted);
 	box-shadow: 0 0 0 3px color-mix(in srgb, var(--fg) 12%, transparent);
 }
-.tracker-select {
-	padding: 0.5rem 0.6rem;
+.tracker-toolbar .spacer {
+	flex: 1 1 auto;
+}
+/* ---- 筛选面板(状态 + 类型 多选) ---- */
+.tracker-filter {
+	position: relative;
+}
+.tracker-filter-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.5rem 0.7rem;
 	font-size: 0.85rem;
 	font-family: inherit;
 	color: var(--fg);
@@ -292,14 +346,101 @@ kbd {
 	border: 1px solid var(--line);
 	border-radius: var(--radius);
 	cursor: pointer;
-	transition: border-color 0.15s ease;
+	transition: border-color 0.15s ease, background-color 0.15s ease;
 }
-.tracker-select:focus {
-	outline: none;
+.tracker-filter-toggle:hover {
 	border-color: var(--fg-muted);
 }
-.tracker-toolbar .spacer {
-	flex: 1 1 auto;
+.tracker-filter-toggle[aria-expanded='true'] {
+	border-color: var(--fg-muted);
+	background: var(--bg-soft);
+}
+.tracker-filter-count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 1.15rem;
+	height: 1.15rem;
+	padding-inline: 0.3rem;
+	border-radius: 999px;
+	background: var(--fg);
+	color: var(--bg);
+	font-size: 0.7rem;
+	font-weight: 700;
+	line-height: 1;
+}
+.tracker-filter-count[hidden] {
+	display: none;
+}
+.tracker-filter-panel {
+	position: absolute;
+	top: calc(100% + 0.45rem);
+	left: 0;
+	z-index: 40;
+	min-width: 13.5rem;
+	padding: 0.7rem;
+	background: var(--bg);
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	box-shadow: var(--shadow-md);
+}
+.tracker-filter-panel[hidden] {
+	display: none;
+}
+.tracker-filter-group + .tracker-filter-group {
+	margin-top: 0.7rem;
+	padding-top: 0.7rem;
+	border-top: 1px solid var(--line);
+}
+.tracker-filter-label {
+	display: block;
+	font-size: 0.72rem;
+	font-weight: 650;
+	letter-spacing: 0.04em;
+	color: var(--fg-faint);
+	margin-bottom: 0.35rem;
+}
+.tracker-filter-options {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem 0.9rem;
+}
+.tracker-filter-option {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	font-size: 0.85rem;
+	color: var(--fg);
+	cursor: pointer;
+	user-select: none;
+}
+.tracker-filter-option input {
+	accent-color: var(--fg);
+	width: 0.95rem;
+	height: 0.95rem;
+	margin: 0;
+	cursor: pointer;
+}
+.tracker-filter-actions {
+	margin-top: 0.75rem;
+	padding-top: 0.7rem;
+	border-top: 1px solid var(--line);
+	text-align: right;
+}
+.tracker-filter-clear {
+	padding: 0.3rem 0.7rem;
+	font-size: 0.78rem;
+	font-family: inherit;
+	color: var(--fg-muted);
+	background: transparent;
+	border: 1px solid var(--line);
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+	transition: border-color 0.15s ease, color 0.15s ease;
+}
+.tracker-filter-clear:hover {
+	border-color: var(--fg-muted);
+	color: var(--fg);
 }
 .tracker-add {
 	display: inline-flex;
@@ -386,6 +527,11 @@ kbd {
 	line-height: 1.45;
 	min-width: 14rem;
 }
+.tracker-appname {
+	font-weight: 550;
+	white-space: nowrap;
+	color: var(--fg);
+}
 .tracker-appver {
 	font-family: var(--font-mono);
 	font-size: 0.78rem;
@@ -441,52 +587,59 @@ kbd {
 	transform: translateY(0);
 }
 
-/* ---- 徽章(黑白灰 + 绿仅用于 FIXED) ---- */
+/* ---- 徽章(彩色点缀:黑白为体,彩作徽章) ---- */
 .tracker-badge {
 	display: inline-flex;
 	align-items: center;
 	padding: 0.08rem 0.5rem;
 	border-radius: 999px;
 	font-size: 0.72rem;
-	font-weight: 650;
+	font-weight: 700;
 	letter-spacing: 0.02em;
 	border: 1px solid var(--line);
 	white-space: nowrap;
 	line-height: 1.5;
-}
-.tracker-badge--feature {
+	background: var(--bg-soft);
 	color: var(--fg-muted);
-	background: transparent;
+}
+
+/* 类型:Feature=绿,Bug=黄(用独立标签色,不动 --go/--accent) */
+.tracker-badge--feature {
+	background: var(--tag-green-bg);
+	color: var(--tag-green-fg);
+	border-color: var(--tag-green-line);
 }
 .tracker-badge--bug {
-	color: var(--fg);
-	background: transparent;
-	border-color: var(--fg);
-	font-weight: 750;
+	background: var(--tag-yellow-bg);
+	color: var(--tag-yellow-fg);
+	border-color: var(--tag-yellow-line);
 }
-/* status:V 系列用灰色深浅区分,由弱到强 */
+
+/* 状态:黄 → 深绿 → 绿 → 黄 → 红(MIGHT→FIXED) */
 .tracker-badge--might {
-	color: var(--fg-faint);
-	background: transparent;
+	background: var(--tag-yellow-bg);
+	color: var(--tag-yellow-fg);
+	border-color: var(--tag-yellow-line);
 }
 .tracker-badge--partly-valid {
-	color: var(--fg-muted);
-	background: var(--bg-soft);
+	background: var(--tag-deepgreen-bg);
+	color: var(--tag-deepgreen-fg);
+	border-color: var(--tag-deepgreen-line);
 }
 .tracker-badge--valid {
-	color: var(--fg);
-	background: var(--bg-raise);
-	border-color: var(--fg-muted);
+	background: var(--tag-green-bg);
+	color: var(--tag-green-fg);
+	border-color: var(--tag-green-line);
 }
 .tracker-badge--changed {
-	color: var(--bg);
-	background: var(--fg);
-	border-color: var(--fg);
+	background: var(--tag-yellow-bg);
+	color: var(--tag-yellow-fg);
+	border-color: var(--tag-yellow-line);
 }
 .tracker-badge--fixed {
-	color: var(--go);
-	background: color-mix(in srgb, var(--go) 12%, transparent);
-	border-color: color-mix(in srgb, var(--go) 45%, transparent);
+	background: var(--tag-red-bg);
+	color: var(--tag-red-fg);
+	border-color: var(--tag-red-line);
 }
 
 /* ---- 结果信息 + 空态 ---- */
@@ -744,6 +897,12 @@ kbd {
 }
 
 /* ---------- 4. 免责 banner(黄色,starlight-globals.js 也注入) ---------- */
+/* 防闪:head 内联脚本在渲染前读 localStorage,已关闭则在 <html> 上加
+   data-banner-hidden,这里用 CSS 先行隐藏,避免首帧闪现。 */
+html[data-banner-hidden] .xh-banner {
+	display: none;
+}
+
 .xh-banner {
 	position: sticky;
 	top: 0;
