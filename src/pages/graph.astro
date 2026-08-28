@@ -14,8 +14,8 @@ try {
   graph = { nodes: [], edges: [], broken: [] };
 }
 
-const nodes = graph.nodes ?? [];
-const edges = graph.edges ?? [];
+const wikiNodes = graph.nodes ?? [];
+const wikiEdges = graph.edges ?? [];
 ---
 
 <BaseLayout
@@ -25,7 +25,7 @@ const edges = graph.edges ?? [];
 	<section class="container" style="padding-block: 2.5rem 2rem;">
 		<h1 style="margin-bottom: 0.4rem;">Wiki 链接图</h1>
 		<p class="muted" style="margin: 0 0 1.25rem; font-size: 0.92rem;">
-			{nodes.length} 个页面 · {edges.length} 条链接。节点大小代表被引用/引用次数，悬停高亮关联。
+			{wikiNodes.length} 个页面 · {wikiEdges.length} 条链接。节点大小代表被引用/引用次数，悬停高亮关联。
 		</p>
 		<div class="graph-wrap">
 			<svg id="wiki-graph" viewBox="0 0 960 640" preserveAspectRatio="xMidYMid meet" role="img" aria-label="wiki 链接图">
@@ -37,11 +37,11 @@ const edges = graph.edges ?? [];
 	</section>
 </BaseLayout>
 
-<script define:vars={{ nodes, edges }}>
+<script define:vars={{ WIKI_NODES: wikiNodes, WIKI_EDGES: wikiEdges }}>
   (() => {
   const data = {
-    nodes: nodes.map((n) => ({ id: n.id, title: n.title, url: n.url, degree: n.degree })),
-    edges: edges.map((e) => ({ from: e.from, to: e.to })),
+    nodes: WIKI_NODES.map((n) => ({ id: n.id, title: n.title, url: n.url, degree: n.degree })),
+    edges: WIKI_EDGES.map((e) => ({ from: e.from, to: e.to })),
   };
   if (!data || data.nodes.length === 0) return;
 
