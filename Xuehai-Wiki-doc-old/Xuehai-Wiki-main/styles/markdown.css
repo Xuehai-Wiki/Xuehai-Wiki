@@ -1,0 +1,401 @@
+/**
+ * Styles for build-time rendered Markdown.
+ *
+ * The document body is plain HTML produced by the unified pipeline, so these
+ * rules replace the per-element Tailwind classes the old runtime renderer
+ * applied. Typography comes from @tailwindcss/typography via `.prose`; what
+ * follows covers the parts it does not know about — Shiki output, code-block
+ * chrome, and anchor targets.
+ */
+
+/* ---------------------------------------------------------------- code ---- */
+
+.ezw-code {
+  margin: 1.5rem 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.ezw-code__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: var(--color-code-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.ezw-code__lang {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-code-muted);
+}
+
+.ezw-code__copy {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  color: var(--color-code-muted);
+  background: transparent;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.ezw-code__copy:hover {
+  color: var(--color-text);
+  background: var(--color-sidebar-hover);
+}
+
+.ezw-code__copy[data-copied] {
+  color: #16a34a;
+}
+
+/* Shiki emits its own background and padding; strip the prose defaults so the
+   two do not fight over the same box. */
+.ezw-code pre {
+  margin: 0;
+  padding: 1rem;
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.ezw-code pre code {
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Typography adds quotation marks around inline code; they read as noise in
+   technical prose. */
+.ezw-prose :where(code):not(:where(pre code))::before,
+.ezw-prose :where(code):not(:where(pre code))::after {
+  content: none;
+}
+
+.ezw-prose :where(code):not(:where(pre code)) {
+  background: var(--color-code-bg);
+  color: var(--color-code-text);
+  padding: 0.15em 0.4em;
+  border-radius: 0.25rem;
+  font-weight: 400;
+  font-size: 0.9em;
+}
+
+/* --------------------------------------------------------- shiki themes ---- */
+
+/* Shiki is configured with `defaultColor: false`, so it writes both themes as
+   CSS variables on each token and neither is applied until one is selected
+   here. This is what makes theme switching instant and flash-free. */
+.shiki,
+.shiki span {
+  color: var(--shiki-light);
+}
+
+.shiki {
+  background-color: var(--shiki-light-bg);
+}
+
+html.dark .shiki,
+html.dark .shiki span {
+  color: var(--shiki-dark);
+}
+
+html.dark .shiki {
+  background-color: var(--shiki-dark-bg);
+}
+
+/* ----------------------------------------------------------- wikilinks ---- */
+
+.ezw-wikilink {
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+
+.ezw-wikilink:hover {
+  border-bottom-color: var(--color-primary);
+}
+
+/* An unresolved link is styled as visibly broken rather than left to look like
+   working text — a dangling reference is a content bug worth surfacing. */
+.ezw-broken-link {
+  font-style: normal;
+  color: #b91c1c;
+  border-bottom: 1px dashed currentColor;
+  cursor: help;
+}
+
+html.dark .ezw-broken-link {
+  color: #f87171;
+}
+
+/* ------------------------------------------------------------- anchors ---- */
+
+/* The header is sticky, so an anchored heading would otherwise land underneath
+   it. */
+.ezw-prose :where(h1, h2, h3, h4, h5, h6)[id] {
+  scroll-margin-top: 6rem;
+}
+
+/* -------------------------------------------------------------- images ---- */
+
+.ezw-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+/* --------------------------------------------------------------- misc ----- */
+
+.ezw-prose table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+  .ezw-prose table {
+    display: table;
+    white-space: normal;
+  }
+}
+
+/* Content pulled in from another page with `![[wiki link]]`.
+   Set apart so a reader can tell borrowed text from the page's own, and
+   attributed so they can follow it back to where it is maintained. */
+.ezw-transclusion {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-primary, #2563eb);
+  border-radius: 0.375rem;
+  background: var(--color-sidebar-bg);
+}
+
+.ezw-transclusion > :first-child {
+  margin-top: 0;
+}
+
+.ezw-transclusion__source {
+  margin: 0.75rem 0 0;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.ezw-transclusion__source::before {
+  content: 'From ';
+}
+
+/* Card shown when a reader hovers or focuses a wiki link. Its contents are
+   already on the anchor from the build, so it never waits on a request. */
+.ezw-link-preview {
+  position: fixed;
+  z-index: 60;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-background);
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1);
+  /* Purely informational, so it never intercepts the pointer heading for the
+     link underneath it. */
+  pointer-events: none;
+}
+
+.ezw-link-preview__title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.ezw-link-preview__excerpt {
+  margin: 0.375rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ezw-link-preview {
+    animation: ezw-link-preview-in 120ms ease-out;
+  }
+
+  @keyframes ezw-link-preview-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+/* Callouts from `> [!NOTE]`, GitHub's and Obsidian's shared syntax.
+   Distinguished by a coloured edge and a heading rather than an icon: no glyph
+   to load, and the meaning survives when colour alone is not perceived. */
+.ezw-callout {
+  --ezw-callout-accent: var(--color-text-muted);
+  margin: 1.5rem 0;
+  padding: 0.875rem 1.125rem;
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--ezw-callout-accent);
+  border-radius: 0.375rem;
+  background: var(--color-sidebar-bg);
+}
+
+.ezw-callout__title {
+  margin: 0 0 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--ezw-callout-accent);
+}
+
+/* The body's first block sits against the title, and the last against the
+   floor, so a one-paragraph callout is not padded twice over. */
+.ezw-callout > :nth-child(2) {
+  margin-top: 0;
+}
+
+.ezw-callout > :last-child {
+  margin-bottom: 0;
+}
+
+/* A foldable callout is a <details>; the marker is dropped in favour of the
+   title carrying the affordance, and the cursor says it is interactive. */
+summary.ezw-callout__title {
+  cursor: pointer;
+  list-style: none;
+}
+
+summary.ezw-callout__title::-webkit-details-marker {
+  display: none;
+}
+
+summary.ezw-callout__title::before {
+  content: '▸';
+  display: inline-block;
+  /* A trailing space in `content` collapses, leaving the marker against the
+     title, so the gap is a margin. */
+  margin-right: 0.4em;
+  transition: transform 120ms ease;
+}
+
+details[open] > summary.ezw-callout__title::before {
+  transform: rotate(90deg);
+}
+
+details.ezw-callout:not([open]) > summary.ezw-callout__title {
+  margin-bottom: 0;
+}
+
+.ezw-callout--note {
+  --ezw-callout-accent: #1d4ed8;
+}
+
+.ezw-callout--tip {
+  --ezw-callout-accent: #047857;
+}
+
+.ezw-callout--important {
+  --ezw-callout-accent: #6d28d9;
+}
+
+.ezw-callout--warning {
+  --ezw-callout-accent: #b45309;
+}
+
+.ezw-callout--caution {
+  --ezw-callout-accent: #b91c1c;
+}
+
+.dark .ezw-callout--note {
+  --ezw-callout-accent: #93c5fd;
+}
+
+.dark .ezw-callout--tip {
+  --ezw-callout-accent: #6ee7b7;
+}
+
+.dark .ezw-callout--important {
+  --ezw-callout-accent: #c4b5fd;
+}
+
+.dark .ezw-callout--warning {
+  --ezw-callout-accent: #fcd34d;
+}
+
+.dark .ezw-callout--caution {
+  --ezw-callout-accent: #fca5a5;
+}
+
+/* A link on each heading pointing at itself, so a section can be shared
+   without reading the id out of the address bar. */
+.ezw-heading {
+  position: relative;
+}
+
+.ezw-heading__anchor {
+  margin-left: 0.4em;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  /* Hidden until wanted, but only visually: it stays in the accessible tree
+     and in the tab order, so a keyboard or screen reader user can reach it. */
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.ezw-heading:hover .ezw-heading__anchor,
+.ezw-heading__anchor:focus-visible {
+  opacity: 1;
+}
+
+.ezw-heading__anchor:hover {
+  color: var(--color-text);
+}
+
+/* A pointer is not always available. On touch the anchor is simply shown,
+   since there is no hover to reveal it with, and padded out to a target a
+   finger can hit — the glyph stays the same size, the area around it grows. */
+@media (hover: none) {
+  .ezw-heading__anchor {
+    opacity: 0.5;
+    padding: 0 0.3em;
+    margin-left: 0.1em;
+  }
+}
+
+/* Diagrams from ```mermaid fences, drawn during the build.
+   The SVG refers to --bg and --fg but no longer fixes them inline, so the
+   colours come from here and follow the theme — the same arrangement the
+   syntax highlighter uses for code. */
+.ezw-mermaid {
+  --bg: transparent;
+  --fg: var(--color-text);
+  --line: var(--color-text-muted);
+  --accent: var(--color-primary, #2563eb);
+  --muted: var(--color-text-muted);
+  --surface: var(--color-code-bg);
+  --border: var(--color-border);
+  margin: 1.5rem 0;
+  /* A wide diagram scrolls inside its own box rather than widening the page. */
+  overflow-x: auto;
+}
+
+.ezw-mermaid svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}

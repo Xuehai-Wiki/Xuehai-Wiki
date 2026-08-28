@@ -7,6 +7,50 @@
    --fg / --fg-muted / --fg-faint 的明度差,圆角与细线勾勒。
    ============================================================ */
 
+/* ---------- 0. 字体(Pretendard,移植自旧 xuehai-wiki-doc) ---------- */
+@font-face {
+	font-family: 'Pretendard';
+	font-weight: 400;
+	src: url('/fonts/Pretendard/pretendard-400-latin.woff2') format('woff2');
+	font-display: swap;
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+	font-family: 'Pretendard';
+	font-weight: 400;
+	src: url('/fonts/Pretendard/pretendard-400-korean.woff2') format('woff2');
+	font-display: swap;
+	unicode-range: U+1100-11FF, U+3000-303F, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF, U+FF00-FFEF;
+}
+@font-face {
+	font-family: 'Pretendard';
+	font-weight: 600;
+	src: url('/fonts/Pretendard/pretendard-600-latin.woff2') format('woff2');
+	font-display: swap;
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+	font-family: 'Pretendard';
+	font-weight: 600;
+	src: url('/fonts/Pretendard/pretendard-600-korean.woff2') format('woff2');
+	font-display: swap;
+	unicode-range: U+1100-11FF, U+3000-303F, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF, U+FF00-FFEF;
+}
+@font-face {
+	font-family: 'Pretendard';
+	font-weight: 700;
+	src: url('/fonts/Pretendard/pretendard-700-latin.woff2') format('woff2');
+	font-display: swap;
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+	font-family: 'Pretendard';
+	font-weight: 700;
+	src: url('/fonts/Pretendard/pretendard-700-korean.woff2') format('woff2');
+	font-display: swap;
+	unicode-range: U+1100-11FF, U+3000-303F, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF, U+FF00-FFEF;
+}
+
 /* ---------- 1. 设计令牌 ---------- */
 :root {
 	/* 亮色默认值 */
@@ -45,7 +89,7 @@
 	--radius-lg: 14px;
 	--shadow: 0 1px 3px rgb(0 0 0 / 0.08);
 	--shadow-md: 0 4px 14px rgb(0 0 0 / 0.08);
-	--font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+	--font: 'Pretendard', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
 		'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
 	--font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 

@@ -1,0 +1,96 @@
+---
+// Starlight Footer override: adds a "反向链接" (backlinks) section beneath the
+// markdown content on every /docs page, driven by the wiki link graph
+// (public/graph.json, generated at build time by scripts/build-graph.mjs).
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+
+const entry = Astro.locals.starlightRoute.entry;
+const docId = entry?.id;
+
+let backlinks = [];
+if (docId) {
+  try {
+    const graph = JSON.parse(
+      readFileSync(path.resolve(process.cwd(), 'public', 'graph.json'), 'utf-8'),
+    );
+    const linked = graph.backlinks?.[docId] ?? [];
+    const byId = new Map((graph.nodes ?? []).map((n) => [n.id, n]));
+    backlinks = linked
+      .map((from) => byId.get(from))
+      .filter(Boolean)
+      .sort((a, b) => (a.title || '').localeCompare(b.title || '', 'zh'));
+  } catch {
+    backlinks = [];
+  }
+}
+---
+
+<footer class="sl-flex">
+	<div class="meta sl-flex">
+		<div class="backlinks">
+			{
+				backlinks.length > 0 && (
+					<>
+						<h2 class="backlinks-title">
+							反向链接 · {backlinks.length}
+						</h2>
+						<ul class="backlinks-list">
+							{backlinks.map((n) => (
+								<li>
+									<a href={n.url}>{n.title}</a>
+								</li>
+							))}
+						</ul>
+					</>
+				)
+			}
+		</div>
+	</div>
+</footer>
+
+<style>
+	@layer starlight.core {
+		.backlinks {
+			width: 100%;
+			margin-top: 2rem;
+			padding-top: 1.5rem;
+			border-top: 1px solid var(--sl-color-hairline);
+		}
+		.backlinks-title {
+			margin: 0 0 0.75rem;
+			font-size: var(--sl-text-xs);
+			font-weight: 600;
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+			color: var(--sl-color-gray-4);
+		}
+		.backlinks-list {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+		}
+		.backlinks-list li {
+			margin: 0;
+			padding: 0;
+		}
+		.backlinks-list a {
+			display: inline-block;
+			border: 1px solid var(--sl-color-hairline);
+			border-radius: 0.5rem;
+			padding: 0.3rem 0.75rem;
+			font-size: var(--sl-text-sm);
+			color: var(--sl-color-text);
+			text-decoration: none;
+			transition: border-color 0.15s ease, background-color 0.15s ease;
+		}
+		.backlinks-list a:hover {
+			border-color: var(--sl-color-gray-3);
+			background: var(--sl-color-bg-nav);
+			text-decoration: none;
+		}
+	}
+</style>

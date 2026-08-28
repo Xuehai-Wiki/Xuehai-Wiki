@@ -1,0 +1,208 @@
+---
+// 全站 wiki 链接图视图:读取构建期生成的 public/graph.json,
+// 用一段自包含的客户端力导向布局(SVG)渲染整站文档链接关系。
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+let graph;
+try {
+  graph = JSON.parse(
+    readFileSync(path.resolve(process.cwd(), 'public', 'graph.json'), 'utf-8'),
+  );
+} catch {
+  graph = { nodes: [], edges: [], broken: [] };
+}
+
+const nodes = graph.nodes ?? [];
+const edges = graph.edges ?? [];
+---
+
+<BaseLayout
+	title="Wiki 链接图 | Xuehai Wiki"
+	description="学海 Wiki 的文档链接关系图"
+>
+	<section class="container" style="padding-block: 2.5rem 2rem;">
+		<h1 style="margin-bottom: 0.4rem;">Wiki 链接图</h1>
+		<p class="muted" style="margin: 0 0 1.25rem; font-size: 0.92rem;">
+			{nodes.length} 个页面 · {edges.length} 条链接。节点大小代表被引用/引用次数，悬停高亮关联。
+		</p>
+		<div class="graph-wrap">
+			<svg id="wiki-graph" viewBox="0 0 960 640" preserveAspectRatio="xMidYMid meet" role="img" aria-label="wiki 链接图">
+				<g id="graph-edges"></g>
+				<g id="graph-nodes"></g>
+			</svg>
+		</div>
+		<div class="graph-legend"><span class="legend-dot"></span> 文档页面</div>
+	</section>
+</BaseLayout>
+
+<script define:vars={{ nodes, edges }}>
+  (() => {
+  const data = {
+    nodes: nodes.map((n) => ({ id: n.id, title: n.title, url: n.url, degree: n.degree })),
+    edges: edges.map((e) => ({ from: e.from, to: e.to })),
+  };
+  if (!data || data.nodes.length === 0) return;
+
+  const W = 960, H = 640;
+  const svg = document.getElementById('wiki-graph');
+  const gEdges = document.getElementById('graph-edges');
+  const gNodes = document.getElementById('graph-nodes');
+
+  const nodes = data.nodes.map((n) => ({ ...n, x: Math.random() * W, y: Math.random() * H, vx: 0, vy: 0 }));
+  const byId = new Map(nodes.map((n) => [n.id, n]));
+  const edges = data.edges.map((e) => ({ from: byId.get(e.from), to: byId.get(e.to) })).filter((e) => e.from && e.to);
+
+  const adj = new Map(nodes.map((n) => [n.id, []]));
+  for (const e of edges) {
+    adj.get(e.from.id).push(e.to);
+    adj.get(e.to.id).push(e.from);
+  }
+  const maxDeg = Math.max(1, ...nodes.map((n) => n.degree));
+  const radius = (n) => 6 + 11 * (n.degree / maxDeg);
+
+  // Simple force simulation.
+  for (let t = 0; t < 240; t++) {
+    for (let i = 0; i < nodes.length; i++) {
+      const a = nodes[i];
+      a.vx += (W / 2 - a.x) * 0.002;
+      a.vy += (H / 2 - a.y) * 0.002;
+      for (let j = i + 1; j < nodes.length; j++) {
+        const b = nodes[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const d2 = Math.max(1, dx * dx + dy * dy);
+        const f = 0.04 / Math.sqrt(d2);
+        const fx = dx * f, fy = dy * f;
+        a.vx += fx; a.vy += fy;
+        b.vx -= fx; b.vy -= fy;
+      }
+    }
+    for (const e of edges) {
+      const a = e.from, b = e.to;
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const d = Math.sqrt(dx * dx + dy * dy) || 1;
+      const f = (d - 150) * 0.004;
+      const fx = (dx / d) * f, fy = (dy / d) * f;
+      a.vx += fx; a.vy += fy;
+      b.vx -= fx; b.vy -= fy;
+    }
+    for (const n of nodes) {
+      n.vx *= 0.8; n.vy *= 0.8;
+      n.x += n.vx; n.y += n.vy;
+      n.x = Math.max(18, Math.min(W - 18, n.x));
+      n.y = Math.max(18, Math.min(H - 18, n.y));
+    }
+  }
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const edgeEls = edges.map((e) => {
+    const line = document.createElementNS(NS, 'line');
+    line.setAttribute('class', 'graph-edge');
+    gEdges.appendChild(line);
+    return { line, a: e.from, b: e.to };
+  });
+
+  const nodeEls = nodes.map((n) => {
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', 'graph-node');
+    g.setAttribute('data-id', n.id);
+    const circle = document.createElementNS(NS, 'circle');
+    circle.setAttribute('r', radius(n));
+    const label = document.createElementNS(NS, 'text');
+    label.setAttribute('class', 'graph-label');
+    label.textContent = n.title || n.id;
+    const link = document.createElementNS(NS, 'a');
+    link.setAttribute('href', n.url || '#');
+    link.setAttribute('target', '_self');
+    g.appendChild(circle);
+    g.appendChild(label);
+    link.appendChild(g);
+    gNodes.appendChild(link);
+    return { g, n };
+  });
+
+  function draw() {
+    for (const e of edgeEls) {
+      e.line.setAttribute('x1', e.a.x);
+      e.line.setAttribute('y1', e.a.y);
+      e.line.setAttribute('x2', e.b.x);
+      e.line.setAttribute('y2', e.b.y);
+    }
+    for (const n of nodeEls) n.g.setAttribute('transform', `translate(${n.n.x},${n.n.y})`);
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  function highlight(id) {
+    const set = new Set(adj.get(id) || []);
+    set.add(id);
+    for (const n of nodeEls) n.g.style.opacity = set.has(n.n.id) ? '1' : '0.12';
+    for (const e of edgeEls) e.line.style.opacity = e.a.id === id || e.b.id === id ? '1' : '0.04';
+  }
+  function clearHighlight() {
+    for (const n of nodeEls) n.g.style.opacity = '1';
+    for (const e of edgeEls) e.line.style.opacity = '1';
+  }
+  for (const n of nodeEls) {
+    n.g.addEventListener('pointerenter', () => highlight(n.n.id));
+    n.g.addEventListener('pointerleave', clearHighlight);
+  }
+  })();
+</script>
+
+<style>
+	.graph-wrap {
+		border: 1px solid var(--line);
+		border-radius: var(--radius-lg);
+		background: var(--bg);
+		box-shadow: var(--shadow);
+		padding: 1rem;
+	}
+	#wiki-graph {
+		width: 100%;
+		height: auto;
+		display: block;
+	}
+	#wiki-graph .graph-edge {
+		stroke: var(--line);
+		stroke-width: 1.2;
+		transition: opacity 0.15s ease;
+	}
+	#wiki-graph .graph-node circle {
+		fill: var(--bg-raise);
+		stroke: var(--fg-muted);
+		stroke-width: 1.4;
+		cursor: pointer;
+		transition: fill 0.15s ease;
+	}
+	#wiki-graph .graph-node:hover circle {
+		fill: var(--fg);
+		stroke: var(--fg);
+	}
+	#wiki-graph .graph-label {
+		fill: var(--fg-muted);
+		font-size: 11px;
+		pointer-events: none;
+		text-anchor: middle;
+		transform: translateY(20px);
+	}
+	#wiki-graph .graph-node:hover .graph-label {
+		fill: var(--fg);
+	}
+	.graph-legend {
+		margin-top: 0.75rem;
+		font-size: 0.8rem;
+		color: var(--fg-faint);
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+	}
+	.legend-dot {
+		width: 0.6rem;
+		height: 0.6rem;
+		border-radius: 50%;
+		background: var(--bg-raise);
+		border: 1px solid var(--fg-muted);
+	}
+</style>

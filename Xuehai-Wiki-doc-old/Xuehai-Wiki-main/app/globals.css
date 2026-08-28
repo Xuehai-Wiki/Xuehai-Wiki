@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import theme CSS variables */
+@import '../styles/theme.css';
+
+/* Styles for build-time rendered Markdown */
+@import '../styles/markdown.css';
+
+/*
+ * `@font-face` for Pretendard is declared in `app/layout.tsx`, not here: the
+ * font URLs need the deployment base path prefixed, which a stylesheet cannot
+ * read. See FONT_FACES there, which also splits each weight by `unicode-range`
+ * so a page fetches only the character sets it uses.
+ */
+
+body {
+  /* SUITE used to sit between Pretendard and the system stack. Pretendard
+     covers Latin and Korean, so nothing ever reached it except the emoji in
+     section names — which it has no glyphs for either, and which the platform
+     emoji font renders. It was 274 kB nobody saw. */
+  font-family:
+    'Pretendard',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  color: var(--color-text);
+  background: var(--color-background);
+  -webkit-overflow-scrolling: touch;
+}
+
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.05);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (max-width: 768px) {
+  button,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

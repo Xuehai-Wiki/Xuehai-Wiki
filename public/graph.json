@@ -1,0 +1,116 @@
+{
+  "nodes": [
+    {
+      "id": "docs/gallery",
+      "title": "画廊",
+      "url": "/docs/gallery",
+      "degree": 1
+    },
+    {
+      "id": "docs/index",
+      "title": "Xuehai Docs 文档库",
+      "url": "/docs/index",
+      "degree": 6
+    },
+    {
+      "id": "docs/known-behaviors",
+      "title": "已知行为记录",
+      "url": "/docs/known-behaviors",
+      "degree": 2
+    },
+    {
+      "id": "docs/using-yunketang",
+      "title": "云课堂使用技巧",
+      "url": "/docs/using-yunketang",
+      "degree": 2
+    },
+    {
+      "id": "docs/xuehai-brushcode",
+      "title": "动态码",
+      "url": "/docs/xuehai-brushcode",
+      "degree": 1
+    },
+    {
+      "id": "docs/xuehai-login-api",
+      "title": "登录API",
+      "url": "/docs/xuehai-login-api",
+      "degree": 1
+    },
+    {
+      "id": "docs/xuehai-sign",
+      "title": "学海请求签名",
+      "url": "/docs/xuehai-sign",
+      "degree": 1
+    }
+  ],
+  "edges": [
+    {
+      "from": "docs/index",
+      "to": "docs/gallery"
+    },
+    {
+      "from": "docs/index",
+      "to": "docs/known-behaviors"
+    },
+    {
+      "from": "docs/index",
+      "to": "docs/using-yunketang"
+    },
+    {
+      "from": "docs/index",
+      "to": "docs/xuehai-brushcode"
+    },
+    {
+      "from": "docs/index",
+      "to": "docs/xuehai-login-api"
+    },
+    {
+      "from": "docs/index",
+      "to": "docs/xuehai-sign"
+    },
+    {
+      "from": "docs/using-yunketang",
+      "to": "docs/known-behaviors"
+    }
+  ],
+  "backlinks": {
+    "docs/gallery": [
+      "docs/index"
+    ],
+    "docs/known-behaviors": [
+      "docs/index",
+      "docs/using-yunketang"
+    ],
+    "docs/using-yunketang": [
+      "docs/index"
+    ],
+    "docs/xuehai-brushcode": [
+      "docs/index"
+    ],
+    "docs/xuehai-login-api": [
+      "docs/index"
+    ],
+    "docs/xuehai-sign": [
+      "docs/index"
+    ]
+  },
+  "outbound": {
+    "docs/gallery": [],
+    "docs/index": [
+      "docs/gallery",
+      "docs/known-behaviors",
+      "docs/using-yunketang",
+      "docs/xuehai-brushcode",
+      "docs/xuehai-login-api",
+      "docs/xuehai-sign"
+    ],
+    "docs/known-behaviors": [],
+    "docs/using-yunketang": [
+      "docs/known-behaviors"
+    ],
+    "docs/xuehai-brushcode": [],
+    "docs/xuehai-login-api": [],
+    "docs/xuehai-sign": []
+  },
+  "broken": []
+}
