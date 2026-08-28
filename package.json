@@ -9,7 +9,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy": "wrangler deploy",
+    "check": "astro check"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.41.9",
@@ -17,5 +19,8 @@
   },
   "allowScripts": {
     "esbuild": true
+  },
+  "devDependencies": {
+    "wrangler": "^4.127.0"
   }
 }
