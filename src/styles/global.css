@@ -1090,6 +1090,15 @@ html:not([data-theme='dark']) .theme-toggle .icon-moon {
 	color: var(--fg);
 }
 
+.xh-footer-counter {
+	padding: 1rem 1.25rem 0;
+	text-align: center;
+}
+
+.xh-footer-counter img {
+	display: inline-block;
+}
+
 /* ---------- 9. 按钮 ---------- */
 .btn {
 	display: inline-flex;
