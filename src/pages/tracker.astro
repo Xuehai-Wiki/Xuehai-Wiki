@@ -22,7 +22,7 @@ const cardData = all.map((e) => ({
 // 转义 < 防止内容里出现 </script> 提前闭合
 const cardJson = JSON.stringify(cardData).replace(/</g, '\\u003c');
 
-const ADD_URL = 'https://github.com/Auratik/xuehai-wiki/issues/new/choose';
+const ADD_URL = 'https://github.com/Xuehai-Wiki/Xuehai-Wiki/issues/new/choose';
 
 // 筛选面板选项(状态/类型),供服务端渲染复选框。
 const STATUS_OPTIONS = [

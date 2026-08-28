@@ -6,7 +6,9 @@ description: '学海/智通云非官方文档中心 —— 使用技巧与已知
 # Xuehai Docs
 
 这里是关于学海 / 智通云(云课堂)的非官方文档库。
-
+此目录下当前为示例内容
+此目录下当前为示例内容
+此目录下当前为示例内容
 - [云课堂使用技巧](/docs/using-yunketang) —— 搜索、作业、错题本的实用用法
 - [已知行为记录](/docs/known-behaviors) —— 记录一些已知的"怪行为",详细追踪见 Xuehai Feature Tracker
 
