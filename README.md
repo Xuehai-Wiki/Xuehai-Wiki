@@ -38,3 +38,7 @@ npm run preview  # 预览构建产物
 ```markdown
 ![示意](/images/tracker/xxx.png)
 ```
+
+## 访问次数
+
+![](https://count.getloli.com/@Kuinone?name=Kuinone&theme=rule34&padding=1&offset=0&align=center&scale=1&pixelated=1&darkmode=auto)
