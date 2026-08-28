@@ -1,0 +1,13 @@
+---
+// 类型徽章:Feature=特性(有用),Bug=Bug(有害)。
+interface Props {
+	type: string;
+}
+
+const { type } = Astro.props;
+const isBug = type === 'Bug';
+const label = isBug ? 'Bug' : '特性';
+const cls = isBug ? 'bug' : 'feature';
+---
+
+<span class={`tracker-badge tracker-badge--${cls}`}>{label}</span>

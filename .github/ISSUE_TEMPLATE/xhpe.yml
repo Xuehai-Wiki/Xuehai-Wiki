@@ -1,0 +1,77 @@
+name: New XHPE submission
+description: 提交一个新的学海特性/故障追踪条目
+title: "XHPE-申请: 简洁描述"
+labels: ["xhpe"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢提交！请按字段填写，由维护者审核后合入 tracker（`src/content/tracker/`）。
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      description: 这是特性还是故障？
+      options:
+        - Feature
+        - Bug
+    validations:
+      required: true
+  - type: dropdown
+    id: status
+    attributes:
+      label: Status
+      description: 你对该条目的确信程度。一般作者选 MIGHT 或 PARTLY VALID。
+      options:
+        - MIGHT
+        - PARTLY VALID
+        - VALID
+        - CHANGED
+        - FIXED
+    validations:
+      required: true
+  - type: input
+    id: app-name
+    attributes:
+      label: APP Name
+      description: 应用名称，如 云课堂 / 智通云
+      placeholder: 云课堂
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: APP Version
+      description: 应用版本号
+      placeholder: v6.16.18.20260409(1213)
+    validations:
+      required: true
+  - type: dropdown
+    id: xhcs
+    attributes:
+      label: XHCS
+      description: 学海草台班子评分（1-5）。效果越明显、触发越容易，分越高。
+      options:
+        - "1 - 效果弱 / 触发难"
+        - "2 - 效果一般 / 触发一般"
+        - "3 - 效果明显 / 触发一般"
+        - "4 - 效果明显 / 触发容易"
+        - "5 - 效果极强 / 触发极易"
+    validations:
+      required: true
+  - type: input
+    id: reporter
+    attributes:
+      label: Reporter
+      description: 可选。留空则匿名。
+      placeholder: 匿名社区成员
+    validations:
+      required: false
+  - type: textarea
+    id: desc
+    attributes:
+      label: Desc
+      description: 详细描述。多行 Markdown，尽量具体、克制。
+      placeholder: 描述现象、复现步骤、影响等……
+    validations:
+      required: true

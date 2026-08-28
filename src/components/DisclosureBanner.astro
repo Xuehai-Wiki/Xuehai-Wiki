@@ -1,0 +1,39 @@
+---
+// 顶部黄色免责 banner:只在 localStorage 'xh-disclaimer-seen' 为空时显示一次,
+// 点 X 设该 key 后移除。与 public/starlight-globals.js 用同一 key,语义一致。
+// 若已显示过则不渲染(由 BaseLayout 判断,这里只负责渲染与关闭逻辑)。
+const TEXT = '此网站非学海官方网站,与学海教育及智通云亦不存在从属关系';
+const KEY = 'xh-disclaimer-seen';
+---
+
+<div class="xh-banner" role="status" data-disclosure-banner>
+	<span>{TEXT}</span>
+	<button class="xh-banner-close" type="button" aria-label="关闭提示" data-disclosure-close>
+		×
+	</button>
+</div>
+
+<script>
+	// 与 starlight-globals.js 共用同一 key,避免重复弹出。
+	const KEY = 'xh-disclaimer-seen';
+	const bar = document.querySelector('[data-disclosure-banner]');
+	const close = document.querySelector('[data-disclosure-close]');
+
+	// 若已显示过,直接不渲染(双保险,BaseLayout 已判断)
+	try {
+		if (localStorage.getItem(KEY)) {
+			bar?.remove();
+		}
+	} catch {
+		/* 忽略 */
+	}
+
+	close?.addEventListener('click', () => {
+		try {
+			localStorage.setItem(KEY, '1');
+		} catch {
+			/* 忽略 */
+		}
+		bar?.remove();
+	});
+</script>

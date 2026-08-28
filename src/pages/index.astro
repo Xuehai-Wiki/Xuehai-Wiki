@@ -1,0 +1,59 @@
+---
+// 着陆页:站名大标题 + 副题 + 免责小字 + 三个入口卡片。
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const cards = [
+	{
+		href: '/status',
+		title: 'Status',
+		desc: '服务实时状态、近 24 小时可用性与 60 天 SLA 一览。',
+		en: '服务状态',
+	},
+	{
+		href: '/tracker',
+		title: 'Tracker',
+		desc: '学海特性与缺陷追踪,记录那些值得被记住的问题。',
+		en: '特性追踪',
+	},
+	{
+		href: '/docs',
+		title: 'Docs',
+		desc: '社区维护的使用文档与经验笔记,持续更新中。',
+		en: '文档',
+	},
+];
+---
+
+<BaseLayout
+	title="Xuehai Wiki | 学海 Wiki"
+	description="学海 Wiki — 社区维护的学海知识库,含服务状态、特性追踪与文档。"
+>
+	<section class="container container--narrow" style="padding-block: 4rem 2rem; text-align: center;">
+		<h1 style="margin-bottom: 0.75rem;">Xuehai Wiki</h1>
+		<p class="muted" style="font-size: 1.05rem; margin: 0 auto; max-width: 30rem;">
+			学海 Wiki — 一个由社区维护的学海知识库
+		</p>
+		<p class="faint" style="font-size: 0.8rem; margin-top: 1.25rem;">
+			此网站非学海官方网站,与学海教育及智通云亦不存在从属关系
+		</p>
+	</section>
+
+	<section class="container" style="padding-block: 1rem 3rem;">
+		<div class="card-grid">
+			{
+				cards.map((card) => (
+					<a class="card card--link" href={card.href}>
+						<h3>{card.title}</h3>
+						<p>{card.desc}</p>
+						<span class="card-arrow">
+							{card.en}
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="M5 12h14M12 5l7 7-7 7" />
+							</svg>
+						</span>
+					</a>
+				))
+			}
+		</div>
+	</section>
+</BaseLayout>

@@ -1,0 +1,235 @@
+---
+// Xuehai Status 页:静态渲染外壳,客户端 fetch(60s 定时刷新)。
+// 数据源:https://xh.asxz.one/status/api/v1/
+// 结构:{ history_24h: {服务: [{time, status:0|1}]}, sla_60d: {服务: [{date, sla}]}, server_time }
+// 图表用手写 SVG(零依赖),黑白灰,随亮暗主题用 CSS 变量描色。
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const SERVICES = ['智通平台服务', '响应服务', '题舟服务', '云作业服务'];
+const API = 'https://xh.asxz.one/status/api/v1/';
+---
+
+<BaseLayout
+	title="Xuehai Status | 学海状态"
+	description="学海服务实时状态、近 24 小时可用性与 60 天 SLA。"
+>
+	<section class="container status-hero">
+		<h1 style="margin: 0;">Xuehai Status</h1>
+		<p class="muted" style="margin: 0.4rem 0 0; font-size: 0.95rem;">
+			学海服务状态监控
+		</p>
+	</section>
+
+	<section class="container">
+		<!-- 加载态 -->
+		<div class="status-loading" data-status-loading>
+			正在获取服务状态…
+		</div>
+
+		<!-- 错误态 -->
+		<div class="status-error" data-status-error hidden>
+			<p style="margin: 0 0 1rem;">无法获取状态数据,请稍后重试。</p>
+			<button class="btn" type="button" data-status-retry>重试</button>
+		</div>
+
+		<!-- 内容态 -->
+		<div data-status-content hidden>
+			<!-- 当前状态汇总 -->
+			<div class="status-summary" data-status-summary></div>
+
+			<!-- 24h 时间线 -->
+			<section class="status-block">
+				<h2>
+					近 24 小时
+					<span class="status-meta" data-status-24h-meta></span>
+				</h2>
+				<div data-status-timeline></div>
+			</section>
+
+			<!-- 60d SLA -->
+			<section class="status-block">
+				<h2>60 天 SLA</h2>
+				<div data-status-sla></div>
+			</section>
+
+			<!-- 页脚元信息 -->
+			<div class="status-footer-meta">
+				<span data-status-server-time></span>
+				<span>每 60 秒自动刷新</span>
+			</div>
+		</div>
+	</section>
+</BaseLayout>
+
+<script>
+	import type { StatusData } from '../types/status';
+
+	const API = 'https://xh.asxz.one/status/api/v1/';
+	const SERVICES = ['智通平台服务', '响应服务', '题舟服务', '云作业服务'];
+
+	const loadingEl = document.querySelector('[data-status-loading]');
+	const errorEl = document.querySelector('[data-status-error]');
+	const contentEl = document.querySelector('[data-status-content]');
+	const summaryEl = document.querySelector('[data-status-summary]');
+	const timelineEl = document.querySelector('[data-status-timeline]');
+	const slaEl = document.querySelector('[data-status-sla]');
+	const meta24hEl = document.querySelector('[data-status-24h-meta]');
+	const serverTimeEl = document.querySelector('[data-status-server-time]');
+	const retryBtn = document.querySelector('[data-status-retry]');
+
+	// ---------- 降采样:把长序列压到 ≤max 个点 ----------
+	function downsample<T>(arr: T[], max: number): T[] {
+		if (arr.length <= max) return arr;
+		const step = arr.length / max;
+		const out: T[] = [];
+		for (let i = 0; i < max; i++) {
+			out.push(arr[Math.floor(i * step)]);
+		}
+		return out;
+	}
+
+	// ---------- 24h 时间线 SVG ----------
+	function renderTimeline(history: Record<string, { time: string; status: number }[]>) {
+		const W = 800;
+		const H = 44;
+		const PAD = 6;
+		const MAX = 120;
+		let html = '';
+		for (const name of SERVICES) {
+			const pts = downsample(history[name] ?? [], MAX);
+			if (!pts.length) continue;
+			const n = pts.length;
+			const bw = (W - PAD * 2) / n;
+			const upCount = pts.filter((p) => p.status === 1).length;
+			const uptime = (upCount / n) * 100;
+			let bars = '';
+			for (let i = 0; i < n; i++) {
+				const x = PAD + i * bw;
+				const up = pts[i].status === 1;
+				const fill = up ? 'var(--ok)' : 'var(--danger)';
+				bars += `<rect x="${x.toFixed(2)}" y="2" width="${Math.max(bw - 1, 1).toFixed(2)}" height="${H - 4}" fill="${fill}" rx="1"/>`;
+			}
+			html += `
+				<div class="timeline-row">
+					<div class="timeline-row-label">
+						<span class="name">${name}</span>
+						<span class="uptime">24h 可用 ${uptime.toFixed(2)}%</span>
+					</div>
+					<svg class="timeline-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${name} 近24小时可用性">
+						<rect x="0" y="0" width="${W}" height="${H}" fill="var(--bg-soft)" rx="6"/>
+						${bars}
+					</svg>
+				</div>`;
+		}
+		return html;
+	}
+
+	// ---------- 60d SLA SVG ----------
+	function renderSla(sla: Record<string, { date: string; sla: number }[]>) {
+		const W = 800;
+		const ROW_H = 30;
+		const LABEL_W = 120;
+		const PAD = 6;
+		const BAR_H = 12;
+		let html = '';
+		let y = PAD;
+		for (const name of SERVICES) {
+			const rows = sla[name] ?? [];
+			const avg = rows.length
+				? rows.reduce((s, r) => s + r.sla, 0) / rows.length
+				: 0;
+			const bw = W - LABEL_W - PAD * 2;
+			const fw = Math.max((avg / 100) * bw, 1);
+			const color = avg >= 99.9 ? 'var(--ok)' : avg >= 95 ? 'var(--fg-muted)' : 'var(--danger)';
+			html += `
+				<g transform="translate(0 ${y})">
+					<text x="0" y="14" font-size="12" fill="var(--fg)">${name}</text>
+					<rect x="${LABEL_W}" y="4" width="${bw}" height="${BAR_H}" rx="6" fill="var(--bg-raise)"/>
+					<rect x="${LABEL_W}" y="4" width="${fw.toFixed(2)}" height="${BAR_H}" rx="6" fill="${color}"/>
+					<text x="${W - PAD}" y="14" font-size="11" text-anchor="end" fill="var(--fg-muted)">${avg.toFixed(2)}%</text>
+				</g>`;
+			y += ROW_H;
+		}
+		const H = y + PAD;
+		return `
+			<div class="sla-chart-wrap">
+				<svg class="sla-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="60天SLA">
+					${html}
+				</svg>
+			</div>`;
+	}
+
+	// ---------- 汇总卡片 ----------
+	function renderSummary(history: Record<string, { status: number }[]>) {
+		let html = '';
+		for (const name of SERVICES) {
+			const pts = history[name] ?? [];
+			const last = pts[pts.length - 1];
+			const up = last ? last.status === 1 : false;
+			const upCount = pts.filter((p) => p.status === 1).length;
+			const uptime = pts.length ? (upCount / pts.length) * 100 : 0;
+			html += StatusCardHtml(name, up, uptime);
+		}
+		return html;
+	}
+
+	function StatusCardHtml(name: string, up: boolean, uptime24h: number) {
+		return `
+			<div class="status-item">
+				<div>
+					<div class="status-item-name">${name}</div>
+					<div class="status-item-sub">24h 可用 ${uptime24h.toFixed(2)}%</div>
+				</div>
+				<span class="badge ${up ? 'badge--on' : 'badge--off'}">${up ? '正常' : '异常'}</span>
+			</div>`;
+	}
+
+	// ---------- 状态切换 ----------
+	function setLoading() {
+		loadingEl?.removeAttribute('hidden');
+		errorEl?.setAttribute('hidden', '');
+		contentEl?.setAttribute('hidden', '');
+	}
+
+	function setError() {
+		loadingEl?.setAttribute('hidden', '');
+		errorEl?.removeAttribute('hidden');
+		contentEl?.setAttribute('hidden', '');
+	}
+
+	function setContent(data: StatusData) {
+		loadingEl?.setAttribute('hidden', '');
+		errorEl?.setAttribute('hidden', '');
+		contentEl?.removeAttribute('hidden');
+
+		if (summaryEl) summaryEl.innerHTML = renderSummary(data.history_24h);
+		if (timelineEl) timelineEl.innerHTML = renderTimeline(data.history_24h);
+		if (slaEl) slaEl.innerHTML = renderSla(data.sla_60d);
+
+		if (meta24hEl) {
+			const first = data.history_24h[SERVICES[0]]?.[0]?.time;
+			const last = data.history_24h[SERVICES[0]]?.at(-1)?.time;
+			if (first && last) meta24hEl.textContent = `${first.slice(5, 16)} — ${last.slice(5, 16)}`;
+		}
+		if (serverTimeEl && data.server_time) {
+			serverTimeEl.textContent = `服务器时间 ${data.server_time}`;
+		}
+	}
+
+	// ---------- 拉取 ----------
+	async function load() {
+		setLoading();
+		try {
+			const res = await fetch(API);
+			if (!res.ok) throw new Error(`HTTP ${res.status}`);
+			const data: StatusData = await res.json();
+			setContent(data);
+		} catch {
+			setError();
+		}
+	}
+
+	retryBtn?.addEventListener('click', load);
+	load();
+	setInterval(load, 60_000);
+</script>

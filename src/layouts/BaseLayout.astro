@@ -1,0 +1,44 @@
+---
+// 全站自定义页面布局:head(主题防 FOUC + 样式)+ 顶部免责 banner + nav + 内容 + footer。
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import DisclosureBanner from '../components/DisclosureBanner.astro';
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const {
+	title = 'Xuehai Wiki',
+	description = '学海 Wiki — 社区维护的学海知识库',
+} = Astro.props;
+
+// 是否显示免责 banner:仅当 localStorage 'xh-disclaimer-seen' 为空时。
+// 服务端无法读 localStorage,故始终渲染,由组件脚本在客户端判断移除。
+const showBanner = true;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<!-- 主题初始化:放 head 紧前,防 FOUC -->
+		<script is:inline src="/theme-init.js"></script>
+	</head>
+	<body>
+		<Nav currentPath={Astro.url.pathname} />
+		{showBanner && <DisclosureBanner />}
+		<main>
+			<slot />
+		</main>
+		<Footer />
+	</body>
+</html>

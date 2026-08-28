@@ -1,0 +1,22 @@
+---
+// 单个服务的当前状态徽章卡片。
+interface Props {
+	name: string;
+	up: boolean;
+	uptime24h?: number; // 0-100
+}
+
+const { name, up, uptime24h } = Astro.props;
+---
+
+<div class="status-item">
+	<div>
+		<div class="status-item-name">{name}</div>
+		{uptime24h !== undefined && (
+			<div class="status-item-sub">24h 可用 {uptime24h.toFixed(2)}%</div>
+		)}
+	</div>
+	<span class={`badge ${up ? 'badge--on' : 'badge--off'}`}>
+		{up ? '正常' : '异常'}
+	</span>
+</div>

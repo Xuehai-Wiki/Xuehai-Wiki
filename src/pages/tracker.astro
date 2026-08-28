@@ -1,0 +1,232 @@
+---
+// 学海特性(bug)追踪列表页 /tracker
+// 筛选 / 搜索 / 分页 / 随机抽卡全部在客户端 JS 完成(数据构建期内嵌)。
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import TrackerTable from '@/components/tracker/TrackerTable.astro';
+import RandomCard from '@/components/tracker/RandomCard.astro';
+import PaginationBar from '@/components/tracker/PaginationBar.astro';
+import { canonicalXhpeId } from '@/components/tracker/xhpe';
+
+const all = await getCollection('tracker');
+
+// 内嵌给客户端 JS 的数据:随机抽卡用(id/type/status/xhcs/title)
+// id 归一化为大写规范形 XHPE-1001(glob loader 会把文件名小写化)
+const cardData = all.map((e) => ({
+	id: canonicalXhpeId(e.id),
+	type: e.data.type,
+	status: e.data.status,
+	xhcs: e.data.xhcs,
+	title: e.data.title,
+}));
+// 转义 < 防止内容里出现 </script> 提前闭合
+const cardJson = JSON.stringify(cardData).replace(/</g, '\\u003c');
+
+const ADD_URL = 'https://github.com/Auratik/xuehai-wiki/issues/new/choose';
+---
+
+<BaseLayout title="学海特性(bug)追踪" description="记录学海的奇奇怪怪的特性/bug —— 学海特性(bug)追踪器">
+	<div class="container">
+		<!-- intro 区 -->
+		<section class="tracker-intro">
+			<div>
+				<h1 class="tracker-title">学海特性(bug)追踪</h1>
+				<p class="tracker-subtitle">Xuehai Feature (Bug) Tracker</p>
+				<p class="tracker-disclaimer">
+					记录学海的奇奇怪怪的特性/bug
+					<span class="sep">·</span>
+					此追踪器非学海官方漏洞报告站点,与学海教育及智通云亦不存在从属关系。
+				</p>
+			</div>
+			<RandomCard />
+		</section>
+
+		<!-- 工具栏 -->
+		<div class="tracker-toolbar">
+			<input
+				id="tracker-search"
+				class="tracker-search"
+				type="search"
+				placeholder="搜索编号 / 标题 / 描述 / 应用 / 版本 / 提交者…"
+				autocomplete="off"
+				spellcheck="false"
+			/>
+			<select id="tracker-type" class="tracker-select" aria-label="按类型筛选">
+				<option value="">全部类型</option>
+				<option value="Feature">特性</option>
+				<option value="Bug">Bug</option>
+			</select>
+			<select id="tracker-status" class="tracker-select" aria-label="按状态筛选">
+				<option value="">全部状态</option>
+				<option value="MIGHT">可能是</option>
+				<option value="PARTLY VALID">部分成立</option>
+				<option value="VALID">成立</option>
+				<option value="CHANGED">已变更</option>
+				<option value="FIXED">已修复</option>
+			</select>
+			<span class="spacer"></span>
+			<a
+				class="tracker-add"
+				href={ADD_URL}
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				<svg
+					width="14"
+					height="14"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2.4"
+					stroke-linecap="round"
+					aria-hidden="true"
+				>
+					<path d="M12 5v14M5 12h14" />
+				</svg>
+				Add New Feature
+			</a>
+		</div>
+
+		<!-- 结果信息 + 空态 -->
+		<p id="tracker-pageinfo" class="tracker-pageinfo"></p>
+
+		<!-- 列表 -->
+		<TrackerTable entries={all} perPage={20} />
+
+		<div id="tracker-empty" class="tracker-empty" hidden>
+			没有匹配的记录,换个关键词或筛选条件试试。
+		</div>
+
+		<!-- 分页 -->
+		<PaginationBar />
+	</div>
+
+	<!-- 随机抽卡数据(客户端 JS 读取) -->
+	<script type="application/json" id="tracker-data" set:html={cardJson}></script>
+
+	<!-- 客户端交互:随机抽卡 / 筛选 / 搜索 / 分页 -->
+	<script is:inline>
+		(() => {
+			const dataEl = document.getElementById('tracker-data');
+			if (!dataEl) return;
+			let items = [];
+			try {
+				items = JSON.parse(dataEl.textContent);
+			} catch {
+				items = [];
+			}
+
+			const PER = 20;
+			const rows = Array.from(document.querySelectorAll('.tracker-row'));
+			const searchInput = document.getElementById('tracker-search');
+			const typeSel = document.getElementById('tracker-type');
+			const statusSel = document.getElementById('tracker-status');
+			const pagNav = document.getElementById('tracker-pagination');
+			const pageInfo = document.getElementById('tracker-pageinfo');
+			const emptyEl = document.getElementById('tracker-empty');
+			let page = 1;
+			let filtered = rows;
+
+			function apply() {
+				const q = (searchInput?.value || '').trim().toLowerCase();
+				const t = typeSel?.value || '';
+				const s = statusSel?.value || '';
+				filtered = rows.filter((r) => {
+					if (t && r.dataset.type !== t) return false;
+					if (s && r.dataset.status !== s) return false;
+					if (q && !(r.dataset.search || '').includes(q)) return false;
+					return true;
+				});
+				page = 1; // 筛选改变重置到第 1 页
+				render();
+			}
+
+			function render() {
+				const total = filtered.length;
+				const pages = Math.max(1, Math.ceil(total / PER));
+				if (page > pages) page = pages;
+
+				const start = (page - 1) * PER;
+				const end = start + PER;
+				rows.forEach((r) => {
+					r.hidden = true;
+				});
+				filtered.slice(start, end).forEach((r) => {
+					r.hidden = false;
+				});
+
+				if (pageInfo) pageInfo.textContent = `第 ${page} / ${pages} 页 · 共 ${total} 条`;
+				if (emptyEl) emptyEl.hidden = total !== 0;
+				buildPagination(pages);
+			}
+
+			function buildPagination(pages) {
+				if (!pagNav) return;
+				pagNav.innerHTML = '';
+				const mk = (label, p, disabled, active) => {
+					const b = document.createElement('button');
+					b.type = 'button';
+					b.textContent = label;
+					b.className = 'tracker-page';
+					if (active) b.classList.add('is-active');
+					if (disabled) b.disabled = true;
+					b.addEventListener('click', () => {
+						page = p;
+						render();
+					});
+					return b;
+				};
+				pagNav.appendChild(mk('上一页', page - 1, page <= 1, false));
+				const startP = Math.max(1, page - 2);
+				const endP = Math.min(pages, page + 2);
+				for (let p = startP; p <= endP; p++) {
+					pagNav.appendChild(mk(String(p), p, false, p === page));
+				}
+				pagNav.appendChild(mk('下一页', page + 1, page >= pages, false));
+			}
+
+			// 随机抽卡:每次刷新随机一条
+			function renderRandom() {
+				const box = document.getElementById('tracker-random-box');
+				if (!box || !items.length) return;
+				const e = items[Math.floor(Math.random() * items.length)];
+				const statusLabel = {
+					MIGHT: '可能是',
+					'PARTLY VALID': '部分成立',
+					VALID: '成立',
+					CHANGED: '已变更',
+					FIXED: '已修复',
+				}[e.status] || e.status;
+				const typeLabel = e.type === 'Bug' ? 'Bug' : '特性';
+				const typeCls = e.type === 'Bug' ? 'bug' : 'feature';
+				const statusCls = e.status.toLowerCase().replace(/ /g, '-');
+				box.innerHTML = `
+					<a class="tracker-random-card" href="/tracker/${e.id}">
+						<span class="tracker-random-id">${e.id}</span>
+						<span class="tracker-random-title">${e.title}</span>
+						<span class="tracker-random-meta">
+							<span class="tracker-badge tracker-badge--${typeCls}">${typeLabel}</span>
+							<span class="tracker-badge tracker-badge--${statusCls}">${statusLabel}</span>
+							<span class="tracker-xhcs">XHCS ${e.xhcs}</span>
+						</span>
+					</a>`;
+			}
+
+			// 整行可点击跳详情(点击内部链接时交给链接自身)
+			rows.forEach((r) => {
+				r.addEventListener('click', (ev) => {
+					if (ev.target.closest('a')) return;
+					const href = r.dataset.href;
+					if (href) window.location.href = href;
+				});
+			});
+
+			searchInput?.addEventListener('input', apply);
+			typeSel?.addEventListener('change', apply);
+			statusSel?.addEventListener('change', apply);
+
+			render();
+			renderRandom();
+		})();
+	</script>
+</BaseLayout>

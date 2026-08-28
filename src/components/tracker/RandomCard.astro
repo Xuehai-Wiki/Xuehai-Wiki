@@ -1,0 +1,12 @@
+---
+// 随机抽卡:每次刷新随机展示一条 XHPE。
+// 卡片内容由 tracker.astro 的内联脚本从内嵌 JSON 中随机选取并填充,
+// 此处只提供容器(避免 SSR 固定一张卡,保证"每次刷新都随机")。
+---
+
+<div class="tracker-random">
+	<p class="tracker-random-hint">随机一条 XHPE</p>
+	<div id="tracker-random-box" class="tracker-random-box" aria-live="polite">
+		<span class="faint">…</span>
+	</div>
+</div>

@@ -1,0 +1,22 @@
+---
+// 状态徽章:黑白灰深浅区分 V 系列,绿色仅用于 FIXED(语义:已修复)。
+// 文案映射 + 对应 CSS 类名(空格转连字符)。
+interface Props {
+	status: string;
+}
+
+const { status } = Astro.props;
+
+const LABELS: Record<string, string> = {
+	MIGHT: '可能是',
+	'PARTLY VALID': '部分成立',
+	VALID: '成立',
+	CHANGED: '已变更',
+	FIXED: '已修复',
+};
+
+const cls = status.toLowerCase().replace(/ /g, '-');
+const label = LABELS[status] ?? status;
+---
+
+<span class={`tracker-badge tracker-badge--${cls}`}>{label}</span>

@@ -1,0 +1,36 @@
+---
+// 亮/暗主题切换按钮:切换 html[data-theme] 并存 localStorage('xh-theme')。
+// 图标用黑白 SVG(太阳/月亮),aria-label 中文。
+const label = '切换亮暗主题';
+---
+
+<button
+	class="theme-toggle"
+	type="button"
+	aria-label={label}
+	title={label}
+	data-theme-toggle
+>
+	<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+		<circle cx="12" cy="12" r="4" />
+		<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+	</svg>
+	<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+		<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+	</svg>
+</button>
+
+<script>
+	// 与 theme-init.js 共用同一个 key('xh-theme'),保持语义一致。
+	const btn = document.querySelector('[data-theme-toggle]');
+	btn?.addEventListener('click', () => {
+		const root = document.documentElement;
+		const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+		root.setAttribute('data-theme', next);
+		try {
+			localStorage.setItem('xh-theme', next);
+		} catch {
+			/* 隐私模式下忽略 */
+		}
+	});
+</script>

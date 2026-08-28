@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Xuehai Feature Tracker
+    url: https://github.com/your-org/xuehai-wiki/tree/main/src/content/tracker
+    about: 查看已收录的特性/故障追踪条目

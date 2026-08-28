@@ -1,0 +1,113 @@
+---
+// 列表表格:SSR 渲染全部行(按编号从大到小),客户端 JS 做筛选/分页(按行显隐)。
+// 表头吸顶(sticky),悬停显示字段含义 tooltip。
+import type { CollectionEntry } from 'astro:content';
+import StatusBadge from './StatusBadge.astro';
+import TypeBadge from './TypeBadge.astro';
+import { canonicalXhpeId } from './xhpe';
+
+type Entry = CollectionEntry<'tracker'>;
+interface Props {
+	entries: Entry[];
+	perPage?: number;
+}
+
+const { entries, perPage = 20 } = Astro.props;
+
+// 编号从大到小排序(前端分页默认第 1 页 = 最新 20 条);
+// 排序用数字部分,避免大小写影响(glob 会把文件名小写化)
+const sorted = [...entries].sort(
+	(a, b) => parseInt(b.id.replace(/^xhpe-/i, ''), 10) - parseInt(a.id.replace(/^xhpe-/i, ''), 10),
+);
+
+// 每行用于客户端搜索的归一化文本(编号/title/desc/appName/appVersion/reporter)
+function searchText(e: Entry): string {
+	return [
+		canonicalXhpeId(e.id),
+		e.data.title,
+		e.body ?? '',
+		e.data.appName,
+		e.data.appVersion,
+		e.data.reporter ?? '',
+	]
+		.join(' ')
+		.toLowerCase();
+}
+---
+
+<div class="tracker-table-wrap">
+	<table class="tracker-table">
+		<thead>
+			<tr>
+				<th class="th-tip" data-tip="XHPE 编号,按从大到小排列">编号</th>
+				<th
+					class="th-tip"
+					data-tip="类型:特性(Feature)指对用户有用/预期的行为,Bug 指有害/异常的行为"
+				>
+					Type
+				</th>
+				<th
+					class="th-tip"
+					data-tip="状态六态:可能是(MIGHT) / 部分成立(PARTLY VALID) / 成立(VALID) / 已变更(CHANGED) / 已修复(FIXED)"
+				>
+					Status
+				</th>
+				<th
+					class="th-tip"
+					data-tip="XHCS = 学海草台班子评分,1-5 分,越高越'草台'(实现越随意/越不可靠)"
+				>
+					XHCS
+				</th>
+				<th class="th-tip" data-tip="该特性/bug 的标题">Title</th>
+				<th
+					class="th-tip"
+					data-tip="涉及的应用版本号,便于对照复现"
+				>
+					APP Version
+				</th>
+				<th
+					class="th-tip"
+					data-tip="提交者;留空显示为匿名"
+				>
+					Reporter
+				</th>
+			</tr>
+		</thead>
+		<tbody id="tracker-tbody">
+			{
+sorted.map((e, i) => {
+					const cid = canonicalXhpeId(e.id);
+					return (
+					<tr
+						class="tracker-row"
+						data-href={`/tracker/${cid}`}
+						data-type={e.data.type}
+						data-status={e.data.status}
+						data-search={searchText(e)}
+						hidden={i >= perPage ? true : undefined}
+					>
+						<td>
+							<a class="tracker-id" href={`/tracker/${cid}`}>
+								{cid}
+							</a>
+						</td>
+						<td><TypeBadge type={e.data.type} /></td>
+						<td><StatusBadge status={e.data.status} /></td>
+						<td class="tracker-xhcs">{e.data.xhcs}</td>
+						<td class="tracker-title-cell">{e.data.title}</td>
+						<td class="tracker-appver">{e.data.appVersion}</td>
+						<td
+							class:list={[
+								'tracker-reporter',
+								e.data.reporter ? '' : 'is-anon',
+							]}
+						>
+							{e.data.reporter ?? '匿名'}
+						</td>
+					</tr>
+					);
+				})
+			}
+		</tbody>
+	</table>
+</div>
