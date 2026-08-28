@@ -1,22 +1,5 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
-import { docsLoader } from '@astrojs/starlight/loaders';
-import { docsSchema } from '@astrojs/starlight/schema';
-
-/** 文档集合:src/content/docs/*.md,由 Starlight 渲染,仅服务 /docs/*。
- *  entry id 加 'docs/' 前缀,使 Starlight 的根路径 [...slug] 只命中 /docs/...。
- */
-const docs = defineCollection({
-	loader: docsLoader({
-		generateId: ({ entry }) =>
-			'docs/' +
-			entry
-				.split('.')
-				.slice(0, -1)
-				.join('.'),
-	}),
-	schema: docsSchema(),
-});
 
 /** 学海特性(bug)追踪集合:src/content/tracker/XHPE-XXXX.md,编号从 1001 起。
  *  frontmatter 字段对应计划中的 Type/Status/APP Name/APP Version/XHCS/Title/Reporter,
@@ -39,4 +22,6 @@ const tracker = defineCollection({
 	}),
 });
 
-export const collections = { docs, tracker };
+// 注:原本的 docs 集合(Starlight 文档)已移除——/docs 现由仓库内的旧 Next.js
+// 维基应用(wiki-app/)整体提供,见 README.md 的「双应用构建」说明。
+export const collections = { tracker };

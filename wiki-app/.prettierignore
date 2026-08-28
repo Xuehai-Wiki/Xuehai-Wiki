@@ -1,0 +1,7 @@
+node_modules
+.next
+out
+reference
+*.config.js
+package-lock.json
+packages/*/template
