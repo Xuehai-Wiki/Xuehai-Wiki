@@ -46,9 +46,12 @@ const API = 'https://xh.asxz.one/status/api/v1/';
 				<div data-status-timeline></div>
 			</section>
 
-			<!-- 60d SLA -->
+			<!-- SLA 格子图(标题天数动态,与格子数一致) -->
 			<section class="status-block">
-				<h2>60 天 SLA</h2>
+				<h2>
+					<span data-status-sla-title>SLA</span>
+					<span class="status-meta" data-status-sla-meta></span>
+				</h2>
 				<div data-status-sla></div>
 			</section>
 
@@ -73,6 +76,8 @@ const API = 'https://xh.asxz.one/status/api/v1/';
 	const summaryEl = document.querySelector('[data-status-summary]');
 	const timelineEl = document.querySelector('[data-status-timeline]');
 	const slaEl = document.querySelector('[data-status-sla]');
+	const slaTitleEl = document.querySelector('[data-status-sla-title]');
+	const slaMetaEl = document.querySelector('[data-status-sla-meta]');
 	const meta24hEl = document.querySelector('[data-status-24h-meta]');
 	const serverTimeEl = document.querySelector('[data-status-server-time]');
 	const retryBtn = document.querySelector('[data-status-retry]');
@@ -124,13 +129,20 @@ const API = 'https://xh.asxz.one/status/api/v1/';
 		return html;
 	}
 
-	// ---------- 60d SLA SVG ----------
+	// ---------- SLA:一天一格(GitHub 贡献图风格,方块) ----------
 	function renderSla(sla: Record<string, { date: string; sla: number }[]>) {
-		const W = 800;
-		const ROW_H = 30;
-		const LABEL_W = 120;
-		const PAD = 6;
-		const BAR_H = 12;
+		const CELL_W = 12;
+		const CELL_H = 12;
+		const GAP = 3;
+		const LABEL_W = 132;
+		const PAD = 4;
+		const ROW_H = 28;
+		const maxCells = Math.max(
+			0,
+			...SERVICES.map((n) => (sla[n] ?? []).length)
+		);
+		const cellsW = Math.max(maxCells * (CELL_W + GAP) - GAP, 0);
+		const W = LABEL_W + cellsW + PAD * 2;
 		let html = '';
 		let y = PAD;
 		for (const name of SERVICES) {
@@ -138,15 +150,17 @@ const API = 'https://xh.asxz.one/status/api/v1/';
 			const avg = rows.length
 				? rows.reduce((s, r) => s + r.sla, 0) / rows.length
 				: 0;
-			const bw = W - LABEL_W - PAD * 2;
-			const fw = Math.max((avg / 100) * bw, 1);
-			const color = avg >= 99.9 ? 'var(--ok)' : avg >= 95 ? 'var(--fg-muted)' : 'var(--danger)';
+			let cells = '';
+			rows.forEach((r, i) => {
+				// 只有真实 100% 才绿色;未达 100 一律血红色(醒目),不再用灰
+				const color = r.sla >= 99.9995 ? 'var(--ok)' : 'var(--danger)';
+				const x = LABEL_W + PAD + i * (CELL_W + GAP);
+				cells += `<rect x="${x}" y="${ROW_H / 2 - CELL_H / 2 + 1}" width="${CELL_W}" height="${CELL_H}" rx="2" fill="${color}"><title>${name} ${r.date} SLA ${r.sla.toFixed(2)}%</title></rect>`;
+			});
 			html += `
 				<g transform="translate(0 ${y})">
-					<text x="0" y="14" font-size="12" fill="var(--fg)">${name}</text>
-					<rect x="${LABEL_W}" y="4" width="${bw}" height="${BAR_H}" rx="6" fill="var(--bg-raise)"/>
-					<rect x="${LABEL_W}" y="4" width="${fw.toFixed(2)}" height="${BAR_H}" rx="6" fill="${color}"/>
-					<text x="${W - PAD}" y="14" font-size="11" text-anchor="end" fill="var(--fg-muted)">${avg.toFixed(2)}%</text>
+					<text x="0" y="16" font-size="12" fill="var(--fg)">${name}<tspan fill="var(--fg-muted)" font-size="11"> ${avg.toFixed(3)}%</tspan></text>
+					${cells}
 				</g>`;
 			y += ROW_H;
 		}
@@ -205,6 +219,18 @@ const API = 'https://xh.asxz.one/status/api/v1/';
 		if (summaryEl) summaryEl.innerHTML = renderSummary(data.history_24h);
 		if (timelineEl) timelineEl.innerHTML = renderTimeline(data.history_24h);
 		if (slaEl) slaEl.innerHTML = renderSla(data.sla_60d);
+
+		// SLA 标题天数动态化,与实际格子数一致
+		const slaDays = Math.max(
+			0,
+			...SERVICES.map((n) => (data.sla_60d[n] ?? []).length)
+		);
+		if (slaTitleEl) slaTitleEl.textContent = `${slaDays} 天 SLA`;
+		if (slaMetaEl) {
+			const first = data.sla_60d[SERVICES[0]]?.[0]?.date;
+			const last = data.sla_60d[SERVICES[0]]?.at(-1)?.date;
+			if (first && last) slaMetaEl.textContent = `${first} — ${last}`;
+		}
 
 		if (meta24hEl) {
 			const first = data.history_24h[SERVICES[0]]?.[0]?.time;
