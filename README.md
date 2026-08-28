@@ -1,4 +1,4 @@
-# [Xuehai-Wiki](https://xh.asxz.one) 
+![Xuehai-Wiki](https://socialify.git.ci/Xuehai-Wiki/Xuehai-Wiki/image?description=1&font=JetBrains+Mono&forks=1&issues=1&name=1&owner=1&pattern=Plus&pulls=1&stargazers=1&theme=Auto)
 
 学海平板 / 智通云非官方社区维基。记录状态、特性追踪与文档。
 
@@ -39,6 +39,8 @@ npm run preview  # 预览构建产物
 ![示意](/images/tracker/xxx.png)
 ```
 
-## 访问次数
+## 统计信息
+
+![Alt](https://repobeats.axiom.co/api/embed/b4efec409d6d6ec64384086af1c6ea471f921173.svg "Repobeats analytics image")
 
 ![](https://count.getloli.com/@Kuinone?name=Kuinone&theme=rule34&padding=1&offset=0&align=center&scale=1&pixelated=1&darkmode=auto)
