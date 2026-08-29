@@ -56,7 +56,7 @@
 	}
 
 	// 维基式右侧目录强化:把文章顶栏的分类标签克隆进 TOC,
-	// 并追加"随机文章"入口(desktop 右侧目录才有 starlight-toc)。
+	// 并追加"随机文章"入口 + 折叠切换(desktop 右侧目录才有 starlight-toc)。
 	function enhanceToc() {
 		const tocNav = document.querySelector('starlight-toc nav');
 		if (!tocNav) return;
@@ -86,6 +86,79 @@
 		a.textContent = '随机文章';
 		foot.appendChild(a);
 		tocNav.appendChild(foot);
+
+		// 右侧目录可折叠:把整个 nav 包进可折叠容器,顶部加"本页目录"开关按钮。
+		// 折叠状态存 localStorage,刷新后保持。
+		if (!tocNav.parentElement.classList.contains('xh-toc-collapsible')) {
+			const panel = tocNav.parentElement;
+			const wrap = document.createElement('div');
+			wrap.className = 'xh-toc-collapsible';
+			const btn = document.createElement('button');
+			btn.type = 'button';
+			btn.className = 'xh-toc-toggle';
+			btn.setAttribute('aria-expanded', 'true');
+			btn.innerHTML =
+				'<span>本页目录</span><svg class="xh-toc-chev" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+			panel.insertBefore(wrap, panel.firstChild);
+			panel.insertBefore(btn, panel.firstChild);
+			wrap.appendChild(tocNav);
+			btn.addEventListener('click', () => {
+				const isCollapsed = wrap.classList.toggle('is-collapsed');
+				btn.setAttribute('aria-expanded', String(!isCollapsed));
+				try {
+					localStorage.setItem('xh-toc-collapsed', isCollapsed ? '1' : '0');
+				} catch {}
+			});
+			// 恢复上次折叠状态
+			let stored = '0';
+			try {
+				stored = localStorage.getItem('xh-toc-collapsed') || '0';
+			} catch {}
+			if (stored === '1') {
+				wrap.classList.add('is-collapsed');
+				btn.setAttribute('aria-expanded', 'false');
+			}
+		}
+	}
+
+	// 维基式左侧文章大纲:把当前文章的标题层级(从右侧目录列表克隆)放进左侧边栏顶部,
+	// 便于在文章内快速跳转。子层级可折叠。
+	function addArticleOutline() {
+		const sidebar = document.querySelector('#starlight__sidebar');
+		if (!sidebar) return;
+		if (sidebar.querySelector('.xh-side-outline')) return;
+		const tocList = document.querySelector('starlight-toc nav > ul');
+		if (!tocList) return;
+
+		const panel = document.createElement('div');
+		panel.className = 'xh-side-outline';
+		const title = document.createElement('p');
+		title.className = 'xh-side-outline-title';
+		title.textContent = '文章目录';
+		panel.appendChild(title);
+		panel.appendChild(tocList.cloneNode(true));
+		// 放左侧边栏导航之前
+		const nav = sidebar.querySelector('nav.sidebar');
+		sidebar.insertBefore(panel, nav || null);
+
+		// 子列表可折叠:点击含子级的父项切换子列表显示
+		panel.querySelectorAll('li').forEach((li) => {
+			const sub = li.querySelector(':scope > ul');
+			if (!sub) return;
+			li.classList.add('has-sub');
+			const link = li.querySelector(':scope > a');
+			const btn = document.createElement('button');
+			btn.type = 'button';
+			btn.className = 'xh-side-outline-toggle';
+			btn.setAttribute('aria-expanded', 'true');
+			btn.setAttribute('aria-label', '切换小节');
+			link.parentElement.insertBefore(btn, link.nextSibling);
+			btn.addEventListener('click', () => {
+				const collapsed = sub.classList.toggle('is-collapsed');
+				btn.setAttribute('aria-expanded', String(!collapsed));
+				li.classList.toggle('is-collapsed', collapsed);
+			});
+		});
 	}
 
 	// 随机文章:让所有 .xh-wiki-random / .xh-toc-random 链接真正跳到随机文档。
@@ -121,6 +194,7 @@
 		addBanner();
 		addFooterNote();
 		enhanceToc();
+		addArticleOutline();
 		setupRandomLinks();
 	}
 	if (document.readyState === 'loading') {

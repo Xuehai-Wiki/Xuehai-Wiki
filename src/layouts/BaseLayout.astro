@@ -8,16 +8,20 @@ import '../styles/global.css';
 interface Props {
 	title?: string;
 	description?: string;
+	// 是否显示顶部免责 banner。某些落地页(如 /docs 维基门户)在页脚已展示免责声明,
+	// 为避免与 banner 重复,可传入 false 隐藏 banner。
+	hideBanner?: boolean;
 }
 
 const {
 	title = 'Xuehai Wiki',
 	description = '学海 Wiki — 社区维护的学海知识库',
+	hideBanner = false,
 } = Astro.props;
 
 // 是否显示免责 banner:仅当 localStorage 'xh-disclaimer-seen' 为空时。
 // 服务端无法读 localStorage,故始终渲染,由组件脚本在客户端判断移除。
-const showBanner = true;
+const showBanner = !hideBanner;
 ---
 
 <!doctype html>
