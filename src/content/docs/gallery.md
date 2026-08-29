@@ -8,7 +8,6 @@ excerpt: 学海娘的图片。
 
 # 画廊
 
-学海娘的立绘。
 
 ![[xuehai-chan.png]]
 
