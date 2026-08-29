@@ -1,6 +1,9 @@
 ---
 title: 画廊
 description: 学海娘
+categories:
+  - 其他
+excerpt: 学海娘的立绘与图片。
 ---
 
 # 画廊

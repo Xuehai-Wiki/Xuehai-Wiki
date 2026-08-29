@@ -29,6 +29,8 @@ export default defineConfig({
 				Header: './src/components/starlight/Header.astro',
 				// 在每个 /docs 页面底部注入"反向链接"(wiki 链接图驱动)
 				Footer: './src/components/starlight/Footer.astro',
+				// 维基式文章标题栏:标题下方注入分类标签 + 最后更新 + 字数/章节数 + 随机文章
+				PageTitle: './src/components/starlight/PageTitle.astro',
 			},
 			head: [
 				// 主题初始化 + 免责 banner/页脚注入(starlight 页面没有我们的全局布局,

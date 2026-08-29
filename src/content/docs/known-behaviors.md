@@ -1,6 +1,9 @@
 ---
 title: 已知行为记录
 description: 记录一些已知的"怪行为"，供排查与参考。
+categories:
+  - 已知行为
+excerpt: 按编号记录学海/智通云中一些已知的"怪行为"，含隐藏特性与待确认问题。
 badge:
   text: 示例
   variant: caution

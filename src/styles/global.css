@@ -1804,3 +1804,63 @@ nav.sidebar [aria-current='page'] {
 	color: var(--fg);
 	background-color: var(--bg-raise);
 }
+
+/* ============================================================
+   维基式右侧目录强化(desktop TOC,starlight-toc)
+   由 starlight-globals.js 注入分类标签行 + 随机文章入口,
+   这里负责其样式 + 目录大纲的维基化观感。
+   ============================================================ */
+starlight-toc nav {
+	/* 分类标签行(JS 注入) */
+	.xh-toc-cats {
+		margin: 0 0 0.6rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3rem;
+	}
+	.xh-toc-tag {
+		display: inline-block;
+		padding: 0.06rem 0.5rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: 999px;
+		background: var(--sl-color-bg-nav);
+		color: var(--sl-color-gray-3);
+		font-size: var(--sl-text-xs);
+		font-weight: 600;
+		line-height: 1.6;
+		text-decoration: none;
+	}
+	.xh-toc-tag:hover {
+		border-color: var(--sl-color-gray-3);
+		color: var(--sl-color-white);
+		text-decoration: none;
+	}
+	/* 大纲列表项:更紧凑的维基观感 */
+	> ul {
+		padding-left: 0;
+	}
+	> ul a {
+		padding-block: 0.22rem;
+		line-height: 1.3;
+	}
+	/* 随机文章入口(JS 注入) */
+	.xh-toc-foot {
+		margin: 0.9rem 0 0;
+		padding-top: 0.7rem;
+		border-top: 1px solid var(--sl-color-hairline);
+	}
+	.xh-toc-random {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3rem;
+		font-size: var(--sl-text-sm);
+		color: var(--sl-color-gray-3);
+		text-decoration: none;
+		transition: color 0.15s ease;
+	}
+	.xh-toc-random:hover {
+		color: var(--sl-color-white);
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+}

@@ -1,0 +1,271 @@
+---
+// 维基式文档库门户(/docs):文章统计 + 随机文章 + 按分类分组的文章索引 + 站内搜索入口。
+// 使用全站 BaseLayout(品牌 Nav + Footer),与 /tracker、/status 一致;
+// 这样 /docs 主页是"维基门户"而非文档侧栏页,更有维基主页的观感。
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const docs = (await getCollection('docs')).filter(
+	// 排除门户页自身(docs/index),避免把首页也算成一篇普通文章
+	(e) => e.id !== 'docs/index',
+);
+
+// 分类 -> 文章列表。保留每个分类首次出现时的顺序,便于稳定展示。
+const categoryOrder: string[] = [];
+const byCategory = new Map<string, typeof docs>();
+for (const e of docs) {
+	const cats = e.data.categories?.length ? e.data.categories : ['其他'];
+	for (const cat of cats) {
+		if (!categoryOrder.includes(cat)) categoryOrder.push(cat);
+		if (!byCategory.has(cat)) byCategory.set(cat, []);
+		byCategory.get(cat)!.push(e);
+	}
+}
+
+const totalArticles = docs.length;
+const totalCategories = byCategory.size;
+const totalLinks = 0;
+
+// 每篇文档的相对路径,用于文档内普通跳转
+const slugOf = (id: string) => id.replace(/^docs\//, '');
+---
+
+<BaseLayout
+	title="文档库 | Xuehai Wiki"
+	description="学海 / 智通云非官方文档库 —— 按分类索引全部使用技巧、已知行为与技术解析文章。"
+>
+	<section class="container" style="padding-block: 3rem 1.5rem;">
+		<div class="wiki-hero">
+			<h1 class="wiki-title">文档库</h1>
+			<p class="wiki-subtitle">Xuehai Docs · 学海 / 智通云非官方维基</p>
+			<p class="wiki-lead">
+				这里是关于学海 / 智通云(云课堂)的非官方文档库。按分类浏览全部文章,或点击
+				"随机文章"探索未知条目。
+			</p>
+
+			<div class="wiki-actions">
+				<a class="btn btn--primary" href="/tracker">
+					浏览特性追踪
+				</a>
+				<button class="btn" type="button" data-random-article>
+					随机文章
+					<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
+					</svg>
+				</button>
+			</div>
+
+			<ul class="wiki-stats">
+				<li>
+					<strong>{totalArticles}</strong>
+					<span>文章</span>
+				</li>
+				<li>
+					<strong>{totalCategories}</strong>
+					<span>分类</span>
+				</li>
+				<li>
+					<strong data-total-links>{totalLinks}</strong>
+					<span>条目链接</span>
+				</li>
+			</ul>
+		</div>
+	</section>
+
+	<section class="container" style="padding-block: 0 3rem;">
+		<div class="wiki-sections">
+			{
+				categoryOrder.map((cat) => {
+					const items = byCategory.get(cat) ?? [];
+					return (
+						<div class="wiki-section" id={cat}>
+							<h2 class="wiki-section-title">
+								{cat}
+								<span class="wiki-section-count">{items.length}</span>
+							</h2>
+							<ul class="wiki-list">
+								{items.map((e) => (
+									<li>
+										<a class="wiki-link" href={`/docs/${slugOf(e.id)}`}>
+											<span class="wiki-link-title">{e.data.title}</span>
+											{e.data.excerpt && (
+												<span class="wiki-link-excerpt">{e.data.excerpt}</span>
+											)}
+										</a>
+									</li>
+								))}
+							</ul>
+						</div>
+					);
+				})
+			}
+		</div>
+
+		<div class="wiki-footnote">
+			<p>
+				本站为非官方社区站点,与学海教育及智通云不存在从属关系。
+				资料仅供学习交流使用,不倡导破坏正常教学秩序,请勿用于非法用途。
+			</p>
+		</div>
+	</section>
+</BaseLayout>
+
+<script>
+	// 随机文章按钮:从页面已渲染的文章链接里随机挑一个跳转。
+	// 也顺带统计当前文档间的条目链接数(内链),填入统计卡片。
+	const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.wiki-link'));
+	const btn = document.querySelector<HTMLButtonElement>('[data-random-article]');
+	btn?.addEventListener('click', () => {
+		if (links.length === 0) return;
+		const pick = links[Math.floor(Math.random() * links.length)];
+		window.location.href = pick.href;
+	});
+
+	// 文档间内链数:取 graph.json 的 edges 数量(构建期已生成),这里从页面链接近似。
+	// 直接读取静态数据:由构建脚本注入的站点数据在 /graph.json。
+	fetch('/graph.json')
+		.then((r) => (r.ok ? r.json() : null))
+		.catch(() => null)
+		.then((graph) => {
+			const total = graph?.edges?.length ?? 0;
+			const el = document.querySelector<HTMLElement>('[data-total-links]');
+			if (el && total) el.textContent = String(total);
+		});
+</script>
+
+<style>
+	.wiki-hero {
+		max-width: 46rem;
+	}
+	.wiki-title {
+		margin: 0;
+		font-size: clamp(2.2rem, 5vw, 3rem);
+		font-weight: 780;
+		letter-spacing: -0.02em;
+		line-height: 1.1;
+	}
+	.wiki-subtitle {
+		margin: 0.4rem 0 0;
+		font-size: 0.85rem;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		color: var(--fg-faint);
+		text-transform: uppercase;
+	}
+	.wiki-lead {
+		margin: 1rem 0 0;
+		font-size: 1.02rem;
+		color: var(--fg-muted);
+		line-height: 1.7;
+		max-width: 40rem;
+	}
+	.wiki-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+		margin-top: 1.6rem;
+	}
+	.wiki-actions .btn svg {
+		margin-left: 0.15rem;
+	}
+	.wiki-stats {
+		list-style: none;
+		margin: 2rem 0 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+	}
+	.wiki-stats li {
+		display: flex;
+		align-items: baseline;
+		gap: 0.4rem;
+		padding: 0.55rem 1rem;
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		background: var(--bg-soft);
+	}
+	.wiki-stats strong {
+		font-size: 1.15rem;
+		font-weight: 750;
+		font-family: var(--font-mono);
+	}
+	.wiki-stats span {
+		font-size: 0.8rem;
+		color: var(--fg-muted);
+	}
+
+	.wiki-sections {
+		display: grid;
+		gap: 1.5rem;
+	}
+	.wiki-section {
+		border: 1px solid var(--line);
+		border-radius: var(--radius-lg);
+		background: var(--bg);
+		padding: 1.25rem 1.4rem;
+	}
+	.wiki-section-title {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin: 0 0 0.85rem;
+		font-size: 1.1rem;
+		font-weight: 700;
+		letter-spacing: -0.01em;
+	}
+	.wiki-section-count {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 1.35rem;
+		height: 1.35rem;
+		padding-inline: 0.35rem;
+		border-radius: 999px;
+		background: var(--fg);
+		color: var(--bg);
+		font-size: 0.72rem;
+		font-weight: 700;
+	}
+	.wiki-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.4rem;
+	}
+	.wiki-link {
+		display: flex;
+		flex-direction: column;
+		gap: 0.1rem;
+		padding: 0.55rem 0.7rem;
+		border-radius: var(--radius);
+		transition: background-color 0.12s ease;
+	}
+	.wiki-link:hover {
+		background: var(--bg-soft);
+		text-decoration: none;
+	}
+	.wiki-link-title {
+		font-weight: 600;
+		color: var(--fg);
+	}
+	.wiki-link-excerpt {
+		font-size: 0.85rem;
+		color: var(--fg-muted);
+		line-height: 1.5;
+	}
+
+	.wiki-footnote {
+		margin-top: 2rem;
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--line);
+		font-size: 0.8rem;
+		color: var(--fg-faint);
+		text-align: center;
+	}
+	.wiki-footnote p {
+		margin: 0 auto;
+		max-width: 32rem;
+	}
+</style>

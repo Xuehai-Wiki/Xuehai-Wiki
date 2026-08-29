@@ -3,6 +3,10 @@ title: "登录API"
 
 description: "登录接口是获取通行令牌的途径"
 
+categories:
+  - 技术解析
+excerpt: 学海登录接口的请求与响应解析，以及通行令牌的获取方式。
+
 badge:
   text: 示例
   variant: note

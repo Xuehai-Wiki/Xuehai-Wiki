@@ -1,6 +1,9 @@
 ---
 title: 云课堂使用技巧
 description: 云课堂的一些实用操作技巧，覆盖搜索、作业与错题本。
+categories:
+  - 使用技巧
+excerpt: 云课堂的搜索、作业与错题本三个常用入口的实用用法与省时技巧。
 badge:
   text: 示例
   variant: note

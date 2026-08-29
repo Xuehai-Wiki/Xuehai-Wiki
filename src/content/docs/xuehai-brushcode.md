@@ -1,6 +1,9 @@
 ---
 title: "动态码"
 description: 动态码是学海用于重置设备的动态密码
+categories:
+  - 技术解析
+excerpt: 动态码(TOTP)的原理、在线/离线验证流程与通过反编译还原的获取方式。
 badge:
   text: 示例
   variant: note

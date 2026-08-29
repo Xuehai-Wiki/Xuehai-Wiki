@@ -55,9 +55,73 @@
 		document.body.appendChild(note);
 	}
 
+	// 维基式右侧目录强化:把文章顶栏的分类标签克隆进 TOC,
+	// 并追加"随机文章"入口(desktop 右侧目录才有 starlight-toc)。
+	function enhanceToc() {
+		const tocNav = document.querySelector('starlight-toc nav');
+		if (!tocNav) return;
+		if (tocNav.querySelector('.xh-toc-cats') || tocNav.querySelector('.xh-toc-foot')) return;
+
+		// 分类标签:从 PageTitle 渲染的分类芯片里读取文本,重建一批
+		const sourceCats = document.querySelectorAll('.xh-wiki-meta-cats .xh-wiki-tag');
+		if (sourceCats.length > 0) {
+			const cats = document.createElement('p');
+			cats.className = 'xh-toc-cats';
+			sourceCats.forEach((src) => {
+				const a = document.createElement('a');
+				a.className = 'xh-toc-tag';
+				a.href = src.getAttribute('href') || '/docs';
+				a.textContent = src.textContent || '';
+				cats.appendChild(a);
+			});
+			tocNav.insertBefore(cats, tocNav.firstChild);
+		}
+
+		// 随机文章:追加到目录底部
+		const foot = document.createElement('p');
+		foot.className = 'xh-toc-foot';
+		const a = document.createElement('a');
+		a.className = 'xh-toc-random';
+		a.href = '/docs';
+		a.textContent = '随机文章';
+		foot.appendChild(a);
+		tocNav.appendChild(foot);
+	}
+
+	// 随机文章:让所有 .xh-wiki-random / .xh-toc-random 链接真正跳到随机文档。
+	// 从 graph.json 读取全部文档节点,排除当前页与门户页,随机挑一个跳转。
+	let randomLinksReady = false;
+	function setupRandomLinks() {
+		if (randomLinksReady) return;
+		randomLinksReady = true;
+		const links = document.querySelectorAll('.xh-wiki-random, .xh-toc-random');
+		if (links.length === 0) return;
+		fetch('/graph.json')
+			.then((r) => (r.ok ? r.json() : null))
+			.catch(() => null)
+			.then((graph) => {
+				const nodes = (graph?.nodes ?? []).filter(
+					(n) => n.id !== 'docs/index' && n.url !== location.pathname,
+				);
+				links.forEach((link) => {
+					link.addEventListener('click', (ev) => {
+						ev.preventDefault();
+						if (nodes.length === 0) {
+							window.location.href = '/docs';
+							return;
+						}
+						const pick = nodes[Math.floor(Math.random() * nodes.length)];
+						window.location.href = pick.url;
+					});
+				});
+			});
+	}
+
 	function run() {
 		addBanner();
 		addFooterNote();
+		enhanceToc();
+		setupRandomLinks();
 	}
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', run);

@@ -1,0 +1,155 @@
+---
+// Starlight PageTitle override:
+// 在文档页标题下方注入"维基式元信息栏":分类标签 + 最后更新时间 + 字数/章节数 + 随机文章。
+// 保持黑白灰设计系统,分类标签复用 tracker 徽章样式逻辑的灰阶版本。
+// Starlight 的页面标题锚点 id 常量,供 TOC "回到顶部" 使用。
+const PAGE_TITLE_ID = '_top';
+
+const route = Astro.locals.starlightRoute;
+const entry = route.entry;
+const title = entry.data.title ?? '';
+
+// 分类标签
+const categories = entry.data.categories ?? [];
+
+// 最后更新时间
+const lastUpdated = route.lastUpdated;
+
+// 字数 / 章节数:从原始 Markdown 正文估算
+let wordCount = 0;
+let headingCount = 0;
+const body = (entry as unknown as { body?: string })?.body ?? '';
+if (body) {
+	// 去掉代码块与行内代码后统计中文字符与英文单词
+	const text = body
+		.replace(/```[\s\S]*?```/g, ' ')
+		.replace(/`[^`]*`/g, ' ');
+	const cjk = (text.match(/[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]/g) ?? []).length;
+	const words = (text.replace(/[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]/g, ' ').match(/[A-Za-z0-9_]+/g) ?? []).length;
+	wordCount = cjk + words;
+	headingCount = (body.match(/^#{2,4}\s/gm) ?? []).length;
+}
+
+// 格式化日期
+const fmtDate = (d: Date) =>
+	d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<h1 id={PAGE_TITLE_ID} class="xh-wiki-title">{title}</h1>
+
+{
+	(categories.length > 0 || lastUpdated || wordCount > 0) && (
+		<div class="xh-wiki-meta">
+			{
+				categories.length > 0 && (
+					<span class="xh-wiki-meta-cats">
+						{categories.map((c) => (
+							<a class="xh-wiki-tag" href={`/docs/#${encodeURIComponent(c)}`}>{c}</a>
+						))}
+					</span>
+				)
+			}
+			{lastUpdated && (
+				<span class="xh-wiki-meta-item" title="最后更新时间">
+					<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<rect x="3" y="4" width="18" height="18" rx="2" />
+						<path d="M16 2v4M8 2v4M3 10h18" />
+					</svg>
+					{fmtDate(lastUpdated)}
+				</span>
+			)}
+			{wordCount > 0 && (
+				<span class="xh-wiki-meta-item">
+					<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+						<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+					</svg>
+					约 {wordCount.toLocaleString('zh-CN')} 字
+					{headingCount > 0 && ` · ${headingCount} 节`}
+				</span>
+			)}
+			<span class="xh-wiki-meta-random">
+				<a href="/docs" class="xh-wiki-random">随机文章</a>
+			</span>
+		</div>
+	)
+}
+
+<style>
+	@layer starlight.core {
+		.xh-wiki-title {
+			margin-top: 0.25rem;
+			font-size: var(--sl-text-h1);
+			line-height: var(--sl-line-height-headings);
+			font-weight: 650;
+			letter-spacing: -0.02em;
+			color: var(--sl-color-white);
+		}
+		.xh-wiki-meta {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 0.5rem 0.9rem;
+			margin-top: 0.7rem;
+			margin-bottom: 1.25rem;
+			padding-bottom: 1rem;
+			border-bottom: 1px solid var(--sl-color-hairline);
+		}
+		.xh-wiki-meta-cats {
+			display: inline-flex;
+			flex-wrap: wrap;
+			gap: 0.35rem;
+			align-items: center;
+		}
+		.xh-wiki-tag {
+			display: inline-block;
+			padding: 0.12rem 0.6rem;
+			border: 1px solid var(--sl-color-hairline);
+			border-radius: 999px;
+			background: var(--sl-color-bg-nav);
+			color: var(--sl-color-gray-3);
+			font-size: var(--sl-text-xs);
+			font-weight: 600;
+			line-height: 1.6;
+			text-decoration: none;
+			transition: border-color 0.15s ease, color 0.15s ease;
+		}
+		.xh-wiki-tag:hover {
+			border-color: var(--sl-color-gray-3);
+			color: var(--sl-color-white);
+			text-decoration: none;
+		}
+		.xh-wiki-meta-item {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.35rem;
+			color: var(--sl-color-gray-3);
+			font-size: var(--sl-text-sm);
+		}
+		.xh-wiki-meta-item svg {
+			opacity: 0.7;
+		}
+		.xh-wiki-meta-random {
+			margin-left: auto;
+		}
+		.xh-wiki-random {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.3rem;
+			font-size: var(--sl-text-sm);
+			color: var(--sl-color-gray-3);
+			text-decoration: none;
+			transition: color 0.15s ease;
+		}
+		.xh-wiki-random:hover {
+			color: var(--sl-color-white);
+			text-decoration: underline;
+			text-underline-offset: 2px;
+		}
+		@media (max-width: 50em) {
+			.xh-wiki-meta-random {
+				margin-left: 0;
+			}
+		}
+	}
+</style>

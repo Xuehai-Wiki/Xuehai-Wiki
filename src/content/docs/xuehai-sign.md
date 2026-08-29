@@ -2,6 +2,9 @@
 title: "学海请求签名"
 
 description: "请求签名是学海对服务器的一种加固手段"
+categories:
+  - 技术解析
+excerpt: 通过反编译 OkHttp 拦截器解析学海 REST API 的请求签名方式。
 ---
 
 # 学海签名方式解析

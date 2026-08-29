@@ -15,7 +15,15 @@ const docs = defineCollection({
 				.slice(0, -1)
 				.join('.'),
 	}),
-	schema: docsSchema(),
+	// 扩展 Starlight schema,加入维基分类字段 categories(用于文档首页分组与文章页标签)。
+	schema: docsSchema({
+		extend: z.object({
+			// 维基分类:每篇文档可挂一个或多个分类,分类名即分组标签。
+			categories: z.array(z.string()).optional(),
+			// 文章简介一句话,用于文档首页索引与卡片预览。
+			excerpt: z.string().optional(),
+		}),
+	}),
 });
 
 /** 学海特性(bug)追踪集合:src/content/tracker/XHPE-XXXX.md,编号从 1001 起。
