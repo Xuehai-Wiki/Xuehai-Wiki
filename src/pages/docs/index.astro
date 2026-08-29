@@ -33,7 +33,6 @@ const slugOf = (id: string) => id.replace(/^docs\//, '');
 <BaseLayout
 	title="文档库 | Xuehai Wiki"
 	description="学海 / 智通云非官方文档库 —— 按分类索引全部使用技巧、已知行为与技术解析文章。"
-	hideBanner
 >
 	<section class="container" style="padding-block: 3rem 1.5rem;">
 		<div class="wiki-hero">
@@ -100,6 +99,13 @@ const slugOf = (id: string) => id.replace(/^docs\//, '');
 					);
 				})
 			}
+		</div>
+
+		<div class="wiki-footnote">
+			<p>
+				本站为非官方社区站点,与学海教育及智通云不存在从属关系。
+				资料仅供学习交流使用,不倡导破坏正常教学秩序,请勿用于非法用途。
+			</p>
 		</div>
 	</section>
 </BaseLayout>
@@ -248,5 +254,18 @@ const slugOf = (id: string) => id.replace(/^docs\//, '');
 		font-size: 0.85rem;
 		color: var(--fg-muted);
 		line-height: 1.5;
+	}
+
+	.wiki-footnote {
+		margin-top: 2rem;
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--line);
+		font-size: 0.8rem;
+		color: var(--fg-faint);
+		text-align: center;
+	}
+	.wiki-footnote p {
+		margin: 0 auto;
+		max-width: 32rem;
 	}
 </style>
