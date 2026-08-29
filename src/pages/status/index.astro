@@ -5,7 +5,6 @@
 // 图表用手写 SVG(零依赖),黑白灰,随亮暗主题用 CSS 变量描色。
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const SERVICES = ['智通平台服务', '响应服务', '题舟服务', '云作业服务'];
 const API = 'https://xh.asxz.one/status/api/v1/';
 ---
 
@@ -68,7 +67,7 @@ const API = 'https://xh.asxz.one/status/api/v1/';
 	import type { StatusData } from '../types/status';
 
 	const API = 'https://xh.asxz.one/status/api/v1/';
-	const SERVICES = ['智通平台服务', '响应服务', '题舟服务', '云作业服务'];
+	// 服务列表以 API 返回为准(union of history/sla),新增服务自动展示,无需改代码
 
 	const loadingEl = document.querySelector('[data-status-loading]');
 	const errorEl = document.querySelector('[data-status-error]');
@@ -94,13 +93,13 @@ const API = 'https://xh.asxz.one/status/api/v1/';
 	}
 
 	// ---------- 24h 时间线 SVG ----------
-	function renderTimeline(history: Record<string, { time: string; status: number }[]>) {
+	function renderTimeline(history: Record<string, { time: string; status: number }[]>, services: string[]) {
 		const W = 800;
 		const H = 44;
 		const PAD = 6;
 		const MAX = 120;
 		let html = '';
-		for (const name of SERVICES) {
+		for (const name of services) {
 			const pts = downsample(history[name] ?? [], MAX);
 			if (!pts.length) continue;
 			const n = pts.length;
@@ -130,7 +129,7 @@ const API = 'https://xh.asxz.one/status/api/v1/';
 	}
 
 	// ---------- SLA:一天一格(GitHub 贡献图风格,方块) ----------
-	function renderSla(sla: Record<string, { date: string; sla: number }[]>) {
+	function renderSla(sla: Record<string, { date: string; sla: number }[]>, services: string[]) {
 		const CELL_W = 12;
 		const CELL_H = 12;
 		const GAP = 3;
@@ -139,13 +138,13 @@ const API = 'https://xh.asxz.one/status/api/v1/';
 		const ROW_H = 28;
 		const maxCells = Math.max(
 			0,
-			...SERVICES.map((n) => (sla[n] ?? []).length)
+			...services.map((n) => (sla[n] ?? []).length)
 		);
 		const cellsW = Math.max(maxCells * (CELL_W + GAP) - GAP, 0);
 		const W = LABEL_W + cellsW + PAD * 2;
 		let html = '';
 		let y = PAD;
-		for (const name of SERVICES) {
+		for (const name of services) {
 			const rows = sla[name] ?? [];
 			const avg = rows.length
 				? rows.reduce((s, r) => s + r.sla, 0) / rows.length
@@ -174,9 +173,9 @@ const API = 'https://xh.asxz.one/status/api/v1/';
 	}
 
 	// ---------- 汇总卡片 ----------
-	function renderSummary(history: Record<string, { status: number }[]>) {
+	function renderSummary(history: Record<string, { status: number }[]>, services: string[]) {
 		let html = '';
-		for (const name of SERVICES) {
+		for (const name of services) {
 			const pts = history[name] ?? [];
 			const last = pts[pts.length - 1];
 			const up = last ? last.status === 1 : false;
@@ -216,25 +215,30 @@ const API = 'https://xh.asxz.one/status/api/v1/';
 		errorEl?.setAttribute('hidden', '');
 		contentEl?.removeAttribute('hidden');
 
-		if (summaryEl) summaryEl.innerHTML = renderSummary(data.history_24h);
-		if (timelineEl) timelineEl.innerHTML = renderTimeline(data.history_24h);
-		if (slaEl) slaEl.innerHTML = renderSla(data.sla_60d);
+		// 服务列表以 API 返回为准:先 history 后 sla,去重保序。新增服务自动出现,不用改代码。
+		const services = Array.from(
+			new Set([...Object.keys(data.history_24h), ...Object.keys(data.sla_60d)])
+		);
+
+		if (summaryEl) summaryEl.innerHTML = renderSummary(data.history_24h, services);
+		if (timelineEl) timelineEl.innerHTML = renderTimeline(data.history_24h, services);
+		if (slaEl) slaEl.innerHTML = renderSla(data.sla_60d, services);
 
 		// SLA 标题天数动态化,与实际格子数一致
 		const slaDays = Math.max(
 			0,
-			...SERVICES.map((n) => (data.sla_60d[n] ?? []).length)
+			...services.map((n) => (data.sla_60d[n] ?? []).length)
 		);
 		if (slaTitleEl) slaTitleEl.textContent = `${slaDays} 天 SLA`;
 		if (slaMetaEl) {
-			const first = data.sla_60d[SERVICES[0]]?.[0]?.date;
-			const last = data.sla_60d[SERVICES[0]]?.at(-1)?.date;
+			const first = data.sla_60d[services[0]]?.[0]?.date;
+			const last = data.sla_60d[services[0]]?.at(-1)?.date;
 			if (first && last) slaMetaEl.textContent = `${first} — ${last}`;
 		}
 
 		if (meta24hEl) {
-			const first = data.history_24h[SERVICES[0]]?.[0]?.time;
-			const last = data.history_24h[SERVICES[0]]?.at(-1)?.time;
+			const first = data.history_24h[services[0]]?.[0]?.time;
+			const last = data.history_24h[services[0]]?.at(-1)?.time;
 			if (first && last) meta24hEl.textContent = `${first.slice(5, 16)} — ${last.slice(5, 16)}`;
 		}
 		if (serverTimeEl && data.server_time) {
