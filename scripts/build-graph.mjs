@@ -5,7 +5,6 @@
  * (and normal relative markdown links) to other documents, and writes a JSON
  * graph to public/graph.json. The graph drives:
  *   - the backlinks section on each doc page (see src/components/starlight/Footer.astro)
- *   - the full graph view (see src/pages/docs/graph.astro)
  *
  * Run as part of the Astro build (see astro.config.mjs hooks) or manually:
  *   node scripts/build-graph.mjs
