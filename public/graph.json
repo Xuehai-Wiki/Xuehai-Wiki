@@ -7,16 +7,10 @@
       "degree": 0
     },
     {
-      "id": "docs/known-behaviors",
-      "title": "已知行为记录",
-      "url": "/docs/known-behaviors",
-      "degree": 1
-    },
-    {
-      "id": "docs/using-yunketang",
-      "title": "云课堂使用技巧",
-      "url": "/docs/using-yunketang",
-      "degree": 1
+      "id": "docs/xhpe-standard",
+      "title": "XHPE 说明",
+      "url": "/docs/xhpe-standard",
+      "degree": 0
     },
     {
       "id": "docs/xuehai-brushcode",
@@ -37,23 +31,11 @@
       "degree": 0
     }
   ],
-  "edges": [
-    {
-      "from": "docs/using-yunketang",
-      "to": "docs/known-behaviors"
-    }
-  ],
-  "backlinks": {
-    "docs/known-behaviors": [
-      "docs/using-yunketang"
-    ]
-  },
+  "edges": [],
+  "backlinks": {},
   "outbound": {
     "docs/gallery": [],
-    "docs/known-behaviors": [],
-    "docs/using-yunketang": [
-      "docs/known-behaviors"
-    ],
+    "docs/xhpe-standard": [],
     "docs/xuehai-brushcode": [],
     "docs/xuehai-login-api": [],
     "docs/xuehai-sign": []
