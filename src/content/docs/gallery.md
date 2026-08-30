@@ -2,7 +2,7 @@
 title: 画廊
 description: 正在监视用户的学海
 categories:
-  - 其他
+  - 画廊
 excerpt: 学海娘的图片。
 ---
 
