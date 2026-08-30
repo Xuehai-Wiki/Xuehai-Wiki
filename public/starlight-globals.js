@@ -60,7 +60,22 @@
 	function enhanceToc() {
 		const tocNav = document.querySelector('starlight-toc nav');
 		if (!tocNav) return;
-		if (tocNav.querySelector('.xh-toc-cats') || tocNav.querySelector('.xh-toc-foot')) return;
+		if (tocNav.querySelector('.xh-toc-head')) return;
+
+		// 折叠开关:默认收起,点击展开。开关放在最前。
+		const head = document.createElement('button');
+		head.type = 'button';
+		head.className = 'xh-toc-head';
+		head.setAttribute('aria-expanded', 'false');
+		head.textContent = 'On this page';
+
+		// 把目录正文(分类标签 + 大纲列表 + 随机文章)包进 .xh-toc-body,默认 display:none
+		const body = document.createElement('div');
+		body.className = 'xh-toc-body';
+		// 移动 TOC 已有的目录项(分类标签、大纲 ul、随机文章脚注)到 body
+		while (tocNav.firstChild) body.appendChild(tocNav.firstChild);
+		tocNav.appendChild(head);
+		tocNav.appendChild(body);
 
 		// 分类标签:从 PageTitle 渲染的分类芯片里读取文本,重建一批
 		const sourceCats = document.querySelectorAll('.xh-wiki-meta-cats .xh-wiki-tag');
@@ -74,7 +89,7 @@
 				a.textContent = src.textContent || '';
 				cats.appendChild(a);
 			});
-			tocNav.insertBefore(cats, tocNav.firstChild);
+			body.insertBefore(cats, body.firstChild);
 		}
 
 		// 随机文章:追加到目录底部
@@ -85,7 +100,19 @@
 		a.href = '/docs';
 		a.textContent = '随机文章';
 		foot.appendChild(a);
-		tocNav.appendChild(foot);
+		body.appendChild(foot);
+
+		// 展开/收起切换
+		head.addEventListener('click', () => {
+			const open = tocNav.closest('starlight-toc').hasAttribute('data-toc-open');
+			if (open) {
+				tocNav.closest('starlight-toc').removeAttribute('data-toc-open');
+				head.setAttribute('aria-expanded', 'false');
+			} else {
+				tocNav.closest('starlight-toc').setAttribute('data-toc-open', '');
+				head.setAttribute('aria-expanded', 'true');
+			}
+		});
 	}
 
 	// 随机文章:让所有 .xh-wiki-random / .xh-toc-random 链接真正跳到随机文档。

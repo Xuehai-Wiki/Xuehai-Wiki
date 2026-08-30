@@ -1781,6 +1781,11 @@ html:not([data-theme='dark']) .theme-toggle .icon-moon {
 	--sl-font: var(--font);
 	--sl-font-mono: var(--font-mono);
 
+	/* 阅读区加宽:增大正文内容列宽,便于长文阅读。
+	   Starlight 默认 45rem;此处覆盖为更宽的正文列。 */
+	--sl-content-width: 52rem;
+	--sl-content-pad-x: 1.25rem;
+
 	/* 阴影 */
 	--sl-shadow-sm: var(--shadow);
 	--sl-shadow-md: var(--shadow-md);
@@ -1863,4 +1868,54 @@ starlight-toc nav {
 		text-decoration: underline;
 		text-underline-offset: 2px;
 	}
+}
+
+/* ============================================================
+   右侧目录默认收起(starlight-toc)
+   由 starlight-globals.js 注入 .xh-toc-head 折叠开关,默认收起,
+   点击展开目录。收起时正文更宽、更聚焦阅读。
+   ============================================================ */
+.xh-toc-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	gap: 0.4rem;
+	padding: 0;
+	margin: 0 0 0.55rem;
+	background: transparent;
+	border: none;
+	border-bottom: 1px solid var(--sl-color-hairline);
+	color: var(--sl-color-gray-2);
+	font: inherit;
+	font-size: var(--sl-text-sm);
+	font-weight: 600;
+	line-height: 1.4;
+	cursor: pointer;
+	text-align: left;
+	padding-bottom: 0.4rem;
+}
+.xh-toc-head:hover {
+	color: var(--sl-color-white);
+}
+.xh-toc-head::after {
+	content: '';
+	flex: 0 0 auto;
+	width: 0.5rem;
+	height: 0.5rem;
+	border-right: 1.5px solid currentColor;
+	border-bottom: 1.5px solid currentColor;
+	transform: rotate(45deg) translateY(-1px);
+	transition: transform 0.18s ease;
+}
+/* 展开态箭头朝上 */
+starlight-toc[data-toc-open] .xh-toc-head::after {
+	transform: rotate(-135deg) translateY(-1px);
+}
+/* 收起态默认隐藏正文 */
+starlight-toc nav .xh-toc-body {
+	display: none;
+}
+starlight-toc[data-toc-open] nav .xh-toc-body {
+	display: block;
 }
