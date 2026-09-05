@@ -3,6 +3,7 @@
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import DisclosureBanner from '../components/DisclosureBanner.astro';
+import { umamiScript, themeInitScript } from '../head.mjs';
 import '../styles/global.css';
 
 interface Props {
@@ -29,14 +30,11 @@ const showBanner = true;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<meta name="description" content={description} />
-		<!-- Umami 站点统计 -->
-		<script
-			defer
-			src="https://cloud.umami.is/script.js"
-			data-website-id="b4795099-d45b-4b35-aa70-3270d7b71ee2"
-		></script>
+		<!-- 全站共享 head(umami + theme-init):单一事实来源 src/head.mjs,
+		     与 Starlight 页面 astro.config.mjs 的 starlight.head 保持一致 -->
+		<script defer src={umamiScript.attrs.src} data-website-id={umamiScript.attrs['data-website-id']}></script>
 		<!-- 主题初始化:放 head 紧前,防 FOUC -->
-		<script is:inline src="/theme-init.js"></script>
+		<script is:inline src={themeInitScript.attrs.src}></script>
 		<!-- 免责 banner 防闪:head 同步读 localStorage,已关闭则在 <html> 上加
 		     data-banner-hidden,由 CSS 先行隐藏(.xh-banner display:none),避免首帧闪现 -->
 		<script is:inline>

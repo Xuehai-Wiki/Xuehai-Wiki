@@ -1,48 +1,24 @@
 ---
 // Starlight /docs 页面的顶栏 override:
-// 与全站导航统一(品牌 Xuehai Wiki + 链接 + ThemeToggle),同时保留 Starlight 搜索。
+// 与全站导航统一(品牌 Xuehai Wiki + 链接),同时保留 Starlight 搜索。
+// 品牌 + 链接复用 SiteNav.astro(单一事实来源);本文件只负责外壳:
+// 外层 flex 容器 + 右侧(搜索 + 主题切换)。保留 Search,勿移除。
 // 关键:外层 <header class="header"> 由 PageFrame 渲染(fixed + 固定高度),不含布局;
 // 原 Starlight 默认 Header 的 grid 布局被此组件替换,因此这里必须自带一个
 // flex 根容器 .xhs-root,否则三个子元素会垂直堆叠挤出 header(布局错乱)。
 import Search from 'virtual:starlight/components/Search';
 import ThemeToggle from '../ThemeToggle.astro';
+import SiteNav from '../SiteNav.astro';
 
 interface Props {
 	currentPath?: string;
 }
 
 const { currentPath = '' } = Astro.props;
-
-const links = [
-	{ href: '/', label: '首页' },
-	{ href: '/status', label: 'Status' },
-	{ href: '/tracker', label: 'Tracker' },
-	{ href: '/docs', label: 'Docs' },
-];
-
-const isActive = (href: string) =>
-	href === '/' ? currentPath === '/' : currentPath.startsWith(href);
 ---
 
 <div class="xhs-root">
-	<a class="xhs-brand xh-nav-brand" href="/" aria-label="Xuehai Wiki 首页">
-		<span>Xuehai Wiki</span>
-		<small>学海 Wiki</small>
-	</a>
-
-	<nav class="xhs-links" aria-label="主导航">
-		{
-			links.map((link) => (
-				<a
-					class="xh-nav-link"
-					href={link.href}
-					aria-current={isActive(link.href) ? 'page' : undefined}
-				>
-					{link.label}
-				</a>
-			))
-		}
-	</nav>
+	<SiteNav currentPath={currentPath} navClass="xhs-links" />
 
 	<div class="xhs-right">
 		<Search />
@@ -66,7 +42,7 @@ const isActive = (href: string) =>
 		flex: 1 1 auto;
 		display: flex;
 		align-items: center;
-		justify-content: center;
+		justify-content: flex-end;
 		gap: 0.25rem;
 		min-width: 0;
 		padding-inline: 1rem;

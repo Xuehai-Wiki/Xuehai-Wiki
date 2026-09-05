@@ -1,11 +1,12 @@
 // Starlight 页面没有自定义 BaseLayout,此脚本在 starlight 页面 head 注入
 // (defer:false,同步执行,早于 body 解析):
-// 1) 主题初始化(theme-init.js 逻辑,head 前已执行,此处不需要重复);
-// 2) 顶部黄色免责 banner(带 X,可关闭,只显示一次);
-// 3) 页脚免责声明。样式见 src/styles/global.css 中 banner/footer 段。
+// 1) 免责 banner 防闪标记:head 同步读 localStorage,已关闭则在 <html> 上加
+//    data-banner-hidden,由 CSS 先行隐藏(.xh-banner display:none),避免首帧闪现。
+//    注:banner 本体不再在此运行时注入 —— 改由 PageFrame override 作为组件渲染
+//    (src/components/starlight/PageFrame.astro 里的 <DisclosureBanner />),
+//    使 banner 成为导航与内容之间的真正组件,而非浮层。
+// 2) 页脚免责声明。样式见 src/styles/global.css 中 banner/footer 段。
 // 此文件由 designer A 维护,与 src/pages/404.astro、BaseLayout 中的逻辑保持一致。
-// 防闪机制与 BaseLayout 一致:head 同步读 localStorage,已关闭则在 <html> 上加
-// data-banner-hidden,由 CSS 先行隐藏(.xh-banner display:none),避免首帧闪现。
 (() => {
 	const KEY = 'xh-disclaimer-seen';
 
@@ -18,41 +19,6 @@
 	}
 	if (seen) {
 		document.documentElement.setAttribute('data-banner-hidden', '');
-	}
-
-	function addBanner() {
-		if (seen) return;
-		const bar = document.createElement('div');
-		bar.className = 'xh-banner';
-		bar.setAttribute('role', 'status');
-		bar.textContent =
-			'此网站非学海官方网站,与学海教育及智通云亦不存在从属关系';
-		const close = document.createElement('button');
-		close.className = 'xh-banner-close';
-		close.type = 'button';
-		close.setAttribute('aria-label', '关闭提示');
-		close.textContent = '×';
-		close.addEventListener('click', () => {
-			try {
-				localStorage.setItem(KEY, '1');
-			} catch {
-				/* ignore */
-			}
-			document.documentElement.setAttribute('data-banner-hidden', '');
-			bar.remove();
-		});
-		bar.appendChild(close);
-
-		// 把 banner 插到固定顶栏之后(而非 body 最前)。
-		// Starlight 的 <header class="header"> 是 position:fixed,若 prepend 到 body,
-		// banner 会落在 fixed 顶栏的底下被部分遮挡。插到 header 之后即可自然地
-		// 出现在顶栏与内容之间(sticky top 由 CSS 用 var(--sl-nav-height) 定位在顶栏下方)。
-		const header = document.querySelector('header.header');
-		if (header) {
-			header.insertAdjacentElement('afterend', bar);
-		} else {
-			document.body.prepend(bar);
-		}
 	}
 
 	// 页脚免责:附加在 starlight 自带 footer 之后
@@ -155,7 +121,6 @@
 	}
 
 	function run() {
-		addBanner();
 		addFooterNote();
 		enhanceToc();
 		setupRandomLinks();

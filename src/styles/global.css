@@ -949,26 +949,24 @@ html[data-banner-hidden] .xh-banner {
 	display: none;
 }
 
-/* Starlight /docs 页面:固定顶栏(position:fixed,高度 var(--sl-nav-height))在流外,
-   由 starlight-globals.js 把 banner 插到 header 之后。此时 banner 需贴在顶栏下方
-   (top = 顶栏高度)而非视口顶部,否则会与 fixed 顶栏重叠。full-width 贯穿整行。
-   margin-top = 顶栏高度,让 banner 自然落在 fixed 顶栏之下(顶栏占流外,本身不占位);
-   同时 main-frame 原 padding-top 里用于补偿 fixed 顶栏的那部分(`--sl-nav-height`)
-   由 banner 承担,故有此 banner 时把 main-frame 的 padding-top 降为仅剩移动端 TOC
-   高度(桌面端为 0),避免内容被再往下推一段多余空隙。 */
+/* Starlight /docs 页面:fixed 顶栏(<header class="header">,高度 var(--sl-nav-height))
+   占流外,PageFrame override 把 <DisclosureBanner /> 作为 .page 的 flex 子元素
+   渲染在顶栏之后、内容之前。banner 是真正的文档流组件(非 sticky/浮层),
+   margin-top = 顶栏高度,让 banner 落在 fixed 顶栏之下;滚动时随内容自然上移,
+   不会悬浮遮挡内容。同时 main-frame 原 padding-top 里用于补偿 fixed 顶栏的
+   `--sl-nav-height` 部分由 banner 承担,故有此 banner 时把 main-frame 的
+   padding-top 降为仅剩移动端 TOC 高度(桌面端为 0),避免内容被再往下推一段。 */
 .page > .xh-banner {
-	position: sticky;
-	top: var(--sl-nav-height);
 	margin-top: var(--sl-nav-height);
-	z-index: calc(var(--sl-z-index-navbar) - 1);
 }
 .page:has(> .xh-banner) .main-frame {
 	padding-top: var(--sl-mobile-toc-height);
 }
 
 .xh-banner {
-	position: sticky;
-	top: 0;
+	/* relative 而非 sticky:作为真正的文档流组件随内容滚动,不悬浮遮挡;
+	   同时作为 .xh-banner-close(position:absolute)的定位上下文。 */
+	position: relative;
 	z-index: 60;
 	display: flex;
 	align-items: center;

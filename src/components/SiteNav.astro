@@ -1,0 +1,45 @@
+---
+// 全站主导航:品牌(Xuehai Wiki)+ 链接(首页/Status/Tracker/Docs)。
+// 单一事实来源:自定义页面(Nav.astro)与 Starlight 页面(starlight/Header.astro)
+// 都复用它,避免 links 数组与品牌标记重复定义。
+// 各自外壳负责自己的容器/折叠开关/搜索/主题切换(不在这里共享)。
+interface Props {
+	currentPath?: string;
+	/** 外层 <nav> 的 class:Nav.astro 传 'xh-nav-links',starlight/Header.astro 传 'xhs-links' */
+	navClass?: string;
+	/** 透传给 <nav> 的额外属性(如 Nav.astro 的 data-nav-links 供汉堡 JS 使用) */
+	navAttrs?: Record<string, string>;
+}
+
+const { currentPath = '', navClass = '', navAttrs = {} } = Astro.props;
+
+const links = [
+	{ href: '/', label: '首页' },
+	{ href: '/status', label: 'Status' },
+	{ href: '/tracker', label: 'Tracker' },
+	{ href: '/docs', label: 'Docs' },
+];
+
+// 判断当前激活项:精确匹配或路径前缀
+const isActive = (href: string) =>
+	href === '/' ? currentPath === '/' : currentPath.startsWith(href);
+---
+
+<a class="xh-nav-brand" href="/" aria-label="Xuehai Wiki 首页">
+	<span>Xuehai Wiki</span>
+	<small>学海 Wiki</small>
+</a>
+
+<nav class={navClass} aria-label="主导航" {...navAttrs}>
+	{
+		links.map((link) => (
+			<a
+				class="xh-nav-link"
+				href={link.href}
+				aria-current={isActive(link.href) ? 'page' : undefined}
+			>
+				{link.label}
+			</a>
+		))
+	}
+</nav>

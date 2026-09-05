@@ -1,6 +1,8 @@
 ---
 // 顶部导航:站名 "Xuehai Wiki" + 链接(首页/Status/Tracker/Docs)+ 主题切换。
-// 移动端可折叠(汉堡菜单)。
+// 品牌 + 链接复用 SiteNav.astro(单一事实来源);本文件只负责外壳:
+// 容器、移动端折叠(汉堡菜单)与主题切换。
+import SiteNav from './SiteNav.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
 interface Props {
@@ -8,39 +10,15 @@ interface Props {
 }
 
 const { currentPath = '' } = Astro.props;
-
-const links = [
-	{ href: '/', label: '首页' },
-	{ href: '/status', label: 'Status' },
-	{ href: '/tracker', label: 'Tracker' },
-	{ href: '/docs', label: 'Docs' },
-];
-
-// 判断当前激活项:精确匹配或路径前缀
-const isActive = (href: string) =>
-	href === '/' ? currentPath === '/' : currentPath.startsWith(href);
 ---
 
 <header class="xh-nav">
 	<div class="container xh-nav-inner">
-		<a class="xh-nav-brand" href="/" aria-label="Xuehai Wiki 首页">
-			<span>Xuehai Wiki</span>
-			<small>学海 Wiki</small>
-		</a>
-
-		<nav class="xh-nav-links" aria-label="主导航" data-nav-links>
-			{
-				links.map((link) => (
-					<a
-						class="xh-nav-link"
-						href={link.href}
-						aria-current={isActive(link.href) ? 'page' : undefined}
-					>
-						{link.label}
-					</a>
-				))
-			}
-		</nav>
+		<SiteNav
+			currentPath={currentPath}
+			navClass="xh-nav-links"
+			navAttrs={{ 'data-nav-links': '' }}
+		/>
 
 		<div class="xh-nav-actions">
 			<ThemeToggle />
