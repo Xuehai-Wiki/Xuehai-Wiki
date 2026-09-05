@@ -42,7 +42,17 @@
 			bar.remove();
 		});
 		bar.appendChild(close);
-		document.body.prepend(bar);
+
+		// 把 banner 插到固定顶栏之后(而非 body 最前)。
+		// Starlight 的 <header class="header"> 是 position:fixed,若 prepend 到 body,
+		// banner 会落在 fixed 顶栏的底下被部分遮挡。插到 header 之后即可自然地
+		// 出现在顶栏与内容之间(sticky top 由 CSS 用 var(--sl-nav-height) 定位在顶栏下方)。
+		const header = document.querySelector('header.header');
+		if (header) {
+			header.insertAdjacentElement('afterend', bar);
+		} else {
+			document.body.prepend(bar);
+		}
 	}
 
 	// 页脚免责:附加在 starlight 自带 footer 之后

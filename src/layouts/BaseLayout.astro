@@ -29,6 +29,12 @@ const showBanner = true;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<meta name="description" content={description} />
+		<!-- Umami 站点统计 -->
+		<script
+			defer
+			src="https://cloud.umami.is/script.js"
+			data-website-id="b4795099-d45b-4b35-aa70-3270d7b71ee2"
+		></script>
 		<!-- 主题初始化:放 head 紧前,防 FOUC -->
 		<script is:inline src="/theme-init.js"></script>
 		<!-- 免责 banner 防闪:head 同步读 localStorage,已关闭则在 <html> 上加

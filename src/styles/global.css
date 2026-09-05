@@ -521,7 +521,7 @@ kbd {
 .tracker-table {
 	width: 100%;
 	border-collapse: collapse;
-	font-size: 0.86rem;
+	font-size: 0.96rem;
 	min-width: 46rem;
 }
 .tracker-table thead th {
@@ -530,7 +530,7 @@ kbd {
 	z-index: 5;
 	background: var(--bg-soft);
 	color: var(--fg-muted);
-	font-size: 0.74rem;
+	font-size: 0.82rem;
 	font-weight: 650;
 	letter-spacing: 0.04em;
 	text-align: left;
@@ -558,7 +558,7 @@ kbd {
 }
 .tracker-id {
 	font-family: var(--font-mono);
-	font-size: 0.78rem;
+	font-size: 0.9rem;
 	font-weight: 650;
 	white-space: nowrap;
 	color: var(--fg);
@@ -568,11 +568,13 @@ kbd {
 }
 .tracker-title-cell {
 	font-weight: 550;
+	font-size: 0.96rem;
 	line-height: 1.45;
 	min-width: 14rem;
 }
 .tracker-appname {
 	font-weight: 550;
+	font-size: 0.92rem;
 	white-space: nowrap;
 	color: var(--fg);
 }
@@ -592,7 +594,7 @@ kbd {
 }
 .tracker-xhcs {
 	font-family: var(--font-mono);
-	font-size: 0.78rem;
+	font-size: 0.9rem;
 	font-weight: 700;
 	white-space: nowrap;
 }
@@ -637,7 +639,7 @@ kbd {
 	align-items: center;
 	padding: 0.08rem 0.5rem;
 	border-radius: 999px;
-	font-size: 0.72rem;
+	font-size: 0.78rem;
 	font-weight: 700;
 	letter-spacing: 0.02em;
 	border: 1px solid var(--line);
@@ -947,6 +949,23 @@ html[data-banner-hidden] .xh-banner {
 	display: none;
 }
 
+/* Starlight /docs 页面:固定顶栏(position:fixed,高度 var(--sl-nav-height))在流外,
+   由 starlight-globals.js 把 banner 插到 header 之后。此时 banner 需贴在顶栏下方
+   (top = 顶栏高度)而非视口顶部,否则会与 fixed 顶栏重叠。full-width 贯穿整行。
+   margin-top = 顶栏高度,让 banner 自然落在 fixed 顶栏之下(顶栏占流外,本身不占位);
+   同时 main-frame 原 padding-top 里用于补偿 fixed 顶栏的那部分(`--sl-nav-height`)
+   由 banner 承担,故有此 banner 时把 main-frame 的 padding-top 降为仅剩移动端 TOC
+   高度(桌面端为 0),避免内容被再往下推一段多余空隙。 */
+.page > .xh-banner {
+	position: sticky;
+	top: var(--sl-nav-height);
+	margin-top: var(--sl-nav-height);
+	z-index: calc(var(--sl-z-index-navbar) - 1);
+}
+.page:has(> .xh-banner) .main-frame {
+	padding-top: var(--sl-mobile-toc-height);
+}
+
 .xh-banner {
 	position: sticky;
 	top: 0;
@@ -955,7 +974,7 @@ html[data-banner-hidden] .xh-banner {
 	align-items: center;
 	justify-content: center;
 	gap: 0.75rem;
-	padding: 0.55rem 1rem;
+	padding: 0.55rem 3rem;
 	background: var(--accent);
 	color: var(--accent-ink);
 	font-size: 0.85rem;
@@ -966,9 +985,12 @@ html[data-banner-hidden] .xh-banner {
 
 .xh-banner-close {
 	flex: 0 0 auto;
+	position: absolute;
+	top: 50%;
+	right: 0.75rem;
+	transform: translateY(-50%);
 	width: 1.5rem;
 	height: 1.5rem;
-	margin-left: auto;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;

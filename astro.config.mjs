@@ -48,6 +48,15 @@ export default defineConfig({
 					tag: 'script',
 					attrs: { src: '/starlight-theme-sync.js', defer: false },
 				},
+				// Umami 站点统计(与全站 BaseLayout 的 head 保持一致)
+				{
+					tag: 'script',
+					attrs: {
+						src: 'https://cloud.umami.is/script.js',
+						defer: true,
+						'data-website-id': 'b4795099-d45b-4b35-aa70-3270d7b71ee2',
+					},
+				},
 			],
 		}),
 	],
