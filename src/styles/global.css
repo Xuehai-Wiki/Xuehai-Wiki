@@ -1942,58 +1942,63 @@ starlight-toc[data-toc-open] nav .xh-toc-body {
 	display: block;
 }
 
+
+
 /* ============================================================
    Apps 应用列表页(designer 维护)
    与全站一致:黑白灰单色 + 亮/暗两套主题。分类分组 + 角色筛选。
    ============================================================ */
-.apps-hero {
-	padding: 2.5rem 0 1rem;
-}
-.apps-title {
-	margin: 0;
-	font-size: clamp(1.9rem, 4.5vw, 2.6rem);
-	font-weight: 780;
-	letter-spacing: -0.02em;
-	line-height: 1.1;
-}
-.apps-subtitle {
-	margin: 0.4rem 0 0;
-	font-size: 0.85rem;
-	font-weight: 600;
-	letter-spacing: 0.08em;
-	color: var(--fg-faint);
-	text-transform: uppercase;
-}
-.apps-lead {
-	margin: 1rem 0 0;
-	font-size: 1rem;
-	color: var(--fg-muted);
-	line-height: 1.7;
-	max-width: 42rem;
-}
-.apps-stats {
-	list-style: none;
-	margin: 1.8rem 0 0;
-	padding: 0;
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.6rem;
-}
-.apps-stats li {
-	display: flex;
-	align-items: baseline;
-	gap: 0.4rem;
-	padding: 0.55rem 1rem;
-	border: 1px solid var(--line);
-	border-radius: var(--radius);
-	background: var(--bg-soft);
-}
-.apps-stats strong {
-	font-size: 1.15rem;
-	font-weight: 750;
-	font-family: var(--font-mono);
-}
-.apps-stats span {
-	font-size: 0.8rem;
-	color: var(--fg-muted);
-}
+.apps-hero { padding: 2.5rem 0 1rem; }
+.apps-title { margin: 0; font-size: clamp(1.9rem, 4.5vw, 2.6rem); font-weight: 780; letter-spacing: -0.02em; line-height: 1.1; }
+.apps-subtitle { margin: 0.4rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.08em; color: var(--fg-faint); text-transform: uppercase; }
+.apps-lead { margin: 1rem 0 0; font-size: 1rem; color: var(--fg-muted); line-height: 1.7; max-width: 42rem; }
+.apps-stats { list-style: none; margin: 1.8rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.apps-stats li { display: flex; align-items: baseline; gap: 0.4rem; padding: 0.55rem 1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-soft); }
+.apps-stats strong { font-size: 1.15rem; font-weight: 750; font-family: var(--font-mono); }
+.apps-stats span { font-size: 0.8rem; color: var(--fg-muted); }
+
+.apps-toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; padding-block: 1.4rem 0.6rem; border-bottom: 1px solid var(--line); }
+.apps-role-btn { padding: 0.4rem 0.9rem; font-size: 0.86rem; font-family: inherit; font-weight: 500; color: var(--fg-muted); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; cursor: pointer; transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease; }
+.apps-role-btn:hover { border-color: var(--fg-muted); color: var(--fg); }
+.apps-role-btn.is-active { background: var(--fg); color: var(--bg); border-color: var(--fg); font-weight: 650; }
+
+.apps-sections { display: grid; gap: 1.75rem; padding-block: 1.75rem 0; }
+.apps-section { padding-top: 0.25rem; }
+.apps-section-title { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.9rem; font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em; }
+.apps-section-count { display: inline-flex; align-items: center; justify-content: center; min-width: 1.35rem; height: 1.35rem; padding-inline: 0.35rem; border-radius: 999px; background: var(--bg-raise); color: var(--fg-muted); font-size: 0.72rem; font-weight: 700; }
+
+.apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: 1rem; }
+.app-card { display: flex; flex-direction: column; gap: 0.85rem; padding: 1.1rem 1.15rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--bg); box-shadow: var(--shadow); transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease; }
+.app-card:hover { border-color: var(--fg-faint); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.app-card[hidden] { display: none; }
+
+.app-card-head { display: flex; align-items: center; gap: 0.8rem; }
+.app-icon { position: relative; flex: 0 0 auto; width: 3rem; height: 3rem; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); background: var(--bg-soft); display: flex; align-items: center; justify-content: center; }
+.app-icon img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.app-icon-fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 700; color: var(--fg-muted); }
+.app-titlewrap { min-width: 0; }
+.app-name { margin: 0; font-size: 1.02rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; overflow-wrap: anywhere; }
+.app-role { display: inline-flex; align-items: center; margin-top: 0.3rem; padding: 0.04rem 0.5rem; border-radius: 999px; font-size: 0.72rem; font-weight: 650; border: 1px solid var(--line); background: var(--bg-soft); color: var(--fg-muted); }
+.app-role--student { background: var(--tag-green-bg); color: var(--tag-green-fg); border-color: var(--tag-green-line); }
+.app-role--teacher { background: var(--tag-deepgreen-bg); color: var(--tag-deepgreen-fg); border-color: var(--tag-deepgreen-line); }
+.app-role--common { background: var(--tag-yellow-bg); color: var(--tag-yellow-fg); border-color: var(--tag-yellow-line); }
+
+.app-desc { margin: 0; font-size: 0.86rem; color: var(--fg-muted); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+.app-meta { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0.3rem 0.9rem; font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 0.75rem; }
+.app-meta > div { display: contents; }
+.app-meta dt { color: var(--fg-faint); font-size: 0.76rem; white-space: nowrap; }
+.app-meta dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
+.app-meta .mono { font-family: var(--font-mono); font-size: 0.78rem; }
+
+.app-relnote { margin: 0; padding: 0.6rem 0.7rem; background: var(--bg-soft); border: 1px solid var(--line); border-radius: var(--radius); font-size: 0.78rem; color: var(--fg-muted); line-height: 1.55; white-space: pre-line; }
+
+.app-card-foot { margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: flex-end; }
+.app-nodl { font-size: 0.78rem; color: var(--fg-faint); }
+
+.apps-empty { text-align: center; color: var(--fg-faint); padding: 3rem 1rem; font-size: 0.88rem; }
+
+.apps-footnote { margin-block: 0 2rem; padding-top: 1.25rem; border-top: 1px solid var(--line); font-size: 0.8rem; color: var(--fg-faint); text-align: center; }
+.apps-footnote p { margin: 0 auto; max-width: 34rem; }
+
+@media (max-width: 720px) { .apps-grid { grid-template-columns: 1fr; } }

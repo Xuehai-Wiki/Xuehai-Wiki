@@ -79,6 +79,8 @@ const apps = (rawApps as any[])
 			dateText: fmtDate(latest?.updateTime ?? a.updateTime),
 			// 下载链接取最新版本 url;无版本则不提供下载
 			downloadUrl: latest?.url || '',
+			// 图标是否可渲染:XML 矢量文件无法在 <img> 显示,用文字兜底
+			iconOk: Boolean(a.icon) && !a.icon.split('?')[0].toLowerCase().endsWith('.xml'),
 		};
 	})
 	.sort((a, b) => a.name.localeCompare(b.name, 'zh'));
@@ -97,10 +99,6 @@ const totalApps = apps.length;
 const totalCats = catList.length;
 const totalDownloads = apps.filter((a) => a.downloadUrl).length;
 
-// 转义 < 防 JSON 注入脚本提前闭合
-const jsonForFilter = JSON.stringify(
-	apps.map((a) => ({ id: a.appId, cat: a.cat.key, role: a.role.cls, name: a.name, pkg: a.packageName }))
-).replace(/</g, '\\u003c');
 ---
 
 <BaseLayout
@@ -151,7 +149,7 @@ const jsonForFilter = JSON.stringify(
 								>
 									<div class="app-card-head">
 										<div class="app-icon">
-											{a.icon ? (
+											{a.iconOk ? (
 												<img src={a.icon} alt="" loading="lazy" referrerpolicy="no-referrer" />
 											) : (
 												<span class="app-icon-fallback">{a.name.slice(0, 1)}</span>
