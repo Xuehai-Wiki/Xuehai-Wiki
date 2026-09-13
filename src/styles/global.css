@@ -1941,3 +1941,59 @@ starlight-toc nav .xh-toc-body {
 starlight-toc[data-toc-open] nav .xh-toc-body {
 	display: block;
 }
+
+/* ============================================================
+   Apps 应用列表页(designer 维护)
+   与全站一致:黑白灰单色 + 亮/暗两套主题。分类分组 + 角色筛选。
+   ============================================================ */
+.apps-hero {
+	padding: 2.5rem 0 1rem;
+}
+.apps-title {
+	margin: 0;
+	font-size: clamp(1.9rem, 4.5vw, 2.6rem);
+	font-weight: 780;
+	letter-spacing: -0.02em;
+	line-height: 1.1;
+}
+.apps-subtitle {
+	margin: 0.4rem 0 0;
+	font-size: 0.85rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	color: var(--fg-faint);
+	text-transform: uppercase;
+}
+.apps-lead {
+	margin: 1rem 0 0;
+	font-size: 1rem;
+	color: var(--fg-muted);
+	line-height: 1.7;
+	max-width: 42rem;
+}
+.apps-stats {
+	list-style: none;
+	margin: 1.8rem 0 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.6rem;
+}
+.apps-stats li {
+	display: flex;
+	align-items: baseline;
+	gap: 0.4rem;
+	padding: 0.55rem 1rem;
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	background: var(--bg-soft);
+}
+.apps-stats strong {
+	font-size: 1.15rem;
+	font-weight: 750;
+	font-family: var(--font-mono);
+}
+.apps-stats span {
+	font-size: 0.8rem;
+	color: var(--fg-muted);
+}

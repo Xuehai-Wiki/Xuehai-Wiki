@@ -1,0 +1,257 @@
+---
+// 应用列表页 /apps:读取 public/data/xuehai-apps.json,按业务分类分组,
+// 列出每款应用的详细信息(图标/名称/角色/包名/版本/大小/更新时间)并提供下载。
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// public 下的 JSON 不能经 Vite import,故在构建期用 node:fs 读取。
+import { readFileSync } from 'node:fs';
+const rawApps = JSON.parse(
+	readFileSync(new URL('../../../public/data/xuehai-apps.json', import.meta.url), 'utf8'),
+);
+
+// ---------- 分类映射(appCode 前缀 -> 业务分类) ----------
+// 依据 appCode 前缀判断业务模块;更长的前缀优先匹配(如 WBYY 长于 CA)。
+const CATEGORIES: { key: string; label: string; matcher: (code: string) => boolean; order: number }[] = [
+	{ key: 'ai', label: 'AI 应用', matcher: (c) => c.startsWith('CA11'), order: 1 },
+	{ key: 'system', label: '系统与办公', matcher: (c) => c.startsWith('CA00'), order: 2 },
+	{ key: 'practice', label: '刷题与错题', matcher: (c) => c.startsWith('CA101'), order: 3 },
+	{ key: 'teacher', label: '名师金课', matcher: (c) => c.startsWith('CA102'), order: 4 },
+	{ key: 'homework', label: '作业与作文', matcher: (c) => c.startsWith('CA103'), order: 5 },
+	{ key: 'classroom', label: '课堂与智能', matcher: (c) => c.startsWith('CA104'), order: 6 },
+	{ key: 'read', label: '听说与阅读', matcher: (c) => c.startsWith('CA105'), order: 7 },
+	{ key: 'launcher', label: '大厅与平台', matcher: (c) => c.startsWith('CA106'), order: 8 },
+	{ key: 'tools', label: '学习工具', matcher: (c) => c.startsWith('CA107'), order: 9 },
+	{ key: 'feedback', label: '反馈', matcher: (c) => c.startsWith('CA108'), order: 10 },
+	{ key: 'train', label: '练习与训练', matcher: (c) => c.startsWith('CA20'), order: 11 },
+	{ key: 'settings', label: '设置', matcher: (c) => c.startsWith('CB20'), order: 12 },
+	{ key: 'subject', label: '学科强化练', matcher: (c) => c.startsWith('WBYY'), order: 13 },
+	{ key: 'bai fen', label: '百分·云教育', matcher: (c) => c.startsWith('LS00'), order: 14 },
+	{ key: 'deep', label: '深度学习', matcher: (c) => c.startsWith('CAT0'), order: 15 },
+	{ key: 'legacy', label: '经典旧版', matcher: (c) => /^\d{4}$/.test(c), order: 16 },
+	{ key: 'other', label: '其他', matcher: () => true, order: 99 },
+];
+
+function categorize(code: string) {
+	for (const cat of CATEGORIES) {
+		if (cat.matcher(code)) return cat;
+	}
+	return CATEGORIES[CATEGORIES.length - 1];
+}
+
+// ---------- 角色(userType)映射 ----------
+const ROLE: Record<number, { label: string; cls: string }> = {
+	1: { label: '学生端', cls: 'student' },
+	2: { label: '教师端', cls: 'teacher' },
+	4: { label: '通用', cls: 'common' },
+	3: { label: '其他', cls: 'other' },
+};
+const roleOf = (ut: number) => ROLE[ut] ?? { label: '通用', cls: 'common' };
+
+// ---------- 工具函数 ----------
+// 格式化包体积:字节 -> MB
+const fmtSize = (bytes: number) => {
+	if (!bytes) return '';
+	return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+};
+// 格式化时间戳 -> YYYY-MM-DD
+const fmtDate = (ts: number) => {
+	if (!ts) return '';
+	const d = new Date(ts);
+	const y = d.getFullYear();
+	const m = String(d.getMonth() + 1).padStart(2, '0');
+	const day = String(d.getDate()).padStart(2, '0');
+	return `${y}-${m}-${day}`;
+};
+
+// ---------- 数据归一化 ----------
+// 每个 app 取最新版本(第一项)展示;同 appCode 下学生/教师/多包各为一条记录。
+const apps = (rawApps as any[])
+	.map((a) => {
+		const latest = a.appVersions?.[0] ?? null;
+		const role = roleOf(a.userType);
+		const cat = categorize(a.appCode);
+		return {
+			...a,
+			role,
+			cat,
+			latest,
+			sizeText: fmtSize(latest?.packageSize),
+			dateText: fmtDate(latest?.updateTime ?? a.updateTime),
+			// 下载链接取最新版本 url;无版本则不提供下载
+			downloadUrl: latest?.url || '',
+		};
+	})
+	.sort((a, b) => a.name.localeCompare(b.name, 'zh'));
+
+// ---------- 按分类分组 ----------
+const byCat = new Map<string, typeof apps>();
+for (const a of apps) {
+	if (!byCat.has(a.cat.key)) byCat.set(a.cat.key, []);
+	byCat.get(a.cat.key)!.push(a);
+}
+const catList = [...byCat.entries()]
+	.sort((x, y) => x[1][0].cat.order - y[1][0].cat.order)
+	.map(([key, list]) => ({ key, list, label: list[0].cat.label }));
+
+const totalApps = apps.length;
+const totalCats = catList.length;
+const totalDownloads = apps.filter((a) => a.downloadUrl).length;
+
+// 转义 < 防 JSON 注入脚本提前闭合
+const jsonForFilter = JSON.stringify(
+	apps.map((a) => ({ id: a.appId, cat: a.cat.key, role: a.role.cls, name: a.name, pkg: a.packageName }))
+).replace(/</g, '\\u003c');
+---
+
+<BaseLayout
+	title="应用列表 | Xuehai Wiki"
+	description="学海 / 智通云全部应用一览 —— 按分类浏览并下载最新 Android 安装包。"
+>
+	<section class="container apps-hero">
+		<h1 class="apps-title">应用列表</h1>
+		<p class="apps-subtitle">Xuehai Apps · 学海 / 智通云应用一览</p>
+		<p class="apps-lead">
+			按分类浏览学海 / 智通云(云课堂)的全部 Android 应用,查看最新版本信息并直接下载
+			安装包。部分应用提供学生端 / 教师端两个版本,可在详情中区分。
+		</p>
+
+		<ul class="apps-stats">
+			<li><strong>{totalApps}</strong><span>应用</span></li>
+			<li><strong>{totalCats}</strong><span>分类</span></li>
+			<li><strong>{totalDownloads}</strong><span>可下载</span></li>
+		</ul>
+	</section>
+
+	<!-- 角色筛选 -->
+	<section class="container">
+		<div class="apps-toolbar" role="group" aria-label="按角色筛选">
+			<button class="apps-role-btn is-active" type="button" data-role-filter="all">全部</button>
+			<button class="apps-role-btn" type="button" data-role-filter="student">学生端</button>
+			<button class="apps-role-btn" type="button" data-role-filter="teacher">教师端</button>
+			<button class="apps-role-btn" type="button" data-role-filter="common">通用</button>
+		</div>
+	</section>
+
+	<section class="container apps-sections">
+		{
+			catList.map(({ key, label, list }) => (
+				<div class="apps-section" data-cat={key}>
+					<h2 class="apps-section-title">
+						{label}
+						<span class="apps-section-count">{list.length}</span>
+					</h2>
+					<div class="apps-grid">
+						{
+							list.map((a) => (
+								<article
+									class="app-card"
+									data-app
+									data-cat={a.cat.key}
+									data-role={a.role.cls}
+								>
+									<div class="app-card-head">
+										<div class="app-icon">
+											{a.icon ? (
+												<img src={a.icon} alt="" loading="lazy" referrerpolicy="no-referrer" />
+											) : (
+												<span class="app-icon-fallback">{a.name.slice(0, 1)}</span>
+											)}
+										</div>
+										<div class="app-titlewrap">
+											<h3 class="app-name">{a.name}</h3>
+											<span class={`app-role app-role--${a.role.cls}`}>{a.role.label}</span>
+										</div>
+									</div>
+
+									{a.description && <p class="app-desc">{a.description}</p>}
+
+									<dl class="app-meta">
+										<div><dt>包名</dt><dd class="mono">{a.packageName}</dd></div>
+										<div><dt>应用码</dt><dd class="mono">{a.appCode}</dd></div>
+										<div><dt>最新版本</dt><dd class="mono">{a.latest?.versionName ?? '—'}</dd></div>
+										<div><dt>版本号</dt><dd class="mono">{a.latest?.versionCode ?? '—'}</dd></div>
+										<div><dt>大小</dt><dd>{a.sizeText || '—'}</dd></div>
+										<div><dt>更新</dt><dd>{a.dateText || '—'}</dd></div>
+									</dl>
+
+									{a.latest?.description && (
+										<p class="app-relnote">{a.latest.description}</p>
+									)}
+
+									<div class="app-card-foot">
+										{a.downloadUrl ? (
+											<a
+												class="btn btn--primary btn--sm"
+												href={a.downloadUrl}
+												target="_blank"
+												rel="noopener noreferrer"
+												download
+											>
+												<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+													<path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+												</svg>
+												下载
+											</a>
+										) : (
+											<span class="app-nodl">暂无可下载版本</span>
+										)}
+									</div>
+								</article>
+							))
+						}
+					</div>
+				</div>
+			))
+		}
+	</section>
+
+	<div class="container apps-empty" id="apps-empty" hidden>
+		没有匹配的应用,试试切换筛选或搜索。
+	</div>
+
+	<section class="container">
+		<div class="apps-footnote">
+			<p>
+				本站为非官方社区站点,与学海教育及智通云不存在从属关系。应用安装包来自学海官方服务器,
+				仅供学习交流使用,请勿用于非法用途。安装前请自行确认版本与设备兼容性。
+			</p>
+		</div>
+	</section>
+
+	<script is:inline>
+		(() => {
+			const filterBtns = Array.from(document.querySelectorAll('[data-role-filter]'));
+			const cards = Array.from(document.querySelectorAll('[data-app]'));
+			const emptyEl = document.getElementById('apps-empty');
+			// 搜索框由用户手动输入触发?此处保留简单角色筛选即可。
+
+			function apply() {
+				const active = document.querySelector('[data-role-filter].is-active');
+				const role = active ? active.dataset.roleFilter : 'all';
+				let visible = 0;
+				cards.forEach((c) => {
+					const match = role === 'all' || c.dataset.role === role;
+					c.hidden = !match;
+					if (match) visible++;
+				});
+				// 隐藏空分类
+				document.querySelectorAll('.apps-section').forEach((sec) => {
+					const shown = Array.from(sec.querySelectorAll('[data-app]')).some((c) => !c.hidden);
+					sec.hidden = !shown;
+				});
+				if (emptyEl) emptyEl.hidden = visible !== 0;
+			}
+
+			filterBtns.forEach((btn) => {
+				btn.addEventListener('click', () => {
+					filterBtns.forEach((b) => b.classList.remove('is-active'));
+					btn.classList.add('is-active');
+					apply();
+				});
+			});
+
+			// 若当前筛选下某分类无卡片,隐藏其标题
+			apply();
+		})();
+	</script>
+</BaseLayout>

@@ -13,6 +13,12 @@
       "degree": 0
     },
     {
+      "id": "docs/xuehai-abrustu-pk",
+      "title": "竞技场API",
+      "url": "/docs/xuehai-abrustu-pk",
+      "degree": 0
+    },
+    {
       "id": "docs/xuehai-brushcode",
       "title": "动态码",
       "url": "/docs/xuehai-brushcode",
@@ -36,6 +42,7 @@
   "outbound": {
     "docs/gallery": [],
     "docs/xhpe-standard": [],
+    "docs/xuehai-abrustu-pk": [],
     "docs/xuehai-brushcode": [],
     "docs/xuehai-login-api": [],
     "docs/xuehai-sign": []
