@@ -1994,6 +1994,24 @@ starlight-toc[data-toc-open] nav .xh-toc-body {
 .app-relnote { margin: 0; padding: 0.6rem 0.7rem; background: var(--bg-soft); border: 1px solid var(--line); border-radius: var(--radius); font-size: 0.78rem; color: var(--fg-muted); line-height: 1.55; white-space: pre-line; }
 
 .app-card-foot { margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: flex-end; }
+.app-versions { margin-top: 0.15rem; border-top: 1px solid var(--line); padding-top: 0.5rem; }
+.app-versions-summary { list-style: none; display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.1rem; font-size: 0.82rem; font-weight: 600; color: var(--fg-muted); cursor: pointer; user-select: none; transition: color 0.15s ease; }
+.app-versions-summary::-webkit-details-marker { display: none; }
+.app-versions-summary:hover { color: var(--fg); }
+.app-versions-summary svg { width: 0.9rem; height: 0.9rem; margin-left: auto; transition: transform 0.18s ease; }
+.app-versions[open] .app-versions-summary svg { transform: rotate(180deg); }
+.app-versions-list { list-style: none; margin: 0.4rem 0 0; padding: 0; display: grid; gap: 0.35rem; max-height: 16rem; overflow-y: auto; }
+.app-versions-more { margin: 0.3rem 0 0.1rem; font-size: 0.72rem; color: var(--fg-faint); }
+.app-version-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.3rem 0.6rem; padding: 0.45rem 0.55rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-soft); font-size: 0.78rem; }
+.app-version-row + .app-version-row { margin-top: 0.25rem; }
+.app-version-main { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.app-version-main .mono { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; color: var(--fg); overflow-wrap: anywhere; }
+.app-version-meta { display: flex; gap: 0.6rem; font-size: 0.72rem; color: var(--fg-faint); }
+.app-version-desc { grid-column: 1 / -1; font-size: 0.74rem; color: var(--fg-muted); line-height: 1.5; white-space: pre-line; }
+.app-version-dl { grid-row: 1 / span 2; grid-column: 2; justify-self: end; align-self: center; padding: 0.3rem 0.7rem; font-size: 0.76rem; font-weight: 600; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius-sm); transition: border-color 0.15s ease, background-color 0.15s ease; }
+.app-version-dl:hover { border-color: var(--fg-muted); background: var(--bg-raise); text-decoration: none; }
+.app-version-nodl { font-size: 0.72rem; color: var(--fg-faint); }
+
 .app-nodl { font-size: 0.78rem; color: var(--fg-faint); }
 
 .apps-empty { text-align: center; color: var(--fg-faint); padding: 3rem 1rem; font-size: 0.88rem; }

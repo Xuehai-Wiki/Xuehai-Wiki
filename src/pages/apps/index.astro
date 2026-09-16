@@ -81,6 +81,21 @@ const apps = (rawApps as any[])
 			downloadUrl: latest?.url || '',
 			// 图标是否可渲染:XML 矢量文件无法在 <img> 显示,用文字兜底
 			iconOk: Boolean(a.icon) && !a.icon.split('?')[0].toLowerCase().endsWith('.xml'),
+			// 历史版本(降序,最新在前),供"历史版本"展开区展示。
+			// 版本过多时只展示最近 20 个,避免页面过大;totalVersions 记录真实总数。
+			versions: (a.appVersions ?? [])
+				.slice()
+				.sort((x, y) => y.versionCode - x.versionCode)
+				.slice(0, 20)
+				.map((v) => ({
+					versionName: v.versionName,
+					versionCode: v.versionCode,
+					url: v.url || '',
+					description: v.description || v.releaseSummary || v.releaseNote || '',
+					sizeText: fmtSize(v.packageSize),
+					dateText: fmtDate(v.updateTime || v.createTime),
+				})),
+			totalVersions: (a.appVersions ?? []).length,
 		};
 	})
 	.sort((a, b) => a.name.localeCompare(b.name, 'zh'));
@@ -174,6 +189,47 @@ const totalDownloads = apps.filter((a) => a.downloadUrl).length;
 
 									{a.latest?.description && (
 										<p class="app-relnote">{a.latest.description}</p>
+									)}
+
+									{(a.versions?.length ?? 0) > 1 && (
+										<details class="app-versions">
+											<summary class="app-versions-summary">
+												历史版本 ({(a.totalVersions ?? (a.versions?.length ?? 0)) - 1})
+												<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+													<path d="M6 9l6 6 6-6" />
+												</svg>
+											</summary>
+											{(a.totalVersions > a.versions.length) && (
+												<p class="app-versions-more">共 {a.totalVersions} 个版本,此处仅展示最近 {a.versions.length} 个</p>
+											)}
+											<ul class="app-versions-list">
+												{a.versions.map((v) => (
+													<li class="app-version-row">
+														<span class="app-version-main">
+															<span class="mono">{v.versionName || `v${v.versionCode}`}</span>
+															<span class="app-version-meta">
+																<span>{v.sizeText || '—'}</span>
+																<span>{v.dateText || '—'}</span>
+															</span>
+														</span>
+														{v.description && <span class="app-version-desc">{v.description}</span>}
+														{v.url ? (
+															<a
+																class="app-version-dl"
+																href={v.url}
+																target="_blank"
+																rel="noopener noreferrer"
+																download
+															>
+																下载
+															</a>
+														) : (
+															<span class="app-version-nodl">无包</span>
+														)}
+													</li>
+												))}
+											</ul>
+										</details>
 									)}
 
 									<div class="app-card-foot">

@@ -19,6 +19,12 @@
       "degree": 0
     },
     {
+      "id": "docs/xuehai-arespunc",
+      "title": "响应API",
+      "url": "/docs/xuehai-arespunc",
+      "degree": 0
+    },
+    {
       "id": "docs/xuehai-brushcode",
       "title": "动态码",
       "url": "/docs/xuehai-brushcode",
@@ -43,6 +49,7 @@
     "docs/gallery": [],
     "docs/xhpe-standard": [],
     "docs/xuehai-abrustu-pk": [],
+    "docs/xuehai-arespunc": [],
     "docs/xuehai-brushcode": [],
     "docs/xuehai-login-api": [],
     "docs/xuehai-sign": []
