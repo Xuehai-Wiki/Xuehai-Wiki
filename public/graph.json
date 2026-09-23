@@ -1,58 +1,7 @@
 {
-  "nodes": [
-    {
-      "id": "docs/gallery",
-      "title": "画廊",
-      "url": "/docs/gallery",
-      "degree": 0
-    },
-    {
-      "id": "docs/xhpe-standard",
-      "title": "XHPE 说明",
-      "url": "/docs/xhpe-standard",
-      "degree": 0
-    },
-    {
-      "id": "docs/xuehai-abrustu-pk",
-      "title": "竞技场API",
-      "url": "/docs/xuehai-abrustu-pk",
-      "degree": 0
-    },
-    {
-      "id": "docs/xuehai-arespunc",
-      "title": "响应API",
-      "url": "/docs/xuehai-arespunc",
-      "degree": 0
-    },
-    {
-      "id": "docs/xuehai-brushcode",
-      "title": "动态码",
-      "url": "/docs/xuehai-brushcode",
-      "degree": 0
-    },
-    {
-      "id": "docs/xuehai-login-api",
-      "title": "登录API",
-      "url": "/docs/xuehai-login-api",
-      "degree": 0
-    },
-    {
-      "id": "docs/xuehai-sign",
-      "title": "学海请求签名",
-      "url": "/docs/xuehai-sign",
-      "degree": 0
-    }
-  ],
+  "nodes": [],
   "edges": [],
   "backlinks": {},
-  "outbound": {
-    "docs/gallery": [],
-    "docs/xhpe-standard": [],
-    "docs/xuehai-abrustu-pk": [],
-    "docs/xuehai-arespunc": [],
-    "docs/xuehai-brushcode": [],
-    "docs/xuehai-login-api": [],
-    "docs/xuehai-sign": []
-  },
+  "outbound": {},
   "broken": []
 }
