@@ -5,20 +5,32 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
+// public/graph.json 的最小结构,仅为反链渲染提供类型。
+interface GraphNode {
+	id: string;
+	title: string;
+	url: string;
+}
+
+interface LinkGraph {
+	backlinks?: Record<string, string[]>;
+	nodes?: GraphNode[];
+}
+
 const entry = Astro.locals.starlightRoute.entry;
 const docId = entry?.id;
 
-let backlinks = [];
+let backlinks: GraphNode[] = [];
 if (docId) {
   try {
     const graph = JSON.parse(
       readFileSync(path.resolve(process.cwd(), 'public', 'graph.json'), 'utf-8'),
-    );
+    ) as LinkGraph;
     const linked = graph.backlinks?.[docId] ?? [];
     const byId = new Map((graph.nodes ?? []).map((n) => [n.id, n]));
     backlinks = linked
       .map((from) => byId.get(from))
-      .filter(Boolean)
+      .filter((node): node is GraphNode => Boolean(node))
       .sort((a, b) => (a.title || '').localeCompare(b.title || '', 'zh'));
   } catch {
     backlinks = [];

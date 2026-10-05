@@ -5,9 +5,34 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
 // public 下的 JSON 不能经 Vite import,故在构建期用 node:fs 读取。
 import { readFileSync } from 'node:fs';
+
+// 应用与版本的最小数据结构,用于构建期读取 public/data/xuehai-apps.json。
+interface AppVersion {
+	versionName?: string;
+	versionCode: number;
+	url?: string;
+	packageSize?: number;
+	updateTime?: number;
+	createTime?: number;
+	description?: string;
+	releaseSummary?: string;
+	releaseNote?: string;
+}
+
+interface RawApp {
+	name: string;
+	userType: number;
+	appCode: string;
+	packageName: string;
+	icon?: string;
+	description?: string;
+	updateTime?: number;
+	appVersions?: AppVersion[];
+}
+
 const rawApps = JSON.parse(
 	readFileSync(new URL('../../../public/data/xuehai-apps.json', import.meta.url), 'utf8'),
-);
+) as RawApp[];
 
 // ---------- 分类映射(appCode 前缀 -> 业务分类) ----------
 // 依据 appCode 前缀判断业务模块;更长的前缀优先匹配(如 WBYY 长于 CA)。
@@ -49,12 +74,12 @@ const roleOf = (ut: number) => ROLE[ut] ?? { label: '通用', cls: 'common' };
 
 // ---------- 工具函数 ----------
 // 格式化包体积:字节 -> MB
-const fmtSize = (bytes: number) => {
+const fmtSize = (bytes?: number) => {
 	if (!bytes) return '';
 	return (bytes / 1024 / 1024).toFixed(1) + ' MB';
 };
 // 格式化时间戳 -> YYYY-MM-DD
-const fmtDate = (ts: number) => {
+const fmtDate = (ts?: number) => {
 	if (!ts) return '';
 	const d = new Date(ts);
 	const y = d.getFullYear();
@@ -65,7 +90,7 @@ const fmtDate = (ts: number) => {
 
 // ---------- 数据归一化 ----------
 // 每个 app 取最新版本(第一项)展示;同 appCode 下学生/教师/多包各为一条记录。
-const apps = (rawApps as any[])
+const apps = rawApps
 	.map((a) => {
 		const latest = a.appVersions?.[0] ?? null;
 		const role = roleOf(a.userType);
@@ -80,7 +105,7 @@ const apps = (rawApps as any[])
 			// 下载链接取最新版本 url;无版本则不提供下载
 			downloadUrl: latest?.url || '',
 			// 图标是否可渲染:XML 矢量文件无法在 <img> 显示,用文字兜底
-			iconOk: Boolean(a.icon) && !a.icon.split('?')[0].toLowerCase().endsWith('.xml'),
+			iconOk: Boolean(a.icon) && !a.icon?.split('?')[0].toLowerCase().endsWith('.xml'),
 			// 历史版本(降序,最新在前),供"历史版本"展开区展示。
 			// 版本过多时只展示最近 20 个,避免页面过大;totalVersions 记录真实总数。
 			versions: (a.appVersions ?? [])
@@ -109,57 +134,43 @@ for (const a of apps) {
 const catList = [...byCat.entries()]
 	.sort((x, y) => x[1][0].cat.order - y[1][0].cat.order)
 	.map(([key, list]) => ({ key, list, label: list[0].cat.label }));
-
-const totalApps = apps.length;
-const totalCats = catList.length;
-const totalDownloads = apps.filter((a) => a.downloadUrl).length;
-
 ---
 
 <BaseLayout
 	title="应用列表 | Xuehai Wiki"
-	description="学海 / 智通云全部应用一览 —— 按分类浏览并下载最新 Android 安装包。"
+	description="学海 / 智通云应用列表,按分类查看版本记录与安装包。"
 >
-	<section class="container apps-hero">
-		<h1 class="apps-title">应用列表</h1>
-		<p class="apps-subtitle">Xuehai Apps · 学海 / 智通云应用一览</p>
-		<p class="apps-lead">
-			按分类浏览学海 / 智通云(云课堂)的全部 Android 应用,查看最新版本信息并直接下载
-			安装包。部分应用提供学生端 / 教师端两个版本,可在详情中区分。
+	<section class="container" style="padding-block: 2.5rem 1rem;">
+		<h1 style="margin: 0;">应用列表</h1>
+		<p class="muted" style="margin: 0.4rem 0 0; font-size: 0.95rem;">
+			学海 / 智通云应用,按分类查看版本记录与安装包。
 		</p>
-
-		<ul class="apps-stats">
-			<li><strong>{totalApps}</strong><span>应用</span></li>
-			<li><strong>{totalCats}</strong><span>分类</span></li>
-			<li><strong>{totalDownloads}</strong><span>可下载</span></li>
-		</ul>
 	</section>
 
-	<!-- 角色筛选 -->
+	<!-- 角色筛选:沿用列表页工具栏与全站按钮。 -->
 	<section class="container">
-		<div class="apps-toolbar" role="group" aria-label="按角色筛选">
-			<button class="apps-role-btn is-active" type="button" data-role-filter="all">全部</button>
-			<button class="apps-role-btn" type="button" data-role-filter="student">学生端</button>
-			<button class="apps-role-btn" type="button" data-role-filter="teacher">教师端</button>
-			<button class="apps-role-btn" type="button" data-role-filter="common">通用</button>
+		<div class="tracker-toolbar" role="group" aria-label="按角色筛选">
+			<span class="muted">角色</span>
+			<button class="btn btn--sm btn--primary" type="button" data-role-filter="all" aria-pressed="true">全部</button>
+			<button class="btn btn--sm" type="button" data-role-filter="student" aria-pressed="false">学生端</button>
+			<button class="btn btn--sm" type="button" data-role-filter="teacher" aria-pressed="false">教师端</button>
+			<button class="btn btn--sm" type="button" data-role-filter="common" aria-pressed="false">通用</button>
 		</div>
 	</section>
 
 	<section class="container apps-sections">
 		{
 			catList.map(({ key, label, list }) => (
-				<div class="apps-section" data-cat={key}>
+				<section data-app-category={key}>
 					<h2 class="apps-section-title">
 						{label}
-						<span class="apps-section-count">{list.length}</span>
 					</h2>
-					<div class="apps-grid">
+					<div class="card-grid">
 						{
 							list.map((a) => (
 								<article
-									class="app-card"
+									class="card app-card"
 									data-app
-									data-cat={a.cat.key}
 									data-role={a.role.cls}
 								>
 									<div class="app-card-head">
@@ -167,16 +178,16 @@ const totalDownloads = apps.filter((a) => a.downloadUrl).length;
 											{a.iconOk ? (
 												<img src={a.icon} alt="" loading="lazy" referrerpolicy="no-referrer" />
 											) : (
-												<span class="app-icon-fallback">{a.name.slice(0, 1)}</span>
+												<span class="muted">{a.name.slice(0, 1)}</span>
 											)}
 										</div>
 										<div class="app-titlewrap">
-											<h3 class="app-name">{a.name}</h3>
-											<span class={`app-role app-role--${a.role.cls}`}>{a.role.label}</span>
+											<h3>{a.name}</h3>
+											<small class="muted">{a.role.label}</small>
 										</div>
 									</div>
 
-									{a.description && <p class="app-desc">{a.description}</p>}
+									{a.description && <p class="muted">{a.description}</p>}
 
 									<dl class="app-meta">
 										<div><dt>包名</dt><dd class="mono">{a.packageName}</dd></div>
@@ -184,38 +195,33 @@ const totalDownloads = apps.filter((a) => a.downloadUrl).length;
 										<div><dt>最新版本</dt><dd class="mono">{a.latest?.versionName ?? '—'}</dd></div>
 										<div><dt>版本号</dt><dd class="mono">{a.latest?.versionCode ?? '—'}</dd></div>
 										<div><dt>大小</dt><dd>{a.sizeText || '—'}</dd></div>
-										<div><dt>更新</dt><dd>{a.dateText || '—'}</dd></div>
+										<div><dt>更新时间</dt><dd>{a.dateText || '—'}</dd></div>
 									</dl>
 
 									{a.latest?.description && (
-										<p class="app-relnote">{a.latest.description}</p>
+										<p class="muted app-relnote">{a.latest.description}</p>
 									)}
 
 									{(a.versions?.length ?? 0) > 1 && (
 										<details class="app-versions">
-											<summary class="app-versions-summary">
-												历史版本 ({(a.totalVersions ?? (a.versions?.length ?? 0)) - 1})
-												<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-													<path d="M6 9l6 6 6-6" />
-												</svg>
-											</summary>
+											<summary>历史版本 ({a.totalVersions} 个版本)</summary>
 											{(a.totalVersions > a.versions.length) && (
-												<p class="app-versions-more">共 {a.totalVersions} 个版本,此处仅展示最近 {a.versions.length} 个</p>
+												<p class="faint">共 {a.totalVersions} 个版本,此处仅展示最近 {a.versions.length} 个</p>
 											)}
 											<ul class="app-versions-list">
 												{a.versions.map((v) => (
 													<li class="app-version-row">
 														<span class="app-version-main">
 															<span class="mono">{v.versionName || `v${v.versionCode}`}</span>
-															<span class="app-version-meta">
+															<span class="app-version-meta faint">
 																<span>{v.sizeText || '—'}</span>
 																<span>{v.dateText || '—'}</span>
 															</span>
 														</span>
-														{v.description && <span class="app-version-desc">{v.description}</span>}
+														{v.description && <span class="app-version-desc muted">{v.description}</span>}
 														{v.url ? (
 															<a
-																class="app-version-dl"
+																class="btn btn--sm app-version-download"
 																href={v.url}
 																target="_blank"
 																rel="noopener noreferrer"
@@ -224,7 +230,7 @@ const totalDownloads = apps.filter((a) => a.downloadUrl).length;
 																下载
 															</a>
 														) : (
-															<span class="app-version-nodl">无包</span>
+															<span class="faint app-version-download">暂无安装包</span>
 														)}
 													</li>
 												))}
@@ -247,40 +253,30 @@ const totalDownloads = apps.filter((a) => a.downloadUrl).length;
 												下载
 											</a>
 										) : (
-											<span class="app-nodl">暂无可下载版本</span>
+											<span class="faint">暂无可下载版本</span>
 										)}
 									</div>
 								</article>
 							))
 						}
 					</div>
-				</div>
+				</section>
 			))
 		}
 	</section>
 
-	<div class="container apps-empty" id="apps-empty" hidden>
-		没有匹配的应用,试试切换筛选或搜索。
+	<div class="container tracker-empty" id="apps-empty" hidden>
+		没有匹配的应用,请切换角色筛选。
 	</div>
-
-	<section class="container">
-		<div class="apps-footnote">
-			<p>
-				本站为非官方社区站点,与学海教育及智通云不存在从属关系。应用安装包来自学海官方服务器,
-				仅供学习交流使用,请勿用于非法用途。安装前请自行确认版本与设备兼容性。
-			</p>
-		</div>
-	</section>
 
 	<script is:inline>
 		(() => {
 			const filterBtns = Array.from(document.querySelectorAll('[data-role-filter]'));
 			const cards = Array.from(document.querySelectorAll('[data-app]'));
 			const emptyEl = document.getElementById('apps-empty');
-			// 搜索框由用户手动输入触发?此处保留简单角色筛选即可。
 
 			function apply() {
-				const active = document.querySelector('[data-role-filter].is-active');
+				const active = document.querySelector('[data-role-filter][aria-pressed="true"]');
 				const role = active ? active.dataset.roleFilter : 'all';
 				let visible = 0;
 				cards.forEach((c) => {
@@ -289,7 +285,7 @@ const totalDownloads = apps.filter((a) => a.downloadUrl).length;
 					if (match) visible++;
 				});
 				// 隐藏空分类
-				document.querySelectorAll('.apps-section').forEach((sec) => {
+				document.querySelectorAll('[data-app-category]').forEach((sec) => {
 					const shown = Array.from(sec.querySelectorAll('[data-app]')).some((c) => !c.hidden);
 					sec.hidden = !shown;
 				});
@@ -298,8 +294,11 @@ const totalDownloads = apps.filter((a) => a.downloadUrl).length;
 
 			filterBtns.forEach((btn) => {
 				btn.addEventListener('click', () => {
-					filterBtns.forEach((b) => b.classList.remove('is-active'));
-					btn.classList.add('is-active');
+					filterBtns.forEach((b) => {
+						const selected = b === btn;
+						b.classList.toggle('btn--primary', selected);
+						b.setAttribute('aria-pressed', String(selected));
+					});
 					apply();
 				});
 			});

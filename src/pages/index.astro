@@ -1,32 +1,13 @@
 ---
-// 着陆页:站名大标题 + 副题 + 免责小字 + 三个入口卡片。
+// 着陆页:站名大标题 + 副题 + 免责小字 + 与导航同序的五个入口。
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const cards = [
-	{
-		href: '/status',
-		title: 'Status',
-		desc: '学海服务实时状态、近 24 小时可用性与 60 天 SLA 一览。',
-		en: '服务状态',
-	},
-	{
-		href: '/tracker',
-		title: 'Tracker',
-		desc: '学海特性与缺陷追踪,看看学海又写了什么特性(bug)。',
-		en: '特性追踪',
-	},
-	{
-		href: '/docs',
-		title: 'Docs',
-		desc: '一些学海相关文档',
-		en: '文档',
-	},
-];
+import { links } from '../components/SiteNav.astro';
 ---
 
 <BaseLayout
 	title="Xuehai Wiki | 学海 Wiki"
-	description="学海 Wiki — 学海知识库,含服务状态、特性追踪与文档。"
+	description="学海 Wiki — 学海知识库,含应用列表、服务状态、特性追踪与文档。"
 >
 	<section class="container container--narrow" style="padding-block: 4rem 2rem; text-align: center;">
 		<h1 style="margin-bottom: 0.75rem;">Xuehai Wiki</h1>
@@ -41,12 +22,12 @@ const cards = [
 	<section class="container" style="padding-block: 1rem 3rem;">
 		<div class="card-grid">
 			{
-				cards.map((card) => (
+				links.map((card) => (
 					<a class="card card--link" href={card.href}>
-						<h3>{card.title}</h3>
-						<p>{card.desc}</p>
+						<h3>{card.label}</h3>
+						<p>{card.description}</p>
 						<span class="card-arrow">
-							{card.en}
+							{card.caption}
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 								<path d="M5 12h14M12 5l7 7-7 7" />
 							</svg>

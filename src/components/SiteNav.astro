@@ -1,0 +1,68 @@
+---
+// 全站导航的唯一来源:链接、当前项、品牌与主题切换,首页入口也复用此列表。
+import ThemeToggle from './ThemeToggle.astro';
+
+export const links = [
+	{ href: '/', label: '首页', description: '学海 Wiki — 一个学海知识库', caption: '站点首页' },
+	{ href: '/apps', label: '应用', description: '按分类查看学海应用、版本记录与安装包。', caption: '应用列表' },
+	{ href: '/status', label: 'Status', description: '学海服务实时状态、近 24 小时可用性与 60 天 SLA 一览。', caption: '服务状态' },
+	{ href: '/tracker', label: 'Tracker', description: '学海特性与缺陷追踪,看看学海又写了什么特性(bug)。', caption: '特性追踪' },
+	{ href: '/docs', label: 'Docs', description: '一些学海相关文档', caption: '文档' },
+];
+
+interface Props {
+	currentPath?: string;
+	variant?: 'site' | 'starlight';
+}
+
+const { currentPath = Astro.url.pathname, variant = 'site' } = Astro.props;
+const isStarlight = variant === 'starlight';
+// 精确匹配或子路径匹配,避免 /apps-other 误命中 /apps。
+const isActive = (href: string) =>
+	currentPath === href || (href !== '/' && currentPath.startsWith(`${href}/`));
+---
+
+<div class:list={[!isStarlight && 'container', 'xh-nav-inner', isStarlight && 'xh-nav-inner--starlight']}>
+	<a class="xh-nav-brand" href="/" aria-label="Xuehai Wiki 首页">
+		<span>Xuehai Wiki</span>
+		<small>学海 Wiki</small>
+	</a>
+
+	<nav class="xh-nav-links" aria-label="主导航" id="site-nav-links" data-nav-links={isStarlight ? undefined : ''}>
+		{links.map((link) => (
+			<a class="xh-nav-link" href={link.href} aria-current={isActive(link.href) ? 'page' : undefined}>
+				{link.label}
+			</a>
+		))}
+	</nav>
+
+	<div class="xh-nav-actions">
+		<slot name="actions" />
+		<ThemeToggle />
+		{!isStarlight && (
+			<button
+				class="xh-nav-toggle"
+				type="button"
+				aria-label="展开导航菜单"
+				aria-expanded="false"
+				aria-controls="site-nav-links"
+				data-nav-toggle
+			>
+				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+					<path d="M3 6h18M3 12h18M3 18h18" />
+				</svg>
+			</button>
+		)}
+	</div>
+</div>
+
+<script>
+	// 站内页移动端折叠;文档页使用 Starlight 自带的侧栏按钮。
+	const toggle = document.querySelector('.xh-nav-toggle[data-nav-toggle]');
+	const navLinks = document.querySelector('.xh-nav-links[data-nav-links]');
+	toggle?.addEventListener('click', () => {
+		const open = navLinks?.classList.toggle('is-open') ?? false;
+		toggle.setAttribute('aria-expanded', String(open));
+		toggle.setAttribute('aria-label', open ? '收起导航菜单' : '展开导航菜单');
+	});
+</script>
