@@ -34,3 +34,5 @@ Thumbs.db
 # editor
 .idea/
 .omo/
+# 字体子集由 scripts/subset-fonts.mjs 在构建期生成(源:src/assets/fonts/)
+public/fonts/Pretendard/*.woff2

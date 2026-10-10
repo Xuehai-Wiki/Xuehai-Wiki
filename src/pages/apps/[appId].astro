@@ -56,7 +56,7 @@ function releaseNote(version: AppVersion): string {
 					<small class="muted mono">{app.appCode}</small>
 					<h1 class="app-detail-title">{app.name}</h1>
 					<div class="app-detail-badges">
-						<span class="badge">{app.role.label}</span>
+						<span class:list={['role-tag', `role-tag--${app.role.cls}`]}>{app.role.label}</span>
 						<span class="badge">{app.category.label}</span>
 						<span class="badge">{app.totalVersions} 个版本</span>
 					</div>

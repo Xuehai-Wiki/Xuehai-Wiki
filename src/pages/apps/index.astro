@@ -7,13 +7,14 @@ const categoryList = appsByCategory();
 ---
 
 <BaseLayout
-	title="应用列表 | Xuehai Wiki"
-	description="学海 / 智通云应用索引。查看每个应用、版本历史与安装包。"
+	title="学海应用 | Xuehai Wiki"
+	description="按分类浏览学海的全部 Android 应用，查看最新版本信息并直接下载安装包。部分应用提供学生端 / 教师端两个版本，可在详情中区分。"
 >
-	<section class="container" style="padding-block: 2.5rem 1rem;">
-		<h1 style="margin: 0;">应用列表</h1>
-		<p class="muted" style="margin: 0.4rem 0 0; font-size: 0.95rem;">
-			学海 / 智通云应用索引。查看每个应用、版本历史与安装包。
+	<section class="container apps-hero">
+		<h1>学海应用</h1>
+		<p class="apps-hero-en">Xuehai Apps</p>
+		<p class="apps-hero-desc">
+			按分类浏览学海的全部 Android 应用，查看最新版本信息并直接下载安装包。部分应用提供学生端 / 教师端两个版本，可在详情中区分。
 		</p>
 	</section>
 
@@ -50,7 +51,7 @@ const categoryList = appsByCategory();
 									</div>
 									<div class="app-titlewrap">
 										<h3>{app.name}</h3>
-										<small class="muted">{app.role.label}</small>
+										<small class:list={['role-tag', `role-tag--${app.role.cls}`]}>{app.role.label}</small>
 									</div>
 								</div>
 
@@ -64,7 +65,7 @@ const categoryList = appsByCategory();
 								</dl>
 
 								<div class="app-card-foot">
-									<span class="card-arrow">查看详情 →</span>
+									<span class="btn btn--sm btn--primary app-card-cta">查看详情</span>
 								</div>
 							</a>
 						))}
