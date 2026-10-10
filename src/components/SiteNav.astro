@@ -58,11 +58,15 @@ const isActive = (href: string) =>
 
 <script>
 	// 站内页移动端折叠;文档页使用 Starlight 自带的侧栏按钮。
-	const toggle = document.querySelector('.xh-nav-toggle[data-nav-toggle]');
-	const navLinks = document.querySelector('.xh-nav-links[data-nav-links]');
-	toggle?.addEventListener('click', () => {
-		const open = navLinks?.classList.toggle('is-open') ?? false;
-		toggle.setAttribute('aria-expanded', String(open));
-		toggle.setAttribute('aria-label', open ? '收起导航菜单' : '展开导航菜单');
-	});
+	function initSiteNav() {
+		const toggle = document.querySelector('.xh-nav-toggle[data-nav-toggle]');
+		const navLinks = document.querySelector('.xh-nav-links[data-nav-links]');
+		toggle?.addEventListener('click', () => {
+			const open = navLinks?.classList.toggle('is-open') ?? false;
+			toggle.setAttribute('aria-expanded', String(open));
+			toggle.setAttribute('aria-label', open ? '收起导航菜单' : '展开导航菜单');
+		});
+	}
+	initSiteNav();
+	document.addEventListener('astro:page-load', initSiteNav);
 </script>

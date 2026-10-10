@@ -21,16 +21,19 @@ const label = '切换亮暗主题';
 </button>
 
 <script>
-	// 与 theme-init.js 共用同一个 key('xh-theme'),保持语义一致。
-	const btn = document.querySelector('[data-theme-toggle]');
-	btn?.addEventListener('click', () => {
-		const root = document.documentElement;
-		const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-		root.setAttribute('data-theme', next);
-		try {
-			localStorage.setItem('xh-theme', next);
-		} catch {
-			/* 隐私模式下忽略 */
-		}
-	});
+	function initThemeToggle() {
+		const btn = document.querySelector('[data-theme-toggle]');
+		btn?.addEventListener('click', () => {
+			const root = document.documentElement;
+			const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+			root.setAttribute('data-theme', next);
+			try {
+				localStorage.setItem('xh-theme', next);
+			} catch {
+				/* 隐私模式下忽略 */
+			}
+		});
+	}
+	initThemeToggle();
+	document.addEventListener('astro:page-load', initThemeToggle);
 </script>

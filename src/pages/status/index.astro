@@ -67,8 +67,11 @@ const API = 'https://xh.asxz.one/status/api/v1/';
 	import type { StatusData } from '../../types/status';
 
 	const API = 'https://xh.asxz.one/status/api/v1/';
-	// 服务列表以 API 返回为准(union of history/sla),新增服务自动展示,无需改代码
+	let statusTimer: number | undefined;
 
+	function initStatus() {
+	window.clearInterval(statusTimer);
+	// 服务列表以 API 返回为准(union of history/sla),新增服务自动展示,无需改代码
 	const loadingEl = document.querySelector('[data-status-loading]');
 	const errorEl = document.querySelector('[data-status-error]');
 	const contentEl = document.querySelector('[data-status-content]');
@@ -261,5 +264,9 @@ const API = 'https://xh.asxz.one/status/api/v1/';
 
 	retryBtn?.addEventListener('click', load);
 	load();
-	setInterval(load, 60_000);
+	statusTimer = window.setInterval(load, 60_000);
+	}
+
+	initStatus();
+	document.addEventListener('astro:page-load', initStatus);
 </script>

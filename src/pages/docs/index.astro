@@ -111,26 +111,30 @@ const slugOf = (id: string) => id.replace(/^docs\//, '');
 </BaseLayout>
 
 <script>
-	// 随机文章按钮:从页面已渲染的文章链接里随机挑一个跳转。
-	// 也顺带统计当前文档间的条目链接数(内链),填入统计卡片。
-	const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.wiki-link'));
-	const btn = document.querySelector<HTMLButtonElement>('[data-random-article]');
-	btn?.addEventListener('click', () => {
-		if (links.length === 0) return;
-		const pick = links[Math.floor(Math.random() * links.length)];
-		window.location.href = pick.href;
-	});
-
-	// 文档间内链数:取 graph.json 的 edges 数量(构建期已生成),这里从页面链接近似。
-	// 直接读取静态数据:由构建脚本注入的站点数据在 /graph.json。
-	fetch('/graph.json')
-		.then((r) => (r.ok ? r.json() : null))
-		.catch(() => null)
-		.then((graph) => {
-			const total = graph?.edges?.length ?? 0;
-			const el = document.querySelector<HTMLElement>('[data-total-links]');
-			if (el && total) el.textContent = String(total);
+	function initDocsIndex() {
+		// 随机文章按钮:从页面已渲染的文章链接里随机挑一个跳转。
+		const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.wiki-link'));
+		const btn = document.querySelector<HTMLButtonElement>('[data-random-article]');
+		if (!btn) return;
+		btn.addEventListener('click', () => {
+			if (links.length === 0) return;
+			const pick = links[Math.floor(Math.random() * links.length)];
+			window.location.href = pick.href;
 		});
+
+		// 文档间内链数:取 graph.json 的 edges 数量(构建期已生成),这里从页面链接近似。
+		fetch('/graph.json')
+			.then((r) => (r.ok ? r.json() : null))
+			.catch(() => null)
+			.then((graph) => {
+				const total = graph?.edges?.length ?? 0;
+				const el = document.querySelector<HTMLElement>('[data-total-links]');
+				if (el && total) el.textContent = String(total);
+			});
+	}
+
+	initDocsIndex();
+	document.addEventListener('astro:page-load', initDocsIndex);
 </script>
 
 <style>

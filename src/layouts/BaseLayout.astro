@@ -3,6 +3,7 @@
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import DisclosureBanner from '../components/DisclosureBanner.astro';
+import ClientRouter from 'astro/components/ClientRouter.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -29,6 +30,7 @@ const showBanner = true;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<meta name="description" content={description} />
+		<ClientRouter />
 		<!-- Umami 站点统计 -->
 		<script
 			defer
@@ -40,13 +42,17 @@ const showBanner = true;
 		<!-- 免责 banner 防闪:head 同步读 localStorage,已关闭则在 <html> 上加
 		     data-banner-hidden,由 CSS 先行隐藏(.xh-banner display:none),避免首帧闪现 -->
 		<script is:inline>
-			try {
-				if (localStorage.getItem('xh-disclaimer-seen')) {
-					document.documentElement.setAttribute('data-banner-hidden', '');
+			const xhSyncDisclosureState = () => {
+				try {
+					if (localStorage.getItem('xh-disclaimer-seen')) {
+						document.documentElement.setAttribute('data-banner-hidden', '');
+					}
+				} catch {
+					/* 隐私模式等异常忽略 */
 				}
-			} catch {
-				/* 隐私模式等异常忽略 */
-			}
+			};
+			xhSyncDisclosureState();
+			document.addEventListener('astro:after-swap', xhSyncDisclosureState);
 		</script>
 	</head>
 	<body>
