@@ -1,0 +1,171 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { apps, formatDate } from '../../lib/apps';
+import type { AppVersion } from '../../lib/apps';
+
+type AppPath = { params: { appId: string }; props: { appId: string } };
+
+export function getStaticPaths(): AppPath[] {
+	return apps.map((app) => ({
+		params: { appId: app.appId },
+		props: { appId: app.appId },
+	}));
+}
+
+interface Props {
+	appId: string;
+}
+
+const { appId } = Astro.props;
+const app = apps.find((item) => item.appId === appId);
+if (!app) throw new Error(`应用不存在:${appId}`);
+
+function text(value: string | number | boolean | undefined, fallback = '—'): string {
+	if (value === undefined || value === null || value === '') return fallback;
+	return String(value);
+}
+
+function yesNo(value?: boolean): string {
+	return value ? '是' : '否';
+}
+
+function releaseNote(version: AppVersion): string {
+	return version.description || version.releaseSummary || version.releaseNote || '';
+}
+---
+
+<BaseLayout
+	title={`${app.name} · 应用详情 | Xuehai Wiki`}
+	description={`查看 ${app.name} 的应用信息、${app.totalVersions} 个历史版本与安装包。`}
+>
+	<section class="container apps-sections">
+		<nav class="tracker-breadcrumb" aria-label="面包屑">
+			<a href="/apps">← 返回应用列表</a>
+		</nav>
+
+		<header class="app-detail-head card">
+			<div class="app-card-head">
+				<div class="app-icon app-icon--large">
+					{app.iconOk ? (
+						<img src={app.icon} alt="" referrerpolicy="no-referrer" />
+					) : (
+						<span class="muted">{app.name.slice(0, 1)}</span>
+					)}
+				</div>
+				<div class="app-titlewrap">
+					<small class="muted mono">{app.appCode}</small>
+					<h1 class="app-detail-title">{app.name}</h1>
+					<div class="app-detail-badges">
+						<span class="badge">{app.role.label}</span>
+						<span class="badge">{app.category.label}</span>
+						<span class="badge">{app.totalVersions} 个版本</span>
+					</div>
+				</div>
+			</div>
+			{app.description && <p class="muted app-relnote">{app.description}</p>}
+		</header>
+
+		<div class="app-detail-grid">
+			<section class="card app-detail-panel">
+				<h2>应用信息</h2>
+				<dl class="app-detail-meta">
+					<div><dt>应用 ID</dt><dd class="mono">{app.appId}</dd></div>
+					<div><dt>应用码</dt><dd class="mono">{app.appCode}</dd></div>
+					<div><dt>包名</dt><dd class="mono">{app.packageName}</dd></div>
+					<div><dt>角色</dt><dd>{app.role.label}</dd></div>
+					<div><dt>平台</dt><dd class="mono">{text(app.platform)}</dd></div>
+					<div><dt>环境</dt><dd class="mono">{app.envs?.join(', ') || '—'}</dd></div>
+					<div><dt>应用更新时间</dt><dd>{app.dateText || '—'}</dd></div>
+					<div><dt>应用创建时间</dt><dd>{app.createTime ? formatDate(app.createTime) : '—'}</dd></div>
+					<div><dt>安装位置</dt><dd class="mono">{text(app.installPosition)}</dd></div>
+					<div><dt>网络策略</dt><dd class="mono">{text(app.network)}</dd></div>
+					<div><dt>程序类型</dt><dd class="mono">{text(app.programType)}</dd></div>
+					<div><dt>展示大小</dt><dd class="mono">{text(app.displaySize)}</dd></div>
+					<div><dt>排序</dt><dd class="mono">{text(app.order)}</dd></div>
+					<div><dt>排序 V2</dt><dd class="mono">{text(app.orderV2)}</dd></div>
+					<div><dt>显示</dt><dd>{yesNo(app.show)}</dd></div>
+					<div><dt>站外应用</dt><dd>{yesNo(app.outside)}</dd></div>
+					<div><dt>独立应用</dt><dd>{yesNo(app.independent)}</dd></div>
+					{app.beautifyIcon && <div><dt>美化图标</dt><dd class="mono">{app.beautifyIcon}</dd></div>}
+				</dl>
+			</section>
+
+			<section class="card app-detail-panel">
+				<h2>最新版本</h2>
+				{app.latest ? (
+					<div class="app-latest">
+						<dl class="app-detail-meta">
+							<div><dt>版本名</dt><dd class="mono">{app.latest.versionLabel}</dd></div>
+							<div><dt>版本号</dt><dd class="mono">{app.latest.versionCode}</dd></div>
+							<div><dt>大小</dt><dd>{app.latest.sizeText || '—'}</dd></div>
+							<div><dt>更新时间</dt><dd>{app.latest.updateDateText || '—'}</dd></div>
+							<div><dt>创建时间</dt><dd>{app.latest.createDateText || '—'}</dd></div>
+							<div><dt>审核时间</dt><dd>{app.latest.auditDateText || '—'}</dd></div>
+							<div><dt>状态</dt><dd class="mono">{text(app.latest.status)}</dd></div>
+							<div><dt>更新级别</dt><dd class="mono">{text(app.latest.updateLevel)}</dd></div>
+							<div><dt>版本类型</dt><dd class="mono">{text(app.latest.versionType)}</dd></div>
+							<div><dt>MD5</dt><dd class="mono app-detail-hash">{app.latest.md5 || '—'}</dd></div>
+						</dl>
+						{releaseNote(app.latest) && <p class="muted app-relnote">{releaseNote(app.latest)}</p>}
+						{app.downloadUrl ? (
+							<a
+								class="btn btn--primary"
+								href={app.downloadUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+								download
+							>
+								下载最新安装包
+							</a>
+						) : (
+							<span class="faint">暂无可下载版本</span>
+						)}
+					</div>
+				) : (
+					<p class="muted">暂无版本记录。</p>
+				)}
+			</section>
+		</div>
+
+		<section class="card app-history">
+			<h2>版本历史</h2>
+			<ul class="app-versions-list app-versions-list--full">
+				{app.versions.map((version) => (
+					<li class="app-version-row">
+						<div class="app-version-main">
+							<span class="mono">{version.versionLabel}</span>
+							<span class="app-version-meta faint">
+								<span>#{version.versionCode}</span>
+								<span>{version.sizeText || '—'}</span>
+								<span>{version.updateDateText || version.createDateText || '—'}</span>
+								<span>状态 {text(version.status)}</span>
+								<span>更新级别 {text(version.updateLevel)}</span>
+								<span>版本类型 {text(version.versionType)}</span>
+								<span>提醒 {yesNo(version.remindEnabled)}</span>
+								<span>已读 {yesNo(version.noteRead)}</span>
+							</span>
+							{version.description && <span class="app-version-desc muted">{version.description}</span>}
+							{version.releaseSummary && <span class="app-version-desc muted">{version.releaseSummary}</span>}
+							{version.releaseNote && <span class="app-version-desc muted">{version.releaseNote}</span>}
+							<span class="app-version-hash mono">MD5:{version.md5 || '—'}</span>
+							{version.plistUrl && <span class="app-version-hash mono">plist:{version.plistUrl}</span>}
+						</div>
+						{version.url ? (
+							<a
+								class="btn btn--sm app-version-download"
+								href={version.url}
+								target="_blank"
+								rel="noopener noreferrer"
+								download
+							>
+								下载
+							</a>
+						) : (
+							<span class="faint app-version-download">暂无安装包</span>
+						)}
+					</li>
+				))}
+			</ul>
+		</section>
+	</section>
+</BaseLayout>
