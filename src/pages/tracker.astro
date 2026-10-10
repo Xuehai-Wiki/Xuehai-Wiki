@@ -158,7 +158,7 @@ const TYPE_OPTIONS = [
 	<script type="application/json" id="tracker-data" set:html={cardJson}></script>
 
 	<!-- 客户端交互:随机抽卡 / 筛选 / 搜索 / 分页 -->
-	<script is:inline>
+	<script is:inline data-astro-rerun>
 		(() => {
 			const dataEl = document.getElementById('tracker-data');
 			if (!dataEl) return;

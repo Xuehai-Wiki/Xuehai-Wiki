@@ -31,6 +31,7 @@ export default defineConfig({
 				Footer: './src/components/starlight/Footer.astro',
 				// 维基式文章标题栏:标题下方注入分类标签 + 最后更新 + 字数/章节数 + 随机文章
 				PageTitle: './src/components/starlight/PageTitle.astro',
+				Head: './src/components/starlight/Head.astro',
 			},
 			head: [
 				// 主题初始化 + 免责 banner/页脚注入(starlight 页面没有我们的全局布局,

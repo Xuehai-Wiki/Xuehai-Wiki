@@ -72,19 +72,11 @@
 	} catch {
 		/* ignore */
 	}
-	// 全站按钮点击后同步(它在同一页面直接改 html + 写 xh-theme,storage 事件不会触发)
-	const toggles = () => document.querySelectorAll('[data-theme-toggle]');
-	const obs = new MutationObserver(() => {
-		const t = toggles()[0];
-		if (t && !t.dataset.xhSynced) {
-			t.dataset.xhSynced = '1';
-			t.addEventListener('click', () => {
-				const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-				write(SL_KEY, next);
-			});
-		}
+	// 全站按钮点击后同步。使用事件委托,ClientRouter 替换 body 后仍能绑定新按钮。
+	document.addEventListener('click', (event) => {
+		const target = event.target instanceof Element ? event.target.closest('[data-theme-toggle]') : null;
+		if (!target) return;
+		const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+		write(SL_KEY, next);
 	});
-	obs.observe(document.body, { childList: true, subtree: true });
-	// 清理:页面卸载时断开
-	window.addEventListener('pagehide', () => obs.disconnect());
 })();

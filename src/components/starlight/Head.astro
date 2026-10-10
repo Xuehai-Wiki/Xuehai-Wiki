@@ -1,0 +1,8 @@
+---
+import ClientRouter from 'astro/components/ClientRouter.astro';
+
+const { head } = Astro.locals.starlightRoute;
+---
+
+<ClientRouter />
+{head.map(({ tag: Tag, attrs, content }) => <Tag {...attrs} set:html={content} />)}

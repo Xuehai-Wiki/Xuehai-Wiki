@@ -164,7 +164,7 @@ const twikooInitScript = `(function () {
 	<script type="application/json" id="tracker-detail-cfg" set:html={detailCfg}></script>
 
 	<!-- 点赞交互:开关默认关闭,按钮为禁用占位;enabled 时才请求 workerUrl -->
-	<script is:inline>
+	<script is:inline data-astro-rerun>
 		(() => {
 			const cfgEl = document.getElementById('tracker-detail-cfg');
 			let cfg = { likesEnabled: false, likesWorkerUrl: '' };

@@ -17,13 +17,6 @@
 }
 @font-face {
 	font-family: 'Pretendard';
-	font-weight: 400;
-	src: url('/fonts/Pretendard/pretendard-400-korean.woff2') format('woff2');
-	font-display: swap;
-	unicode-range: U+1100-11FF, U+3000-303F, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF, U+FF00-FFEF;
-}
-@font-face {
-	font-family: 'Pretendard';
 	font-weight: 600;
 	src: url('/fonts/Pretendard/pretendard-600-latin.woff2') format('woff2');
 	font-display: swap;
@@ -31,24 +24,10 @@
 }
 @font-face {
 	font-family: 'Pretendard';
-	font-weight: 600;
-	src: url('/fonts/Pretendard/pretendard-600-korean.woff2') format('woff2');
-	font-display: swap;
-	unicode-range: U+1100-11FF, U+3000-303F, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF, U+FF00-FFEF;
-}
-@font-face {
-	font-family: 'Pretendard';
 	font-weight: 700;
 	src: url('/fonts/Pretendard/pretendard-700-latin.woff2') format('woff2');
 	font-display: swap;
 	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-	font-family: 'Pretendard';
-	font-weight: 700;
-	src: url('/fonts/Pretendard/pretendard-700-korean.woff2') format('woff2');
-	font-display: swap;
-	unicode-range: U+1100-11FF, U+3000-303F, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF, U+FF00-FFEF;
 }
 
 /* ---------- 1. 设计令牌 ---------- */
@@ -167,6 +146,7 @@
 }
 
 html {
+	font-size: 93.75%;
 	-webkit-text-size-adjust: 100%;
 	scroll-behavior: smooth;
 }
@@ -178,6 +158,10 @@ body {
 	font-family: var(--font);
 	line-height: 1.65;
 	transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+main {
+	view-transition-name: xh-main;
 }
 
 img,
@@ -1804,6 +1788,38 @@ html:not([data-theme='dark']) .theme-toggle .icon-moon {
 		transition-duration: 0.01ms !important;
 		animation-duration: 0.01ms !important;
 		scroll-behavior: auto !important;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes xh-view-leave {
+		from {
+			opacity: 1;
+			transform: translateY(0);
+		}
+		to {
+			opacity: 0;
+			transform: translateY(-0.4rem);
+		}
+	}
+
+	@keyframes xh-view-enter {
+		from {
+			opacity: 0;
+			transform: translateY(0.4rem);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	::view-transition-old(xh-main) {
+		animation: xh-view-leave 0.12s cubic-bezier(0.2, 0, 0, 1) both;
+	}
+
+	::view-transition-new(xh-main) {
+		animation: xh-view-enter 0.24s cubic-bezier(0.2, 0, 0, 1) both;
 	}
 }
 

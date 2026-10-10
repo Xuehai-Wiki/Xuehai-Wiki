@@ -9,19 +9,21 @@
 (() => {
 	const KEY = 'xh-disclaimer-seen';
 
-	// 已关闭过:给 <html> 加标记,CSS 先行隐藏 banner(不渲染也不闪)
-	let seen = false;
-	try {
-		seen = !!localStorage.getItem(KEY);
-	} catch {
-		/* ignore */
-	}
-	if (seen) {
-		document.documentElement.setAttribute('data-banner-hidden', '');
+	function syncDisclosureState() {
+		let seen = false;
+		try {
+			seen = !!localStorage.getItem(KEY);
+		} catch {
+			/* ignore */
+		}
+		if (seen) {
+			document.documentElement.setAttribute('data-banner-hidden', '');
+		}
+		return seen;
 	}
 
 	function addBanner() {
-		if (seen) return;
+		if (syncDisclosureState()) return;
 		const bar = document.createElement('div');
 		bar.className = 'xh-banner';
 		bar.setAttribute('role', 'status');
@@ -127,32 +129,34 @@
 
 	// 随机文章:让所有 .xh-wiki-random / .xh-toc-random 链接真正跳到随机文档。
 	// 从 graph.json 读取全部文档节点,排除当前页与门户页,随机挑一个跳转。
-	let randomLinksReady = false;
+	let graphNodesPromise = null;
 	function setupRandomLinks() {
-		if (randomLinksReady) return;
-		randomLinksReady = true;
 		const links = document.querySelectorAll('.xh-wiki-random, .xh-toc-random');
 		if (links.length === 0) return;
-		fetch('/graph.json')
-			.then((r) => (r.ok ? r.json() : null))
-			.catch(() => null)
-			.then((graph) => {
-				const nodes = (graph?.nodes ?? []).filter(
-					(n) => n.id !== 'docs/index' && n.url !== location.pathname,
-				);
-				links.forEach((link) => {
-					link.addEventListener('click', (ev) => {
-						ev.preventDefault();
-						if (nodes.length === 0) {
-							window.location.href = '/docs';
-							return;
-						}
-						const pick = nodes[Math.floor(Math.random() * nodes.length)];
-						window.location.href = pick.url;
-					});
+		if (!graphNodesPromise) {
+			graphNodesPromise = fetch('/graph.json')
+				.then((r) => (r.ok ? r.json() : null))
+				.catch(() => null);
+		}
+		graphNodesPromise.then((graph) => {
+			const nodes = (graph?.nodes ?? []).filter(
+				(n) => n.id !== 'docs/index' && n.url !== location.pathname,
+			);
+			links.forEach((link) => {
+				if (link.dataset.xhRandomReady) return;
+				link.dataset.xhRandomReady = '1';
+				link.addEventListener('click', (ev) => {
+					ev.preventDefault();
+					if (nodes.length === 0) {
+						window.location.href = '/docs';
+						return;
+					}
+					const pick = nodes[Math.floor(Math.random() * nodes.length)];
+					window.location.href = pick.url;
 				});
 			});
-	}
+			});
+		}
 
 	function run() {
 		addBanner();
@@ -160,9 +164,12 @@
 		enhanceToc();
 		setupRandomLinks();
 	}
+	syncDisclosureState();
+	document.addEventListener('astro:after-swap', syncDisclosureState);
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', run);
 	} else {
 		run();
 	}
+	document.addEventListener('astro:page-load', run);
 })();

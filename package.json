@@ -7,12 +7,13 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/build-graph.mjs && astro build",
+    "build": "node scripts/subset-fonts.mjs && node scripts/build-graph.mjs && astro build",
     "build:graph": "node scripts/build-graph.mjs",
+    "build:fonts": "node scripts/subset-fonts.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "deploy": "wrangler deploy",
-    "check": "astro check"
+    "check": "node --max-old-space-size=512 node_modules/astro/bin/astro.mjs check"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.41.9",
@@ -22,6 +23,9 @@
     "esbuild": true
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "subset-font": "^2.9.0",
+    "typescript": "^6.0.3",
     "wrangler": "^4.127.0"
   }
 }

@@ -78,7 +78,7 @@ const categoryList = appsByCategory();
 		没有匹配的应用,请切换角色筛选。
 	</div>
 
-	<script is:inline>
+	<script is:inline data-astro-rerun>
 		(() => {
 			const filterButtons = Array.from(document.querySelectorAll('[data-role-filter]'));
 			const apps = Array.from(document.querySelectorAll('[data-app]'));
