@@ -5,7 +5,20 @@
 		const saved = localStorage.getItem('xh-theme');
 		const theme = saved === 'light' || saved === 'dark' ? saved : null;
 		if (theme) document.documentElement.setAttribute('data-theme', theme);
+		if (localStorage.getItem('xh-disclaimer-seen')) {
+			document.documentElement.setAttribute('data-banner-hidden', '');
+		}
 	} catch {
 		/* 隐私模式下 localStorage 可能不可用,退回系统偏好 */
 	}
 })();
+
+document.addEventListener('astro:after-swap', () => {
+	try {
+		if (localStorage.getItem('xh-disclaimer-seen')) {
+			document.documentElement.setAttribute('data-banner-hidden', '');
+		}
+	} catch {
+		/* 隐私模式下 localStorage 可能不可用,退回系统偏好 */
+	}
+});

@@ -7,12 +7,12 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/build-graph.mjs && astro build",
+    "build": "node scripts/build-graph.mjs && astro build && node scripts/minify-public-js.mjs && node scripts/verify-dist.mjs",
     "build:graph": "node scripts/build-graph.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "deploy": "wrangler deploy",
-    "check": "astro check"
+    "check": "node --max-old-space-size=2048 node_modules/astro/bin/astro.mjs check"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.41.9",
@@ -22,6 +22,9 @@
     "esbuild": true
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "terser": "^5.44.1",
+    "typescript": "^6.0.3",
     "wrangler": "^4.127.0"
   }
 }

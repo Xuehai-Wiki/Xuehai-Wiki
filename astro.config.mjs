@@ -10,6 +10,17 @@ import remarkWikiLinks from './src/utils/wikilink-remark.mjs';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://xh.asxz.one',
+	vite: {
+		build: {
+			minify: 'terser',
+			cssMinify: 'esbuild',
+			terserOptions: {
+				compress: { passes: 2 },
+				mangle: true,
+				format: { comments: false },
+			},
+		},
+	},
 	markdown: {
 		remarkPlugins: [
 			// Wiki-link [[…]] / ![[…]] syntax, ported from the old xuehai-wiki-doc.
@@ -19,6 +30,7 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'Xuehai Docs',
+			favicon: '/favicon.ico',
 			// Starlight 0.41 无 route 选项;docs 挂载在根路径的 [...slug] 上。
 			// 内容 entry id 统一加 'docs/' 前缀(见 src/content.config.ts),使文档只服务于 /docs/*。
 			disable404Route: true, // 全站自定义 404 (src/pages/404.astro)

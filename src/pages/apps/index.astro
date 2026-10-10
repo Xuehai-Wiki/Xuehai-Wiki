@@ -269,14 +269,14 @@ const catList = [...byCat.entries()]
 		没有匹配的应用,请切换角色筛选。
 	</div>
 
-	<script is:inline>
+	<script>
 		(() => {
-			const filterBtns = Array.from(document.querySelectorAll('[data-role-filter]'));
-			const cards = Array.from(document.querySelectorAll('[data-app]'));
-			const emptyEl = document.getElementById('apps-empty');
+			const filterBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-role-filter]'));
+			const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-app]'));
+			const emptyEl = document.querySelector<HTMLElement>('#apps-empty');
 
 			function apply() {
-				const active = document.querySelector('[data-role-filter][aria-pressed="true"]');
+				const active = document.querySelector<HTMLElement>('[data-role-filter][aria-pressed="true"]');
 				const role = active ? active.dataset.roleFilter : 'all';
 				let visible = 0;
 				cards.forEach((c) => {
@@ -285,8 +285,8 @@ const catList = [...byCat.entries()]
 					if (match) visible++;
 				});
 				// 隐藏空分类
-				document.querySelectorAll('[data-app-category]').forEach((sec) => {
-					const shown = Array.from(sec.querySelectorAll('[data-app]')).some((c) => !c.hidden);
+				document.querySelectorAll<HTMLElement>('[data-app-category]').forEach((sec) => {
+					const shown = Array.from(sec.querySelectorAll<HTMLElement>('[data-app]')).some((c) => !c.hidden);
 					sec.hidden = !shown;
 				});
 				if (emptyEl) emptyEl.hidden = visible !== 0;
