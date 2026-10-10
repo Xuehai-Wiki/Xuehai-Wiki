@@ -79,39 +79,41 @@ const categoryList = appsByCategory();
 		没有匹配的应用,请切换角色筛选。
 	</div>
 
-	<script is:inline data-astro-rerun>
+	<script>
 		(() => {
-			const filterButtons = Array.from(document.querySelectorAll('[data-role-filter]'));
-			const apps = Array.from(document.querySelectorAll('[data-app]'));
-			const emptyElement = document.getElementById('apps-empty');
+			const filterBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-role-filter]'));
+			const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-app]'));
+			const emptyEl = document.querySelector<HTMLElement>('#apps-empty');
 
 			function apply() {
-				const active = document.querySelector('[data-role-filter][aria-pressed="true"]');
+				const active = document.querySelector<HTMLElement>('[data-role-filter][aria-pressed="true"]');
 				const role = active ? active.dataset.roleFilter : 'all';
 				let visible = 0;
-				apps.forEach((app) => {
-					const match = role === 'all' || app.dataset.role === role;
-					app.hidden = !match;
+				cards.forEach((c) => {
+					const match = role === 'all' || c.dataset.role === role;
+					c.hidden = !match;
 					if (match) visible++;
 				});
-				document.querySelectorAll('[data-app-category]').forEach((section) => {
-					const shown = Array.from(section.querySelectorAll('[data-app]')).some((app) => !app.hidden);
-					section.hidden = !shown;
+				// 隐藏空分类
+				document.querySelectorAll<HTMLElement>('[data-app-category]').forEach((sec) => {
+					const shown = Array.from(sec.querySelectorAll<HTMLElement>('[data-app]')).some((c) => !c.hidden);
+					sec.hidden = !shown;
 				});
-				if (emptyElement) emptyElement.hidden = visible !== 0;
+				if (emptyEl) emptyEl.hidden = visible !== 0;
 			}
 
-			filterButtons.forEach((button) => {
-				button.addEventListener('click', () => {
-					filterButtons.forEach((item) => {
-						const selected = item === button;
-						item.classList.toggle('btn--primary', selected);
-						item.setAttribute('aria-pressed', String(selected));
+			filterBtns.forEach((btn) => {
+				btn.addEventListener('click', () => {
+					filterBtns.forEach((b) => {
+						const selected = b === btn;
+						b.classList.toggle('btn--primary', selected);
+						b.setAttribute('aria-pressed', String(selected));
 					});
 					apply();
 				});
 			});
 
+			// 若当前筛选下某分类无卡片,隐藏其标题
 			apply();
 		})();
 	</script>

@@ -158,34 +158,45 @@ const TYPE_OPTIONS = [
 	<script type="application/json" id="tracker-data" set:html={cardJson}></script>
 
 	<!-- 客户端交互:随机抽卡 / 筛选 / 搜索 / 分页 -->
-	<script is:inline data-astro-rerun>
+	<script>
+		type RandomItem = {
+			id: string;
+			title: string;
+			type: string;
+			status: string;
+			xhcs: number;
+		};
+
 		(() => {
 			const dataEl = document.getElementById('tracker-data');
 			if (!dataEl) return;
-			let items = [];
+			let items: RandomItem[] = [];
 			try {
-				items = JSON.parse(dataEl.textContent);
+				items = JSON.parse(dataEl.textContent ?? '[]') as RandomItem[];
 			} catch {
 				items = [];
 			}
 
 			const PER = 20;
-			const rows = Array.from(document.querySelectorAll('.tracker-row'));
-			const searchInput = document.getElementById('tracker-search');
-			const pagNav = document.getElementById('tracker-pagination');
-			const pageInfo = document.getElementById('tracker-pageinfo');
-			const emptyEl = document.getElementById('tracker-empty');
+			const rows = Array.from(document.querySelectorAll<HTMLElement>('.tracker-row'));
+			const searchInput = document.querySelector<HTMLInputElement>('#tracker-search');
+			const pagNav = document.querySelector<HTMLElement>('#tracker-pagination');
+			const pageInfo = document.querySelector<HTMLElement>('#tracker-pageinfo');
+			const emptyEl = document.querySelector<HTMLElement>('#tracker-empty');
 
 			// ---- 筛选面板(状态 + 类型 多选) ----
-			const filterToggle = document.getElementById('tracker-filter-toggle');
-			const filterPanel = document.getElementById('tracker-filter-panel');
-			const filterCount = document.getElementById('tracker-filter-count');
-			const filterClear = document.getElementById('tracker-filter-clear');
+			const filterToggle = document.querySelector<HTMLButtonElement>('#tracker-filter-toggle');
+			const filterPanel = document.querySelector<HTMLElement>('#tracker-filter-panel');
+			const filterCount = document.querySelector<HTMLElement>('#tracker-filter-count');
+			const filterClear = document.querySelector<HTMLButtonElement>('#tracker-filter-clear');
 			const filterBoxes = Array.from(
-				document.querySelectorAll('#tracker-filter-panel input[type="checkbox"]'),
+				document.querySelectorAll<HTMLInputElement>('#tracker-filter-panel input[type="checkbox"]'),
 			);
 			// 选中集合:status / type
-			const sel = { status: new Set(), type: new Set() };
+			const sel: { status: Set<string>; type: Set<string> } = {
+				status: new Set<string>(),
+				type: new Set<string>(),
+			};
 
 			function currentCount() {
 				return sel.status.size + sel.type.size;
@@ -199,6 +210,7 @@ const TYPE_OPTIONS = [
 			}
 
 			filterToggle?.addEventListener('click', () => {
+				if (!filterPanel) return;
 				const open = filterPanel.hidden;
 				filterPanel.hidden = !open;
 				filterToggle.setAttribute('aria-expanded', String(!open));
@@ -216,7 +228,7 @@ const TYPE_OPTIONS = [
 
 			filterBoxes.forEach((box) => {
 				box.addEventListener('change', () => {
-					const kind = box.dataset.filter;
+					const kind = box.dataset.filter as 'status' | 'type';
 					const v = box.value;
 					if (box.checked) sel[kind].add(v);
 					else sel[kind].delete(v);
@@ -231,8 +243,8 @@ const TYPE_OPTIONS = [
 			function apply() {
 				const q = (searchInput?.value || '').trim().toLowerCase();
 				filtered = rows.filter((r) => {
-					if (sel.status.size && !sel.status.has(r.dataset.status)) return false;
-					if (sel.type.size && !sel.type.has(r.dataset.type)) return false;
+					if (sel.status.size && !sel.status.has(r.dataset.status ?? '')) return false;
+					if (sel.type.size && !sel.type.has(r.dataset.type ?? '')) return false;
 					if (q && !(r.dataset.search || '').includes(q)) return false;
 					return true;
 				});
@@ -259,10 +271,10 @@ const TYPE_OPTIONS = [
 				buildPagination(pages);
 			}
 
-			function buildPagination(pages) {
+			function buildPagination(pages: number) {
 				if (!pagNav) return;
 				pagNav.innerHTML = '';
-				const mk = (label, p, disabled, active) => {
+				const mk = (label: string, p: number, disabled: boolean, active: boolean) => {
 					const b = document.createElement('button');
 					b.type = 'button';
 					b.textContent = label;
@@ -313,8 +325,8 @@ const TYPE_OPTIONS = [
 
 			// 整行可点击跳详情(点击内部链接时交给链接自身)
 			rows.forEach((r) => {
-				r.addEventListener('click', (ev) => {
-					if (ev.target.closest('a')) return;
+				r.addEventListener('click', (ev: MouseEvent) => {
+					if (ev.target instanceof Element && ev.target.closest('a')) return;
 					const href = r.dataset.href;
 					if (href) window.location.href = href;
 				});
@@ -323,10 +335,10 @@ const TYPE_OPTIONS = [
 			searchInput?.addEventListener('input', apply);
 
 			// 点击面板外部时收起
-			document.addEventListener('click', (ev) => {
+			document.addEventListener('click', (ev: MouseEvent) => {
 				if (!filterPanel || filterPanel.hidden) return;
-				const wrap = document.getElementById('tracker-filter');
-				if (wrap && !wrap.contains(ev.target)) {
+				const wrap = document.querySelector<HTMLElement>('#tracker-filter');
+				if (wrap && ev.target instanceof Node && !wrap.contains(ev.target)) {
 					filterPanel.hidden = true;
 					filterToggle?.setAttribute('aria-expanded', 'false');
 				}

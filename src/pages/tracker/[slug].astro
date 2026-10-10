@@ -164,18 +164,23 @@ const twikooInitScript = `(function () {
 	<script type="application/json" id="tracker-detail-cfg" set:html={detailCfg}></script>
 
 	<!-- 点赞交互:开关默认关闭,按钮为禁用占位;enabled 时才请求 workerUrl -->
-	<script is:inline data-astro-rerun>
+	<script>
+		type LikeConfig = {
+			likesEnabled: boolean;
+			likesWorkerUrl: string;
+		};
+
 		(() => {
-			const cfgEl = document.getElementById('tracker-detail-cfg');
-			let cfg = { likesEnabled: false, likesWorkerUrl: '' };
+			const cfgEl = document.querySelector<HTMLElement>('#tracker-detail-cfg');
+			let cfg: LikeConfig = { likesEnabled: false, likesWorkerUrl: '' };
 			if (cfgEl) {
 				try {
-					cfg = JSON.parse(cfgEl.textContent) || cfg;
+					cfg = JSON.parse(cfgEl.textContent ?? '{}') || cfg;
 				} catch {
 					/* ignore */
 				}
 			}
-			const btn = document.querySelector('.tracker-like');
+			const btn = document.querySelector<HTMLButtonElement>('.tracker-like');
 			if (!btn) return;
 			if (!cfg.likesEnabled) return; // 默认关闭:保留禁用占位,不发起任何请求
 			if (!cfg.likesWorkerUrl) {
@@ -197,7 +202,7 @@ const twikooInitScript = `(function () {
 					if (!res.ok) throw new Error('bad status');
 					const data = await res.json();
 					const count = typeof data.count === 'number' ? data.count : 0;
-					const c = btn.querySelector('.tracker-like-count');
+					const c = btn.querySelector<HTMLElement>('.tracker-like-count');
 					if (c) c.textContent = String(count);
 				} catch (e) {
 					btn.classList.add('is-error');
