@@ -1,153 +1,22 @@
 ---
-// 应用列表页 /apps:读取 public/data/xuehai-apps.json,按业务分类分组,
-// 列出每款应用的详细信息(图标/名称/角色/包名/版本/大小/更新时间)并提供下载。
+// 应用索引页 /apps:按业务分类分组,每个应用链接到构建期生成的详情页。
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { appsByCategory } from '../../lib/apps';
 
-// public 下的 JSON 不能经 Vite import,故在构建期用 node:fs 读取。
-import { readFileSync } from 'node:fs';
-
-// 应用与版本的最小数据结构,用于构建期读取 public/data/xuehai-apps.json。
-interface AppVersion {
-	versionName?: string;
-	versionCode: number;
-	url?: string;
-	packageSize?: number;
-	updateTime?: number;
-	createTime?: number;
-	description?: string;
-	releaseSummary?: string;
-	releaseNote?: string;
-}
-
-interface RawApp {
-	name: string;
-	userType: number;
-	appCode: string;
-	packageName: string;
-	icon?: string;
-	description?: string;
-	updateTime?: number;
-	appVersions?: AppVersion[];
-}
-
-const rawApps = JSON.parse(
-	readFileSync(new URL('../../../public/data/xuehai-apps.json', import.meta.url), 'utf8'),
-) as RawApp[];
-
-// ---------- 分类映射(appCode 前缀 -> 业务分类) ----------
-// 依据 appCode 前缀判断业务模块;更长的前缀优先匹配(如 WBYY 长于 CA)。
-const CATEGORIES: { key: string; label: string; matcher: (code: string) => boolean; order: number }[] = [
-	{ key: 'ai', label: 'AI 应用', matcher: (c) => c.startsWith('CA11'), order: 1 },
-	{ key: 'system', label: '系统与办公', matcher: (c) => c.startsWith('CA00'), order: 2 },
-	{ key: 'practice', label: '刷题与错题', matcher: (c) => c.startsWith('CA101'), order: 3 },
-	{ key: 'teacher', label: '名师金课', matcher: (c) => c.startsWith('CA102'), order: 4 },
-	{ key: 'homework', label: '作业与作文', matcher: (c) => c.startsWith('CA103'), order: 5 },
-	{ key: 'classroom', label: '课堂与智能', matcher: (c) => c.startsWith('CA104'), order: 6 },
-	{ key: 'read', label: '听说与阅读', matcher: (c) => c.startsWith('CA105'), order: 7 },
-	{ key: 'launcher', label: '大厅与平台', matcher: (c) => c.startsWith('CA106'), order: 8 },
-	{ key: 'tools', label: '学习工具', matcher: (c) => c.startsWith('CA107'), order: 9 },
-	{ key: 'feedback', label: '反馈', matcher: (c) => c.startsWith('CA108'), order: 10 },
-	{ key: 'train', label: '练习与训练', matcher: (c) => c.startsWith('CA20'), order: 11 },
-	{ key: 'settings', label: '设置', matcher: (c) => c.startsWith('CB20'), order: 12 },
-	{ key: 'subject', label: '学科强化练', matcher: (c) => c.startsWith('WBYY'), order: 13 },
-	{ key: 'bai fen', label: '百分·云教育', matcher: (c) => c.startsWith('LS00'), order: 14 },
-	{ key: 'deep', label: '深度学习', matcher: (c) => c.startsWith('CAT0'), order: 15 },
-	{ key: 'legacy', label: '经典旧版', matcher: (c) => /^\d{4}$/.test(c), order: 16 },
-	{ key: 'other', label: '其他', matcher: () => true, order: 99 },
-];
-
-function categorize(code: string) {
-	for (const cat of CATEGORIES) {
-		if (cat.matcher(code)) return cat;
-	}
-	return CATEGORIES[CATEGORIES.length - 1];
-}
-
-// ---------- 角色(userType)映射 ----------
-const ROLE: Record<number, { label: string; cls: string }> = {
-	1: { label: '学生端', cls: 'student' },
-	2: { label: '教师端', cls: 'teacher' },
-	4: { label: '通用', cls: 'common' },
-	3: { label: '其他', cls: 'other' },
-};
-const roleOf = (ut: number) => ROLE[ut] ?? { label: '通用', cls: 'common' };
-
-// ---------- 工具函数 ----------
-// 格式化包体积:字节 -> MB
-const fmtSize = (bytes?: number) => {
-	if (!bytes) return '';
-	return (bytes / 1024 / 1024).toFixed(1) + ' MB';
-};
-// 格式化时间戳 -> YYYY-MM-DD
-const fmtDate = (ts?: number) => {
-	if (!ts) return '';
-	const d = new Date(ts);
-	const y = d.getFullYear();
-	const m = String(d.getMonth() + 1).padStart(2, '0');
-	const day = String(d.getDate()).padStart(2, '0');
-	return `${y}-${m}-${day}`;
-};
-
-// ---------- 数据归一化 ----------
-// 每个 app 取最新版本(第一项)展示;同 appCode 下学生/教师/多包各为一条记录。
-const apps = rawApps
-	.map((a) => {
-		const latest = a.appVersions?.[0] ?? null;
-		const role = roleOf(a.userType);
-		const cat = categorize(a.appCode);
-		return {
-			...a,
-			role,
-			cat,
-			latest,
-			sizeText: fmtSize(latest?.packageSize),
-			dateText: fmtDate(latest?.updateTime ?? a.updateTime),
-			// 下载链接取最新版本 url;无版本则不提供下载
-			downloadUrl: latest?.url || '',
-			// 图标是否可渲染:XML 矢量文件无法在 <img> 显示,用文字兜底
-			iconOk: Boolean(a.icon) && !a.icon?.split('?')[0].toLowerCase().endsWith('.xml'),
-			// 历史版本(降序,最新在前),供"历史版本"展开区展示。
-			// 版本过多时只展示最近 20 个,避免页面过大;totalVersions 记录真实总数。
-			versions: (a.appVersions ?? [])
-				.slice()
-				.sort((x, y) => y.versionCode - x.versionCode)
-				.slice(0, 20)
-				.map((v) => ({
-					versionName: v.versionName,
-					versionCode: v.versionCode,
-					url: v.url || '',
-					description: v.description || v.releaseSummary || v.releaseNote || '',
-					sizeText: fmtSize(v.packageSize),
-					dateText: fmtDate(v.updateTime || v.createTime),
-				})),
-			totalVersions: (a.appVersions ?? []).length,
-		};
-	})
-	.sort((a, b) => a.name.localeCompare(b.name, 'zh'));
-
-// ---------- 按分类分组 ----------
-const byCat = new Map<string, typeof apps>();
-for (const a of apps) {
-	if (!byCat.has(a.cat.key)) byCat.set(a.cat.key, []);
-	byCat.get(a.cat.key)!.push(a);
-}
-const catList = [...byCat.entries()]
-	.sort((x, y) => x[1][0].cat.order - y[1][0].cat.order)
-	.map(([key, list]) => ({ key, list, label: list[0].cat.label }));
+const categoryList = appsByCategory();
 ---
 
 <BaseLayout
 	title="应用列表 | Xuehai Wiki"
-	description="学海 / 智通云应用列表,按分类查看版本记录与安装包。"
+	description="学海 / 智通云应用索引。查看每个应用、版本历史与安装包。"
 >
 	<section class="container" style="padding-block: 2.5rem 1rem;">
 		<h1 style="margin: 0;">应用列表</h1>
 		<p class="muted" style="margin: 0.4rem 0 0; font-size: 0.95rem;">
-			学海 / 智通云应用,按分类查看版本记录与安装包。
+			学海 / 智通云应用索引。查看每个应用、版本历史与安装包。
 		</p>
 	</section>
 
-	<!-- 角色筛选:沿用列表页工具栏与全站按钮。 -->
 	<section class="container">
 		<div class="tracker-toolbar" role="group" aria-label="按角色筛选">
 			<span class="muted">角色</span>
@@ -160,105 +29,45 @@ const catList = [...byCat.entries()]
 
 	<section class="container apps-sections">
 		{
-			catList.map(({ key, label, list }) => (
+			categoryList.map(({ key, label, list }) => (
 				<section data-app-category={key}>
-					<h2 class="apps-section-title">
-						{label}
-					</h2>
+					<h2 class="apps-section-title">{label}</h2>
 					<div class="card-grid">
-						{
-							list.map((a) => (
-								<article
-									class="card app-card"
-									data-app
-									data-role={a.role.cls}
-								>
-									<div class="app-card-head">
-										<div class="app-icon">
-											{a.iconOk ? (
-												<img src={a.icon} alt="" loading="lazy" referrerpolicy="no-referrer" />
-											) : (
-												<span class="muted">{a.name.slice(0, 1)}</span>
-											)}
-										</div>
-										<div class="app-titlewrap">
-											<h3>{a.name}</h3>
-											<small class="muted">{a.role.label}</small>
-										</div>
-									</div>
-
-									{a.description && <p class="muted">{a.description}</p>}
-
-									<dl class="app-meta">
-										<div><dt>包名</dt><dd class="mono">{a.packageName}</dd></div>
-										<div><dt>应用码</dt><dd class="mono">{a.appCode}</dd></div>
-										<div><dt>最新版本</dt><dd class="mono">{a.latest?.versionName ?? '—'}</dd></div>
-										<div><dt>版本号</dt><dd class="mono">{a.latest?.versionCode ?? '—'}</dd></div>
-										<div><dt>大小</dt><dd>{a.sizeText || '—'}</dd></div>
-										<div><dt>更新时间</dt><dd>{a.dateText || '—'}</dd></div>
-									</dl>
-
-									{a.latest?.description && (
-										<p class="muted app-relnote">{a.latest.description}</p>
-									)}
-
-									{(a.versions?.length ?? 0) > 1 && (
-										<details class="app-versions">
-											<summary>历史版本 ({a.totalVersions} 个版本)</summary>
-											{(a.totalVersions > a.versions.length) && (
-												<p class="faint">共 {a.totalVersions} 个版本,此处仅展示最近 {a.versions.length} 个</p>
-											)}
-											<ul class="app-versions-list">
-												{a.versions.map((v) => (
-													<li class="app-version-row">
-														<span class="app-version-main">
-															<span class="mono">{v.versionName || `v${v.versionCode}`}</span>
-															<span class="app-version-meta faint">
-																<span>{v.sizeText || '—'}</span>
-																<span>{v.dateText || '—'}</span>
-															</span>
-														</span>
-														{v.description && <span class="app-version-desc muted">{v.description}</span>}
-														{v.url ? (
-															<a
-																class="btn btn--sm app-version-download"
-																href={v.url}
-																target="_blank"
-																rel="noopener noreferrer"
-																download
-															>
-																下载
-															</a>
-														) : (
-															<span class="faint app-version-download">暂无安装包</span>
-														)}
-													</li>
-												))}
-											</ul>
-										</details>
-									)}
-
-									<div class="app-card-foot">
-										{a.downloadUrl ? (
-											<a
-												class="btn btn--primary btn--sm"
-												href={a.downloadUrl}
-												target="_blank"
-												rel="noopener noreferrer"
-												download
-											>
-												<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-													<path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
-												</svg>
-												下载
-											</a>
+						{list.map((app) => (
+							<a
+								class="card app-card card--link"
+								data-app
+								data-role={app.role.cls}
+								href={app.detailUrl}
+							>
+								<div class="app-card-head">
+									<div class="app-icon">
+										{app.iconOk ? (
+											<img src={app.icon} alt="" loading="lazy" referrerpolicy="no-referrer" />
 										) : (
-											<span class="faint">暂无可下载版本</span>
+											<span class="muted">{app.name.slice(0, 1)}</span>
 										)}
 									</div>
-								</article>
-							))
-						}
+									<div class="app-titlewrap">
+										<h3>{app.name}</h3>
+										<small class="muted">{app.role.label}</small>
+									</div>
+								</div>
+
+								{app.description && <p class="muted">{app.description}</p>}
+
+								<dl class="app-meta">
+									<div><dt>最新版本</dt><dd class="mono">{app.latest?.versionLabel ?? '—'}</dd></div>
+									<div><dt>大小</dt><dd>{app.sizeText || '—'}</dd></div>
+									<div><dt>更新时间</dt><dd>{app.dateText || '—'}</dd></div>
+									<div><dt>历史版本</dt><dd>{app.totalVersions} 个</dd></div>
+								</dl>
+
+								<div class="app-card-foot">
+									<span class="card-arrow">查看详情 →</span>
+								</div>
+							</a>
+						))}
 					</div>
 				</section>
 			))
@@ -271,39 +80,37 @@ const catList = [...byCat.entries()]
 
 	<script is:inline>
 		(() => {
-			const filterBtns = Array.from(document.querySelectorAll('[data-role-filter]'));
-			const cards = Array.from(document.querySelectorAll('[data-app]'));
-			const emptyEl = document.getElementById('apps-empty');
+			const filterButtons = Array.from(document.querySelectorAll('[data-role-filter]'));
+			const apps = Array.from(document.querySelectorAll('[data-app]'));
+			const emptyElement = document.getElementById('apps-empty');
 
 			function apply() {
 				const active = document.querySelector('[data-role-filter][aria-pressed="true"]');
 				const role = active ? active.dataset.roleFilter : 'all';
 				let visible = 0;
-				cards.forEach((c) => {
-					const match = role === 'all' || c.dataset.role === role;
-					c.hidden = !match;
+				apps.forEach((app) => {
+					const match = role === 'all' || app.dataset.role === role;
+					app.hidden = !match;
 					if (match) visible++;
 				});
-				// 隐藏空分类
-				document.querySelectorAll('[data-app-category]').forEach((sec) => {
-					const shown = Array.from(sec.querySelectorAll('[data-app]')).some((c) => !c.hidden);
-					sec.hidden = !shown;
+				document.querySelectorAll('[data-app-category]').forEach((section) => {
+					const shown = Array.from(section.querySelectorAll('[data-app]')).some((app) => !app.hidden);
+					section.hidden = !shown;
 				});
-				if (emptyEl) emptyEl.hidden = visible !== 0;
+				if (emptyElement) emptyElement.hidden = visible !== 0;
 			}
 
-			filterBtns.forEach((btn) => {
-				btn.addEventListener('click', () => {
-					filterBtns.forEach((b) => {
-						const selected = b === btn;
-						b.classList.toggle('btn--primary', selected);
-						b.setAttribute('aria-pressed', String(selected));
+			filterButtons.forEach((button) => {
+				button.addEventListener('click', () => {
+					filterButtons.forEach((item) => {
+						const selected = item === button;
+						item.classList.toggle('btn--primary', selected);
+						item.setAttribute('aria-pressed', String(selected));
 					});
 					apply();
 				});
 			});
 
-			// 若当前筛选下某分类无卡片,隐藏其标题
 			apply();
 		})();
 	</script>

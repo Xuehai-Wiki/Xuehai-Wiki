@@ -2068,6 +2068,11 @@ starlight-toc[data-toc-open] nav .xh-toc-body {
 	overflow-wrap: anywhere;
 }
 
+.app-icon--large {
+	width: 4.25rem;
+	height: 4.25rem;
+}
+
 .app-meta {
 	margin: 0;
 	display: grid;
@@ -2160,4 +2165,73 @@ starlight-toc[data-toc-open] nav .xh-toc-body {
 	grid-row: 1;
 	grid-column: 2;
 	justify-self: end;
+}
+
+/* ---- 应用详情页 ---- */
+.app-detail-head {
+	display: grid;
+	gap: 1rem;
+}
+
+.app-detail-title {
+	margin: 0;
+	font-size: 1.65rem;
+}
+
+.app-detail-badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+	margin-top: 0.5rem;
+}
+
+.app-detail-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+	gap: 1rem;
+}
+
+.app-detail-panel h2,
+.app-history h2 {
+	margin: 0 0 1rem;
+}
+
+.app-detail-meta {
+	margin: 0;
+	display: grid;
+	gap: 0.55rem;
+	font-size: 0.85rem;
+}
+
+.app-detail-meta > div {
+	display: grid;
+	grid-template-columns: 7.5rem minmax(0, 1fr);
+	gap: 0.6rem;
+	align-items: baseline;
+}
+
+.app-detail-meta dt {
+	color: var(--fg-muted);
+}
+
+.app-detail-meta dd {
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+
+.app-detail-hash,
+.app-version-hash {
+	font-size: 0.72rem;
+	color: var(--fg-muted);
+}
+
+.app-latest {
+	display: grid;
+	gap: 1rem;
+	justify-items: start;
+}
+
+.app-versions-list--full {
+	max-height: none;
+	overflow: visible;
 }
