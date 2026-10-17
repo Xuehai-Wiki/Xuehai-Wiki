@@ -74,20 +74,22 @@
 		if (!tocNav) return;
 		if (tocNav.querySelector('.xh-toc-head')) return;
 
-		// 折叠开关:默认收起,点击展开。开关放在最前。
+		// 折叠开关:默认展开,点击可收起。开关放在最前。
 		const head = document.createElement('button');
 		head.type = 'button';
 		head.className = 'xh-toc-head';
-		head.setAttribute('aria-expanded', 'false');
+		head.setAttribute('aria-expanded', 'true');
 		head.textContent = '目录';
 
-		// 把目录正文(分类标签 + 大纲列表 + 随机文章)包进 .xh-toc-body,默认 display:none
+		// 把目录正文(分类标签 + 大纲列表 + 随机文章)包进 .xh-toc-body,由开关控制显隐
 		const body = document.createElement('div');
 		body.className = 'xh-toc-body';
 		// 移动 TOC 已有的目录项(分类标签、大纲 ul、随机文章脚注)到 body
 		while (tocNav.firstChild) body.appendChild(tocNav.firstChild);
 		tocNav.appendChild(head);
 		tocNav.appendChild(body);
+		// 默认展开:与 aria-expanded 一致,初始即可见
+		tocNav.closest('starlight-toc').setAttribute('data-toc-open', '');
 
 		// 分类标签:从 PageTitle 渲染的分类芯片里读取文本,重建一批
 		const sourceCats = document.querySelectorAll('.xh-wiki-meta-cats .xh-wiki-tag');

@@ -47,6 +47,12 @@
       "title": "学海请求签名",
       "url": "/docs/xuehai-sign",
       "degree": 0
+    },
+    {
+      "id": "docs/ztp",
+      "title": "智通平台",
+      "url": "/docs/ztp",
+      "degree": 0
     }
   ],
   "edges": [],
@@ -59,7 +65,8 @@
     "docs/xuehai-arrays": [],
     "docs/xuehai-brushcode": [],
     "docs/xuehai-login-api": [],
-    "docs/xuehai-sign": []
+    "docs/xuehai-sign": [],
+    "docs/ztp": []
   },
   "broken": []
 }

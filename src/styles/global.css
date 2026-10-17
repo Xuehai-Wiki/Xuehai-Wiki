@@ -1924,23 +1924,35 @@ html:not([data-theme='dark']) .theme-toggle .icon-moon {
    Starlight 默认把「正文列 + 右侧目录列」作为一组整体居中:
    正文中心因此偏离视口中心,目录栏还会随剩余空间变宽。
    这里改为:
-   1. 正文列独占视口中线(左右两条等宽 1fr 留白),居中展示;
+   1. 正文列独占中线附近,两侧留白对称——有目录的页面以「窗口左缘
+      ⇆ 正文 ⇆ 目录栏发丝线」两段空隙相等为准(目录 fixed 贴右缘,
+      不占网格流,故右轨道按 +目录宽 偏移补偿);
    2. 右侧目录改为 fixed 贴窗口右缘,宽度收敛为 --xh-toc-width;
-   3. 两侧留白至少保留「目录宽 + 间距」,目录永不与正文重叠。
+   3. 留白有 1.5rem 下限,窄窗口时正文列先收缩,目录永不与正文重叠。
 
    选择器一律挂 .main-frame 前缀抬高优先级(0,2,0 > Starlight 的
    0,1,0):构建产物会把全局样式与 Starlight 组件样式拆进不同
    CSS 文件,谁后加载不定,同级特异性只靠加载顺序会翻车。
    ============================================================ */
 @media (min-width: 72rem) {
-	/* Starlight 的 lg:sl-flex 两栏容器改为显式三轨网格:
-	   [留白] [正文 ≤--sl-content-width] [留白],两侧等宽 → 正文永远居中。 */
+	/* Starlight 的 lg:sl-flex 两栏容器改为三轨网格:
+	   [左留白] [正文 ≤--sl-content-width] [右留白],两侧等宽 → 正文居中。 */
 	.main-frame > .lg\:sl-flex {
 		display: grid;
 		grid-template-columns:
-			minmax(calc(var(--xh-toc-width) + var(--xh-toc-gap)), 1fr)
+			minmax(1.5rem, 1fr)
 			minmax(0, var(--sl-content-width))
-			minmax(calc(var(--xh-toc-width) + var(--xh-toc-gap)), 1fr);
+			minmax(1.5rem, 1fr);
+	}
+
+	/* 有右侧目录的页面:右轨道比左轨道宽出一份目录宽度,
+	   使「正文→目录」空隙与「窗口左缘→正文」空隙相等。
+	   (两段 calc 的和恰为 100%,正文列在宽窗口下保持满宽。) */
+	html[data-has-toc] .main-frame > .lg\:sl-flex {
+		grid-template-columns:
+			minmax(1.5rem, calc((100% - var(--sl-content-width) - var(--xh-toc-width)) / 2))
+			minmax(0, var(--sl-content-width))
+			minmax(calc(var(--xh-toc-width) + 1.5rem), calc((100% - var(--sl-content-width) + var(--xh-toc-width)) / 2));
 	}
 
 	/* 正文列:占中间轨道;.sl-container 自带的 margin-inline: auto 保持居中。 */
@@ -2047,9 +2059,9 @@ starlight-toc nav {
 }
 
 /* ============================================================
-   右侧目录默认收起(starlight-toc)
-   由 starlight-globals.js 注入 .xh-toc-head 折叠开关,默认收起,
-   点击展开目录。收起时正文更宽、更聚焦阅读。
+   右侧目录(starlight-toc)
+   由 starlight-globals.js 注入 .xh-toc-head 折叠开关,默认展开,
+   点击可收起目录。
    ============================================================ */
 .xh-toc-head {
 	display: flex;
