@@ -25,6 +25,12 @@
       "degree": 0
     },
     {
+      "id": "docs/xuehai-arrays",
+      "title": "学海定制终端网络与应用白名单分析报告",
+      "url": "/docs/xuehai-arrays",
+      "degree": 0
+    },
+    {
       "id": "docs/xuehai-brushcode",
       "title": "动态码",
       "url": "/docs/xuehai-brushcode",
@@ -50,6 +56,7 @@
     "docs/xhpe-standard": [],
     "docs/xuehai-abrustu-pk": [],
     "docs/xuehai-arespunc": [],
+    "docs/xuehai-arrays": [],
     "docs/xuehai-brushcode": [],
     "docs/xuehai-login-api": [],
     "docs/xuehai-sign": []

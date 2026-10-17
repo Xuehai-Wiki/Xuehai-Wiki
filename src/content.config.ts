@@ -1,7 +1,7 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { docsLoader } from '@astrojs/starlight/loaders';
-import { docsSchema } from '@astrojs/starlight/schema';
+import { docsSchema, i18nSchema } from '@astrojs/starlight/schema';
 
 /** 文档集合:src/content/docs/*.md,由 Starlight 渲染,仅服务 /docs/*。
  *  entry id 加 'docs/' 前缀,使 Starlight 的根路径 [...slug] 只命中 /docs/...。
@@ -47,4 +47,11 @@ const tracker = defineCollection({
 	}),
 });
 
-export const collections = { docs, tracker };
+/** Starlight UI 字符串覆盖:src/content/i18n/*.json(文件名即语言标签)。
+ *  站点未配置 locales 时语言为默认 'en',此处将目录标题等改为中文。 */
+const i18n = defineCollection({
+	loader: glob({ pattern: '**/*.json', base: './src/content/i18n' }),
+	schema: i18nSchema(),
+});
+
+export const collections = { docs, tracker, i18n };

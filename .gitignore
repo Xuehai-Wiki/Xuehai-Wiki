@@ -36,3 +36,7 @@ Thumbs.db
 .omo/
 # 字体子集由 scripts/subset-fonts.mjs 在构建期生成(源:src/assets/fonts/)
 public/fonts/Pretendard/*.woff2
+
+# 沙盒内 npm 需要重定向的缓存与临时目录
+.npm-cache/
+.npm-tmp/

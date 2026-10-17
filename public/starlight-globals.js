@@ -79,7 +79,7 @@
 		head.type = 'button';
 		head.className = 'xh-toc-head';
 		head.setAttribute('aria-expanded', 'false');
-		head.textContent = 'On this page';
+		head.textContent = '目录';
 
 		// 把目录正文(分类标签 + 大纲列表 + 随机文章)包进 .xh-toc-body,默认 display:none
 		const body = document.createElement('div');

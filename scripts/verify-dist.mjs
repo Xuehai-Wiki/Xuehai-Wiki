@@ -2,7 +2,10 @@ import { readFile } from 'node:fs/promises';
 import { glob } from 'node:fs/promises';
 const dist = 'dist';
 const htmlFiles = await Array.fromAsync(glob(`${dist}/**/*.html`, { absolute: true }));
-const sitemapFiles = await Array.fromAsync(glob(`${dist}/sitemap*.xml`));
+// fs.glob 在 Windows 上返回反斜杠路径,统一成正斜杠,便于下方与 'dist/sitemap-0.xml' 比较。
+const sitemapFiles = (await Array.fromAsync(glob(`${dist}/sitemap*.xml`))).map((file) =>
+	file.replaceAll('\\', '/'),
+);
 const sitemapMatches = [];
 for (const file of sitemapFiles) {
 	const xml = await readFile(file, 'utf8');

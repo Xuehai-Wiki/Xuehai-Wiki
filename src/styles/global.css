@@ -1894,9 +1894,6 @@ html:not([data-theme='dark']) .theme-toggle .icon-moon {
 	--sl-font: var(--font);
 	--sl-font-mono: var(--font-mono);
 
-	/* 阅读区加宽:增大正文内容列宽,便于长文阅读。
-	   Starlight 默认 45rem;此处覆盖为更宽的正文列。 */
-	--sl-content-width: 52rem;
 	--sl-content-pad-x: 1.25rem;
 
 	/* 阴影 */
@@ -1906,6 +1903,72 @@ html:not([data-theme='dark']) .theme-toggle .icon-moon {
 
 	/* 覆盖 starlight 自带链接下划线颜色,统一为中性 */
 	--sl-color-underline-link: var(--line);
+
+	/* /docs 布局令牌:右侧目录栏宽 + 目录与正文间的最小间距。
+	   目录栏比 Starlight 默认预留(18.75rem)窄,为正文让出空间。 */
+	--xh-toc-width: 14rem;
+	--xh-toc-gap: 1.5rem;
+}
+
+/* 阅读区加宽:增大正文内容列宽,便于长文阅读。
+   Starlight 默认 45rem,且对无侧栏页面会在 Page.astro 内联样式里
+   用 html:not([data-has-sidebar]) 覆写为 67.5rem;这里用 :root:root
+   提高优先级,把正文列宽统一收敛为本站目标值。 */
+:root:root {
+	--sl-content-width: 72rem;
+}
+
+/* ============================================================
+   /docs 桌面端布局定制(≥72rem)
+   ------------------------------------------------------------
+   Starlight 默认把「正文列 + 右侧目录列」作为一组整体居中:
+   正文中心因此偏离视口中心,目录栏还会随剩余空间变宽。
+   这里改为:
+   1. 正文列独占视口中线(左右两条等宽 1fr 留白),居中展示;
+   2. 右侧目录改为 fixed 贴窗口右缘,宽度收敛为 --xh-toc-width;
+   3. 两侧留白至少保留「目录宽 + 间距」,目录永不与正文重叠。
+
+   选择器一律挂 .main-frame 前缀抬高优先级(0,2,0 > Starlight 的
+   0,1,0):构建产物会把全局样式与 Starlight 组件样式拆进不同
+   CSS 文件,谁后加载不定,同级特异性只靠加载顺序会翻车。
+   ============================================================ */
+@media (min-width: 72rem) {
+	/* Starlight 的 lg:sl-flex 两栏容器改为显式三轨网格:
+	   [留白] [正文 ≤--sl-content-width] [留白],两侧等宽 → 正文永远居中。 */
+	.main-frame > .lg\:sl-flex {
+		display: grid;
+		grid-template-columns:
+			minmax(calc(var(--xh-toc-width) + var(--xh-toc-gap)), 1fr)
+			minmax(0, var(--sl-content-width))
+			minmax(calc(var(--xh-toc-width) + var(--xh-toc-gap)), 1fr);
+	}
+
+	/* 正文列:占中间轨道;.sl-container 自带的 margin-inline: auto 保持居中。 */
+	.main-frame .main-pane {
+		grid-column: 2;
+		grid-row: 1;
+		width: auto;
+	}
+
+	/* 目录列容器:占第三轨道但不产生占位(内部 .right-sidebar 已 fixed 脱离文档流)。 */
+	.main-frame .right-sidebar-container {
+		grid-column: 3;
+		grid-row: 1;
+		width: 0;
+	}
+
+	/* 目录本体:贴窗口右缘,宽度固定为 --xh-toc-width(替代 Starlight 的 100% 视口宽)。 */
+	.main-frame .right-sidebar {
+		inset-inline-start: auto;
+		inset-inline-end: 0;
+		width: var(--xh-toc-width);
+	}
+
+	/* 目录内容宽度跟随目录栏,替换 Starlight 基于旧栏宽的「魔法数字」公式。 */
+	.right-sidebar .sl-container {
+		width: 100%;
+		max-width: none;
+	}
 }
 
 /* starlight 亮色模式额外修正(它默认 light,data-theme="light" 时) */
@@ -2031,6 +2094,11 @@ starlight-toc nav .xh-toc-body {
 }
 starlight-toc[data-toc-open] nav .xh-toc-body {
 	display: block;
+}
+/* 展开后 Starlight 自带的 h2「目录」与折叠开关文字重复:
+   仅保留语义(nav 的 aria-labelledby 依赖它),不再重复显示。 */
+starlight-toc .xh-toc-body > h2 {
+	display: none;
 }
 
 
