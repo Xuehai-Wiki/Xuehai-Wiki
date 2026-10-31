@@ -36,6 +36,52 @@ export default defineConfig({
 			disable404Route: true, // 全站自定义 404 (src/pages/404.astro)
 			lastUpdated: true, // 页脚显示 git 最后修改时间
 			customCss: ['./src/styles/global.css'],
+			// 显式侧边栏:自动生成的目录分组名只会是目录名(deep-dive-into-ztp),
+			// 要显示「深入浅出智通平台」必须显式配置。slug 项不写 label 时用页面标题;
+			// 未在此列出的页面不会出现在侧边栏,故根目录其余页面也在下方逐个列出。
+			// 注意:sidebar 的 slug 必须与内容集合的 entry id 完全一致;本项目在
+			// src/content.config.ts 里给所有 entry id 加了 'docs/' 前缀,故此处也要带前缀。
+			sidebar: [
+				{
+					label: '深入浅出智通平台',
+					collapsed: true,
+					// 总目录页(index.md)置顶,加粗样式见 global.css「deep-dive index」一节
+					items: [
+						{ slug: 'docs/deep-dive-into-ztp' },
+						{ slug: 'docs/deep-dive-into-ztp/00-overview', label: '00 · 总体架构' },
+						{ slug: 'docs/deep-dive-into-ztp/01-network-api', label: '01 · 网络子系统' },
+						{ slug: 'docs/deep-dive-into-ztp/02-signing', label: '02 · 请求签名' },
+						{ slug: 'docs/deep-dive-into-ztp/03-file-io', label: '03 · 文件与存储' },
+						{ slug: 'docs/deep-dive-into-ztp/04-ipc-ztcloud', label: '04 · IPC 与推送' },
+						{ slug: 'docs/deep-dive-into-ztp/05-logging', label: '05 · 日志与埋点' },
+						{ slug: 'docs/deep-dive-into-ztp/06-initialization', label: '06 · 初始化流程' },
+						{ slug: 'docs/deep-dive-into-ztp/07-app-management', label: '07 · 应用管理' },
+						{ slug: 'docs/deep-dive-into-ztp/08-control-night-ban', label: '08 · 夜禁与管控时段' },
+						{ slug: 'docs/deep-dive-into-ztp/09-daily-words', label: '09 · 每日一言' },
+						{ slug: 'docs/deep-dive-into-ztp/10-remote-assist', label: '10 · 远程协助' },
+						{ slug: 'docs/deep-dive-into-ztp/11-backdoors', label: '11 · 后门与隐藏能力' },
+						{ slug: 'docs/deep-dive-into-ztp/12-ipc-open-sdk', label: '12 · 开放 SDK' },
+						{ slug: 'docs/deep-dive-into-ztp/13-tinker-hotfix', label: '13 · Tinker 热修复' },
+						{ slug: 'docs/deep-dive-into-ztp/14-taskreward-module', label: '14 · 任务奖励模块' },
+						{ slug: 'docs/deep-dive-into-ztp/15-zty-mdm-startup', label: '15 · 启动关系与看门狗' },
+						{ slug: 'docs/deep-dive-into-ztp/16-permissions-device-identity', label: '16 · 权限与设备身份' },
+						{ slug: 'docs/deep-dive-into-ztp/17-reinstall-and-rewrite', label: '17 · 重装与自写 ztp' },
+						{ slug: 'docs/deep-dive-into-ztp/99-entry-points-index', label: '99 · 入口点索引' },
+					],
+				},
+				// 根目录散页(保持原自动生成的字母序);label 省略时用各页 frontmatter 标题
+				{ slug: 'docs/gallery' },
+				{ slug: 'docs/xhpe-standard' },
+				{ slug: 'docs/xuehai-abrustu-pk' },
+				{ slug: 'docs/xuehai-arespunc' },
+				{ slug: 'docs/xuehai-arrays' },
+				{ slug: 'docs/xuehai-brushcode' },
+				{ slug: 'docs/xuehai-login-api' },
+				{ slug: 'docs/xuehai-sign' },
+				{ slug: 'docs/ztp-api' },
+				{ slug: 'docs/ztp-control-report' },
+				{ slug: 'docs/zty-control-report' },
+			],
 			components: {
 				// 统一 /docs 顶栏与全站 Nav(品牌+链接),右侧保留 Starlight 搜索与主题切换
 				Header: './src/components/starlight/Header.astro',

@@ -29,14 +29,31 @@ let DOC_IDS = null;
 function getDocIds() {
   if (DOC_IDS) return DOC_IDS;
   const dir = path.resolve(process.cwd(), 'src', 'content', 'docs');
-  let files = [];
-  try {
-    files = readdirSync(dir).filter((f) => f.endsWith('.md') && !f.startsWith('_'));
-  } catch {
-    files = [];
-  }
-  DOC_IDS = files.map((f) => `docs/${f.replace(/\.md$/, '')}`);
+  const files = [];
+  // 递归收集(子目录如 deep-dive-into-ztp/ 中的分册也要注册为 wiki-link 目标)。
+  const walk = (d) => {
+    let entries = [];
+    try {
+      entries = readdirSync(d, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const e of entries) {
+      if (e.name.startsWith('_') || e.name.startsWith('.')) continue;
+      const p = path.join(d, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (e.isFile() && e.name.endsWith('.md')) files.push(path.relative(dir, p));
+    }
+  };
+  walk(dir);
+  // 与 src/content.config.ts 的 generateId 保持一致:目录 index 页 id 去掉尾部 /index。
+  DOC_IDS = files.map((f) => `docs/${f.replace(/\.md$/, '').replace(/\/index$/, '')}`).sort();
   return DOC_IDS;
+}
+
+/** doc id → 站点 URL;目录 index 页去掉尾部 /index(与 Starlight 路由一致)。 */
+function toUrl(id) {
+  return '/docs/' + id.replace('docs/', '').replace(/\/index$/, '');
 }
 
 /** Resolve a wiki-link target to a /docs/ url, or null when unresolvable. */
@@ -44,12 +61,12 @@ function resolveTarget(target) {
   const ids = getDocIds();
   const clean = target.replace(/^docs\//, '').replace(/^\/+/, '').replace(/\.md$/i, '').replace(/\/+$/, '');
   if (!clean) return null;
-  if (ids.includes(`docs/${clean}`)) return `/docs/${clean}`;
+  if (ids.includes(`docs/${clean}`)) return toUrl(`docs/${clean}`);
   const base = clean.split('/').pop();
   const exact = ids.find((id) => id === `docs/${base}`) || ids.find((id) => id === `docs/${clean}`);
-  if (exact) return `/docs/${exact.replace('docs/', '')}`;
+  if (exact) return toUrl(exact);
   const suffix = ids.find((id) => id.endsWith('/' + clean));
-  if (suffix) return `/docs/${suffix.replace('docs/', '')}`;
+  if (suffix) return toUrl(suffix);
   return null;
 }
 

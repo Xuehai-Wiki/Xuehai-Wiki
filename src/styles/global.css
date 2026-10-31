@@ -2408,3 +2408,10 @@ starlight-toc .xh-toc-body > h2 {
 	max-height: none;
 	overflow: visible;
 }
+
+/* 深入浅出智通平台总目录页(deep-dive-into-ztp/index):侧边栏置顶项加粗。
+   精确匹配 href,避免误命中以 /docs/deep-dive-into-ztp 为前缀的分册页。 */
+nav a[href='/docs/deep-dive-into-ztp'],
+nav a[href='/docs/deep-dive-into-ztp/'] {
+	font-weight: 700;
+}

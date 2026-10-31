@@ -1,6 +1,126 @@
 {
   "nodes": [
     {
+      "id": "docs/deep-dive-into-ztp/00-overview",
+      "title": "智通平台（智通云）总体架构",
+      "url": "/docs/deep-dive-into-ztp/00-overview",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/01-network-api",
+      "title": "学海网络子系统",
+      "url": "/docs/deep-dive-into-ztp/01-network-api",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/02-signing",
+      "title": "学海签名与加密体系",
+      "url": "/docs/deep-dive-into-ztp/02-signing",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/03-file-io",
+      "title": "本地文件与存储层",
+      "url": "/docs/deep-dive-into-ztp/03-file-io",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/04-ipc-ztcloud",
+      "title": "跨进程通信与推送长连接",
+      "url": "/docs/deep-dive-into-ztp/04-ipc-ztcloud",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/05-logging",
+      "title": "学海日志与埋点体系",
+      "url": "/docs/deep-dive-into-ztp/05-logging",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/06-initialization",
+      "title": "智通平台初始化流程",
+      "url": "/docs/deep-dive-into-ztp/06-initialization",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/07-app-management",
+      "title": "应用管理子系统",
+      "url": "/docs/deep-dive-into-ztp/07-app-management",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/08-control-night-ban",
+      "title": "夜禁与管控子系统",
+      "url": "/docs/deep-dive-into-ztp/08-control-night-ban",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/09-daily-words",
+      "title": "每日一言功能",
+      "url": "/docs/deep-dive-into-ztp/09-daily-words",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/10-remote-assist",
+      "title": "远程协助（Remote Assist）",
+      "url": "/docs/deep-dive-into-ztp/10-remote-assist",
+      "degree": 2
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/11-backdoors",
+      "title": "智通平台后门与隐藏能力",
+      "url": "/docs/deep-dive-into-ztp/11-backdoors",
+      "degree": 3
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/12-ipc-open-sdk",
+      "title": "开放 SDK（Intent IPC）",
+      "url": "/docs/deep-dive-into-ztp/12-ipc-open-sdk",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/13-tinker-hotfix",
+      "title": "Tinker 热修复（Hotfix）",
+      "url": "/docs/deep-dive-into-ztp/13-tinker-hotfix",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/14-taskreward-module",
+      "title": "任务奖励模块（TaskReward）",
+      "url": "/docs/deep-dive-into-ztp/14-taskreward-module",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/15-zty-mdm-startup",
+      "title": "zty 与 ztp 的启动关系、看门狗与安装器",
+      "url": "/docs/deep-dive-into-ztp/15-zty-mdm-startup",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/16-permissions-device-identity",
+      "title": "权限分层与设备身份",
+      "url": "/docs/deep-dive-into-ztp/16-permissions-device-identity",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/17-reinstall-and-rewrite",
+      "title": "一键还原、卸载重装场景与自写 ztp 可行性",
+      "url": "/docs/deep-dive-into-ztp/17-reinstall-and-rewrite",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/99-entry-points-index",
+      "title": "智通平台入口点索引",
+      "url": "/docs/deep-dive-into-ztp/99-entry-points-index",
+      "degree": 1
+    },
+    {
+      "id": "docs/deep-dive-into-ztp",
+      "title": "深入浅出智通平台",
+      "url": "/docs/deep-dive-into-ztp",
+      "degree": 24
+    },
+    {
       "id": "docs/gallery",
       "title": "画廊",
       "url": "/docs/gallery",
@@ -34,30 +154,270 @@
       "id": "docs/xuehai-brushcode",
       "title": "动态码",
       "url": "/docs/xuehai-brushcode",
-      "degree": 0
+      "degree": 2
     },
     {
       "id": "docs/xuehai-login-api",
       "title": "登录API",
       "url": "/docs/xuehai-login-api",
-      "degree": 0
+      "degree": 1
     },
     {
       "id": "docs/xuehai-sign",
       "title": "学海请求签名",
       "url": "/docs/xuehai-sign",
+      "degree": 1
+    },
+    {
+      "id": "docs/ztp-api",
+      "title": "智通平台 API 服务地址分类汇总",
+      "url": "/docs/ztp-api",
       "degree": 0
     },
     {
-      "id": "docs/ztp",
-      "title": "智通平台",
-      "url": "/docs/ztp",
-      "degree": 0
+      "id": "docs/ztp-control-report",
+      "title": "智通平台管控策略",
+      "url": "/docs/ztp-control-report",
+      "degree": 1
+    },
+    {
+      "id": "docs/zty-control-report",
+      "title": "智通云管控策略",
+      "url": "/docs/zty-control-report",
+      "degree": 1
     }
   ],
-  "edges": [],
-  "backlinks": {},
+  "edges": [
+    {
+      "from": "docs/deep-dive-into-ztp/11-backdoors",
+      "to": "docs/deep-dive-into-ztp/10-remote-assist"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp/11-backdoors",
+      "to": "docs/xuehai-brushcode"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/00-overview"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/01-network-api"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/02-signing"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/03-file-io"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/04-ipc-ztcloud"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/05-logging"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/06-initialization"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/07-app-management"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/08-control-night-ban"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/09-daily-words"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/10-remote-assist"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/11-backdoors"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/12-ipc-open-sdk"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/13-tinker-hotfix"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/14-taskreward-module"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/15-zty-mdm-startup"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/16-permissions-device-identity"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/17-reinstall-and-rewrite"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/99-entry-points-index"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/xuehai-brushcode"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/xuehai-login-api"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/xuehai-sign"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/ztp-control-report"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/zty-control-report"
+    }
+  ],
+  "backlinks": {
+    "docs/deep-dive-into-ztp/10-remote-assist": [
+      "docs/deep-dive-into-ztp",
+      "docs/deep-dive-into-ztp/11-backdoors"
+    ],
+    "docs/xuehai-brushcode": [
+      "docs/deep-dive-into-ztp",
+      "docs/deep-dive-into-ztp/11-backdoors"
+    ],
+    "docs/deep-dive-into-ztp/00-overview": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/01-network-api": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/02-signing": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/03-file-io": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/04-ipc-ztcloud": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/05-logging": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/06-initialization": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/07-app-management": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/08-control-night-ban": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/09-daily-words": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/11-backdoors": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/12-ipc-open-sdk": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/13-tinker-hotfix": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/14-taskreward-module": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/15-zty-mdm-startup": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/16-permissions-device-identity": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/17-reinstall-and-rewrite": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/deep-dive-into-ztp/99-entry-points-index": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/xuehai-login-api": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/xuehai-sign": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/ztp-control-report": [
+      "docs/deep-dive-into-ztp"
+    ],
+    "docs/zty-control-report": [
+      "docs/deep-dive-into-ztp"
+    ]
+  },
   "outbound": {
+    "docs/deep-dive-into-ztp/00-overview": [],
+    "docs/deep-dive-into-ztp/01-network-api": [],
+    "docs/deep-dive-into-ztp/02-signing": [],
+    "docs/deep-dive-into-ztp/03-file-io": [],
+    "docs/deep-dive-into-ztp/04-ipc-ztcloud": [],
+    "docs/deep-dive-into-ztp/05-logging": [],
+    "docs/deep-dive-into-ztp/06-initialization": [],
+    "docs/deep-dive-into-ztp/07-app-management": [],
+    "docs/deep-dive-into-ztp/08-control-night-ban": [],
+    "docs/deep-dive-into-ztp/09-daily-words": [],
+    "docs/deep-dive-into-ztp/10-remote-assist": [],
+    "docs/deep-dive-into-ztp/11-backdoors": [
+      "docs/deep-dive-into-ztp/10-remote-assist",
+      "docs/xuehai-brushcode"
+    ],
+    "docs/deep-dive-into-ztp/12-ipc-open-sdk": [],
+    "docs/deep-dive-into-ztp/13-tinker-hotfix": [],
+    "docs/deep-dive-into-ztp/14-taskreward-module": [],
+    "docs/deep-dive-into-ztp/15-zty-mdm-startup": [],
+    "docs/deep-dive-into-ztp/16-permissions-device-identity": [],
+    "docs/deep-dive-into-ztp/17-reinstall-and-rewrite": [],
+    "docs/deep-dive-into-ztp/99-entry-points-index": [],
+    "docs/deep-dive-into-ztp": [
+      "docs/deep-dive-into-ztp/00-overview",
+      "docs/deep-dive-into-ztp/01-network-api",
+      "docs/deep-dive-into-ztp/02-signing",
+      "docs/deep-dive-into-ztp/03-file-io",
+      "docs/deep-dive-into-ztp/04-ipc-ztcloud",
+      "docs/deep-dive-into-ztp/05-logging",
+      "docs/deep-dive-into-ztp/06-initialization",
+      "docs/deep-dive-into-ztp/07-app-management",
+      "docs/deep-dive-into-ztp/08-control-night-ban",
+      "docs/deep-dive-into-ztp/09-daily-words",
+      "docs/deep-dive-into-ztp/10-remote-assist",
+      "docs/deep-dive-into-ztp/11-backdoors",
+      "docs/deep-dive-into-ztp/12-ipc-open-sdk",
+      "docs/deep-dive-into-ztp/13-tinker-hotfix",
+      "docs/deep-dive-into-ztp/14-taskreward-module",
+      "docs/deep-dive-into-ztp/15-zty-mdm-startup",
+      "docs/deep-dive-into-ztp/16-permissions-device-identity",
+      "docs/deep-dive-into-ztp/17-reinstall-and-rewrite",
+      "docs/deep-dive-into-ztp/99-entry-points-index",
+      "docs/xuehai-brushcode",
+      "docs/xuehai-login-api",
+      "docs/xuehai-sign",
+      "docs/ztp-control-report",
+      "docs/zty-control-report"
+    ],
     "docs/gallery": [],
     "docs/xhpe-standard": [],
     "docs/xuehai-abrustu-pk": [],
@@ -66,7 +426,9 @@
     "docs/xuehai-brushcode": [],
     "docs/xuehai-login-api": [],
     "docs/xuehai-sign": [],
-    "docs/ztp": []
+    "docs/ztp-api": [],
+    "docs/ztp-control-report": [],
+    "docs/zty-control-report": []
   },
   "broken": []
 }

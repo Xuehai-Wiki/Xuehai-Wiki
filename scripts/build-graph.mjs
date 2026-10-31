@@ -78,9 +78,19 @@ function resolveTarget(target, docs) {
   return null;
 }
 
-/** Collects every markdown file under a directory (non-recursive here). */
+/** Collects every markdown file under a directory (recursive, includes subdirectories
+ *  like deep-dive-into-ztp/). Skips _-prefixed and dotfiles. */
 function readDocs() {
-  const files = readdirSync(DOCS_DIR).filter((f) => f.endsWith('.md') && !f.startsWith('_') && !f.startsWith('.'));
+  const files = [];
+  const walk = (d) => {
+    for (const e of readdirSync(d, { withFileTypes: true })) {
+      if (e.name.startsWith('_') || e.name.startsWith('.')) continue;
+      const p = path.join(d, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (e.isFile() && e.name.endsWith('.md')) files.push(path.relative(DOCS_DIR, p));
+    }
+  };
+  walk(DOCS_DIR);
   return files.map((file) => {
     const raw = readFileSync(path.join(DOCS_DIR, file), 'utf-8');
     const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/.exec(raw);
@@ -91,7 +101,8 @@ function readDocs() {
       const m = /^([\w-]+):\s*(.*)$/.exec(line.trim());
       if (m) fm[m[1]] = m[2].replace(/^['"]|['"]$/g, '');
     }
-    const id = `docs/${file.replace(/\.md$/, '')}`;
+    // 与 src/content.config.ts 的 generateId 保持一致:目录 index 页 id 去掉尾部 /index。
+    const id = `docs/${file.replace(/\.md$/, '').replace(/\/index$/, '')}`;
     return { id, file, title: fm.title || file.replace(/\.md$/, ''), body };
   });
 }
@@ -162,7 +173,8 @@ function build() {
   const nodes = docs.map((d) => ({
     id: d.id,
     title: d.title,
-    url: `/docs/${d.id.replace('docs/', '')}`,
+    // 目录 index 页的 Starlight 路由不带 /index,这里同步归一化。
+    url: `/docs/${d.id.replace('docs/', '').replace(/\/index$/, '')}`,
     degree: degree.get(d.id) ?? 0,
   }));
 

@@ -5,6 +5,9 @@ import { docsSchema, i18nSchema } from '@astrojs/starlight/schema';
 
 /** 文档集合:src/content/docs/*.md,由 Starlight 渲染,仅服务 /docs/*。
  *  entry id 加 'docs/' 前缀,使 Starlight 的根路径 [...slug] 只命中 /docs/...。
+ *  自定义 generateId 会绕过 Starlight 默认的 index 剥离逻辑,这里手动去掉尾部
+ *  '/index'(目录的 index.md → 目录 slug 本身),否则其 slug 是 'xxx/index',
+ *  侧边栏无法用 'xxx' 引用,URL 也会带上 /index。
  */
 const docs = defineCollection({
 	loader: docsLoader({
@@ -13,7 +16,8 @@ const docs = defineCollection({
 			entry
 				.split('.')
 				.slice(0, -1)
-				.join('.'),
+				.join('.')
+				.replace(/\/index$/, ''),
 	}),
 	// 扩展 Starlight schema,加入维基分类字段 categories(用于文档首页分组与文章页标签)。
 	schema: docsSchema({
