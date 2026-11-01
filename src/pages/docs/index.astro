@@ -86,10 +86,10 @@ const slugOf = (id: string) => id.replace(/^docs\//, '');
 							<ul class="wiki-list">
 								{items.map((e) => (
 									<li>
-										<a class="wiki-link" href={`/docs/${slugOf(e.id)}`}>
-											<span class="wiki-link-title">{e.data.title}</span>
+										<a class="wiki-link" href={`/docs/${slugOf(e.id)}`} data-xh-doc={e.id}>
+											<span class="wiki-link-title" data-xh-field="t">{e.data.title}</span>
 											{e.data.excerpt && (
-												<span class="wiki-link-excerpt">{e.data.excerpt}</span>
+												<span class="wiki-link-excerpt" data-xh-field="e">{e.data.excerpt}</span>
 											)}
 										</a>
 									</li>

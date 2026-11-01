@@ -39,6 +39,8 @@ const showBanner = true;
 		></script>
 		<!-- 主题初始化:放 head 紧前,防 FOUC -->
 		<script is:inline src="/theme-init.js"></script>
+		<!-- 文档身份校验(涂黑加密)运行时:文档首页卡片等已加密条目的解锁态还原 -->
+		<script is:inline src="/xh-lock.js" defer></script>
 	</head>
 	<body>
 		<Nav currentPath={Astro.url.pathname} />

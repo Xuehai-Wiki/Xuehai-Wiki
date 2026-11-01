@@ -1,0 +1,6 @@
+# pnpm 10 需要显式声明允许执行安装脚本(postinstall)的依赖,
+# 否则 esbuild 的平台二进制不会下载,astro build 会失败。
+# 注意:这里是布尔值,不是 pnpm 交互式提示里的占位句。
+allowBuilds:
+  esbuild: true
+  workerd: false

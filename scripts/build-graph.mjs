@@ -21,10 +21,12 @@
 import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { encrypt, blackMask, hashPassword } from '../src/utils/xh-crypto.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DOCS_DIR = path.join(ROOT, 'src', 'content', 'docs');
 const OUT_FILE = path.join(ROOT, 'public', 'graph.json');
+const LOCKS_FILE = path.join(ROOT, 'public', 'xh-locks.json');
 
 /** Matches [[target]] and ![[embed]]; refuses ] and newlines inside brackets. */
 const WIKILINK_PATTERN = /(!?)\[\[([^\]\n]+)\]\]/g;
@@ -78,9 +80,20 @@ function resolveTarget(target, docs) {
   return null;
 }
 
-/** Collects every markdown file under a directory (non-recursive here). */
+/** Collects every markdown file under a directory (recursive, includes subdirectories
+ *  like deep-dive-into-ztp/). Skips _-prefixed and dotfiles. */
 function readDocs() {
-  const files = readdirSync(DOCS_DIR).filter((f) => f.endsWith('.md') && !f.startsWith('_') && !f.startsWith('.'));
+  const files = [];
+  const walk = (d) => {
+    for (const e of readdirSync(d, { withFileTypes: true })) {
+      if (e.name.startsWith('_') || e.name.startsWith('.')) continue;
+      const p = path.join(d, e.name);
+      if (e.isDirectory()) walk(p);
+      // 统一成 POSIX 分隔符:node id / url 与操作系统无关(Windows 下 path.relative 会给反斜杠)。
+      else if (e.isFile() && e.name.endsWith('.md')) files.push(path.relative(DOCS_DIR, p).split(path.sep).join('/'));
+    }
+  };
+  walk(DOCS_DIR);
   return files.map((file) => {
     const raw = readFileSync(path.join(DOCS_DIR, file), 'utf-8');
     const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/.exec(raw);
@@ -91,8 +104,19 @@ function readDocs() {
       const m = /^([\w-]+):\s*(.*)$/.exec(line.trim());
       if (m) fm[m[1]] = m[2].replace(/^['"]|['"]$/g, '');
     }
-    const id = `docs/${file.replace(/\.md$/, '')}`;
-    return { id, file, title: fm.title || file.replace(/\.md$/, ''), body };
+    // 与 src/content.config.ts 的 generateId / wikilink-remark 的 toUrl 保持一致:
+    // 目录 index 页的 id 去掉尾部 /index。
+    const id = `docs/${file.replace(/\.md$/, '').replace(/\/index$/, '')}`;
+    return {
+      id,
+      file,
+      title: fm.title || file.replace(/\.md$/, ''),
+      description: fm.description || '',
+      excerpt: fm.excerpt || '',
+      password: fm.password || '',
+      protect: fm.protect || '',
+      body,
+    };
   });
 }
 
@@ -161,7 +185,8 @@ function build() {
 
   const nodes = docs.map((d) => ({
     id: d.id,
-    title: d.title,
+    // 完全涂黑文档:graph.json 里的标题也只保留涂黑形态(反链展示不泄漏)。
+    title: isFullLocked(d) ? blackMask(d.title) : d.title,
     url: `/docs/${d.id.replace('docs/', '')}`,
     degree: degree.get(d.id) ?? 0,
   }));
@@ -177,6 +202,32 @@ function build() {
   mkdirSync(path.dirname(OUT_FILE), { recursive: true });
   writeFileSync(OUT_FILE, JSON.stringify(graph, null, 2));
   console.log(`✓ Wrote graph with ${nodes.length} nodes, ${edges.length} edges, ${broken.length} broken links -> ${path.relative(ROOT, OUT_FILE)}`);
+
+  // 完全涂黑文档的解锁索引:URL -> {id, 哈希, 标题/描述/摘要密文}。
+  // 供 /xh-lock.js 在侧栏、上下篇、反链与文档首页卡片上做解锁态还原。
+  /** @type {Record<string, object>} */
+  const locks = {};
+  for (const d of docs) {
+    if (!isFullLocked(d)) continue;
+    const slug = d.id.replace('docs/', '');
+    const entry = {
+      id: d.id,
+      mode: 'full',
+      h: hashPassword(d.password),
+      tl: [...d.title].length,
+      t: encrypt(d.title, d.password),
+    };
+    if (d.description) entry.d = encrypt(d.description, d.password);
+    if (d.excerpt) entry.e = encrypt(d.excerpt, d.password);
+    locks[`/docs/${slug}/`] = entry;
+  }
+  writeFileSync(LOCKS_FILE, JSON.stringify(locks, null, 2));
+  console.log(`✓ Wrote ${Object.keys(locks).length} encrypted lock entries -> ${path.relative(ROOT, LOCKS_FILE)}`);
+}
+
+/** 是否为完全涂黑文档(声明了 protect: full 且有密码)。 */
+function isFullLocked(doc) {
+  return Boolean(doc.password) && doc.protect === 'full';
 }
 
 build();

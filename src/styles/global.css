@@ -2408,3 +2408,100 @@ starlight-toc .xh-toc-body > h2 {
 	max-height: none;
 	overflow: visible;
 }
+
+/* ============================================================
+   文档身份校验(涂黑加密)
+   ------------------------------------------------------------
+   锁横幅渲染在 Starlight 文档页(共用 global.css,但变量在
+   starlight 域内是 --sl-*),颜色用全站黑白灰令牌并回退 --sl-*。
+   ============================================================ */
+
+.xh-lock-banner {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.45rem 0.6rem;
+	margin-top: 0.7rem;
+	margin-bottom: 1rem;
+	padding: 0.55rem 0.85rem;
+	border: 1px dashed var(--line, var(--sl-color-hairline));
+	border-radius: var(--radius);
+	background: var(--bg-soft, var(--sl-color-bg-nav));
+	font-size: 0.85rem;
+	color: var(--fg-muted, var(--sl-color-gray-3));
+}
+.xh-lock-banner[data-xh-state='unlocked'] {
+	border-style: solid;
+}
+.xh-lock-icon {
+	display: inline-flex;
+	color: var(--fg, var(--sl-color-white));
+}
+.xh-lock-text {
+	flex: 1 1 auto;
+	min-width: 8rem;
+}
+.xh-lock-btn {
+	display: inline-flex;
+	align-items: center;
+	padding: 0.22rem 0.7rem;
+	border: 1px solid var(--line, var(--sl-color-hairline));
+	border-radius: 999px;
+	background: var(--bg, var(--sl-color-bg));
+	color: var(--fg, var(--sl-color-white));
+	font-size: 0.78rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.xh-lock-btn:hover {
+	border-color: var(--fg-muted, var(--sl-color-gray-3));
+	background: var(--bg-raise, var(--sl-color-bg-inline-code));
+}
+.xh-lock-form {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.4rem;
+	margin: 0;
+}
+.xh-lock-input {
+	width: 11rem;
+	padding: 0.22rem 0.6rem;
+	border: 1px solid var(--line, var(--sl-color-hairline));
+	border-radius: var(--radius-sm);
+	background: var(--bg, var(--sl-color-bg));
+	color: var(--fg, var(--sl-color-white));
+	font-size: 0.82rem;
+}
+.xh-lock-input:focus {
+	outline: 2px solid var(--fg, var(--sl-color-white));
+	outline-offset: 1px;
+}
+.xh-lock-input.xh-shake {
+	animation: xh-shake 0.28s ease;
+}
+@keyframes xh-shake {
+	0%, 100% { transform: translateX(0); }
+	25% { transform: translateX(-4px); }
+	50% { transform: translateX(4px); }
+	75% { transform: translateX(-2px); }
+}
+.xh-lock-err {
+	color: var(--danger, var(--sl-color-red-400));
+	font-size: 0.78rem;
+}
+
+/* 涂黑片段:em 语义重置为普通文本外观,不可见时与周围文字一致 */
+.xh-secret {
+	font-style: normal;
+	font-weight: inherit;
+	color: inherit;
+	white-space: inherit;
+}
+
+/* 完全涂黑文档的图片:解锁前隐藏,防止图像内容本身泄漏 */
+img[data-xh-img] {
+	visibility: hidden;
+}
+
