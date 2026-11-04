@@ -72,6 +72,61 @@ for (const sitemap of sitemapMatches) {
 
 if (!sitemapFiles.includes('dist/sitemap-0.xml')) throw new Error('sitemap-0.xml is missing');
 
+/* ---------- 文档身份校验(涂黑加密)防泄漏检查 ----------
+ * 重新解析源码 frontmatter,任何声明了 password 的文档:
+ *   - 部分模式:%%……%% 中的明文段不得出现在任何构建产物 HTML 里;
+ *   - 完全模式:标题/描述/摘要明文不得出现在任何构建产物 HTML 里
+ *     (包括侧栏、反链、graph.json 之外的 HTML 文本)。
+ * 标题等短词可能撞车别的正常文本,只在长度 ≥ 4 码点时才计入检查。
+ */
+const distHtmlTexts = [];
+for (const file of htmlFiles) {
+	distHtmlTexts.push([file, await readFile(file, 'utf8')]);
+}
+const xhLeaks = [];
+let xhLockedDocs = 0;
+{
+	const { readdirSync } = await import('node:fs');
+	const docsDir = 'src/content/docs';
+	if (readdirSync(docsDir).includes('xh-lock.md')) {
+		const { readFileSync } = await import('node:fs');
+		const cryptoPath = new URL('../src/utils/xh-crypto.mjs', import.meta.url);
+		const { parseScalarFrontmatter } = await import(cryptoPath.href);
+		for (const name of readdirSync(docsDir)) {
+			if (!name.endsWith('.md') || name.startsWith('_')) continue;
+			const fm = parseScalarFrontmatter(readFileSync(`${docsDir}/${name}`, 'utf8'));
+			if (!fm.password) continue;
+			xhLockedDocs++;
+			const full = fm.protect === 'full';
+			/** @type {string[]} */
+			const plains = [];
+			if (full) {
+				for (const key of ['title', 'description', 'excerpt']) {
+					const v = (fm[key] || '').replace(/^['"]|['"]$/g, '').trim();
+					if ([...v].length >= 4) plains.push(v);
+				}
+			} else {
+				// 部分模式:抽取正文里的 %%……%% 明文段。
+				const raw = readFileSync(`${docsDir}/${name}`, 'utf8');
+				const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---/, '');
+				for (const m of body.matchAll(/%%([\s\S]+?)%%/g)) {
+					if (m[1].trim().length >= 4) plains.push(m[1].trim());
+				}
+			}
+			for (const plain of plains) {
+				for (const [file, html] of distHtmlTexts) {
+					if (html.includes(plain)) {
+						xhLeaks.push(`${plain.slice(0, 30)} (${name}) -> ${file.replaceAll('\\', '/')}`);
+					}
+				}
+			}
+		}
+	}
+}
+if (xhLeaks.length > 0) {
+	throw new Error(`Protected doc plaintext leaked into dist (${xhLeaks.length}):\n` + xhLeaks.join('\n'));
+}
+
 const preloadCount = (
 	await Promise.all(
 		htmlFiles.map(async (file) =>
@@ -83,5 +138,5 @@ const preloadCount = (
 ).reduce((sum, count) => sum + count, 0);
 
 console.log(
-	`Verified ${htmlFiles.length} HTML files, ${checkedAssets} assets, ${checkedRoutes} routes, and ${preloadCount} preload links.`,
+	`Verified ${htmlFiles.length} HTML files, ${checkedAssets} assets, ${checkedRoutes} routes, ${preloadCount} preload links, and ${xhLockedDocs} encrypted docs (no plaintext leaks).`,
 );
