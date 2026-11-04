@@ -1,13 +1,14 @@
 ---
-title: "智通云管控策略"
+title: "zty MDM 管控体系（com.xuehai.launcher）"
 
-description: "智通云管控策略"
+description: "zty(com.xuehai.launcher)MDM 代理层逆向分析:厂商适配与锁机序列、解锁凭证、AIDL 控制面、网络平面与风险清单。"
 categories:
   - 应用
 ---
 
 # 学海智通云 MDM 管控体系逆向分析报告
 
+**配套报告**:[[ztp-control-report]](ztp = `com.xh.zhitongyunstu` 应用端,即这些管控的消费方)
 **分析对象**:`com.xuehai.launcher`(学生端)/ `com.xuehai.response_launcher_teacher`(教师端变体)
 **版本**:versionName `v1.19.06.20250731S`,versionCode `1019006`;minSdk 19 / targetSdk 28
 **角色**:HOME 桌面启动器 + 厂商 MDM SDK 载体 + 解锁工具 + 智通云(ZTY)平台守护进程

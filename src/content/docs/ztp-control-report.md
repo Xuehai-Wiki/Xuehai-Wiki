@@ -1,13 +1,14 @@
 ---
-title: "智通平台管控策略"
+title: "ztp 管控策略（com.xh.zhitongyunstu）"
 
-description: "智通平台管控策略"
+description: "ztp(com.xh.zhitongyunstu)应用端管控策略全量分析:权限位、时段/场景/考试管控、应用禁用、远程协助与推送通道。"
 categories:
   - 应用
 ---
 
 # 学海智通云学生端（com.xh.zhitongyunstu）管控策略全量分析报告
 
+> 配套报告：[[zty-control-report]]（zty = `com.xuehai.launcher`，负责实际执行这些管控的 MDM 代理层）
 > 分析对象：JADX 反编译源码 `D:\Users\root\Desktop\ztpt\sources`（+ `resources`）
 > 应用：`com.xh.zhitongyunstu`，versionCode 312504 / versionName `v3.125.04.20251125S`，minSdk 21 / targetSdk 28
 > 定位：学生平板"管控型桌面"（Launcher + 管控服务 + MDM 代理 + 推送通道），配合云端平台（TOB 学校 / TOC 家长）实现设备级管控。

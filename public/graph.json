@@ -188,9 +188,9 @@
     },
     {
       "id": "docs/ztp-control-report",
-      "title": "智通平台管控策略",
+      "title": "ztp 管控策略（com.xh.zhitongyunstu）",
       "url": "/docs/ztp-control-report",
-      "degree": 1
+      "degree": 3
     },
     {
       "id": "docs/ztp-unlock",
@@ -200,9 +200,9 @@
     },
     {
       "id": "docs/zty-control-report",
-      "title": "智通云管控策略",
+      "title": "zty MDM 管控体系（com.xuehai.launcher）",
       "url": "/docs/zty-control-report",
-      "degree": 1
+      "degree": 3
     }
   ],
   "edges": [
@@ -309,6 +309,14 @@
     {
       "from": "docs/deep-dive-into-ztp",
       "to": "docs/zty-control-report"
+    },
+    {
+      "from": "docs/ztp-control-report",
+      "to": "docs/zty-control-report"
+    },
+    {
+      "from": "docs/zty-control-report",
+      "to": "docs/ztp-control-report"
     }
   ],
   "backlinks": {
@@ -381,10 +389,12 @@
       "docs/deep-dive-into-ztp"
     ],
     "docs/ztp-control-report": [
-      "docs/deep-dive-into-ztp"
+      "docs/deep-dive-into-ztp",
+      "docs/zty-control-report"
     ],
     "docs/zty-control-report": [
-      "docs/deep-dive-into-ztp"
+      "docs/deep-dive-into-ztp",
+      "docs/ztp-control-report"
     ]
   },
   "outbound": {
@@ -447,9 +457,13 @@
     "docs/xuehai-login-api": [],
     "docs/xuehai-sign": [],
     "docs/ztp-api": [],
-    "docs/ztp-control-report": [],
+    "docs/ztp-control-report": [
+      "docs/zty-control-report"
+    ],
     "docs/ztp-unlock": [],
-    "docs/zty-control-report": []
+    "docs/zty-control-report": [
+      "docs/ztp-control-report"
+    ]
   },
   "broken": []
 }
