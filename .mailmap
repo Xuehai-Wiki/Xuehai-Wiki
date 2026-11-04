@@ -1,0 +1,15 @@
+# 作者身份归并表(git shortlog / git log 按此显示)。
+# 1) 同一邮箱的不同署名 —— 纯归并,无歧义。
+# 2) Redstix 的 kynetic992@gmail.com 与 redstixtick@outlook.com —— 两邮箱都用过
+#    Redstix / Redstixd 两个名字,判定为同一人,统一到最近在用的 outlook 邮箱。
+# 注意:Ubuntu <ubuntu@localhost.localdomain>(2026-09-23 两个提交)来源不明,未归并。
+
+kuinone <kuinone@qq.com> Kuinone_醌酱 <kuinone@qq.com>
+
+Redstix <redstixtick@outlook.com> Redstixd <redstixtick@outlook.com>
+Redstix <redstixtick@outlook.com> Redstix <RedstixTick@outlook.com>
+Redstix <redstixtick@outlook.com> Redstixd <kynetic992@gmail.com>
+Redstix <redstixtick@outlook.com> Redstix <kynetic992@gmail.com>
+Redstix <redstixtick@outlook.com> NextNeuro <kynetic992@gmail.com>
+
+Auratik <TileTick@outlook.com> Aurotik <TileTick@outlook.com>
