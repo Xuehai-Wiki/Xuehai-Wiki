@@ -29,5 +29,8 @@
     "terser": "^5.44.1",
     "typescript": "^6.0.3",
     "wrangler": "^4.127.0"
+  },
+  "overrides": {
+    "rolldown": "~1.2.19"
   }
 }
