@@ -1,6 +1,6 @@
 ---
 title: 深入浅出智通平台
-description: 智通平台（ztp）与 MDM 代理（zty）的逆向分析系列总目录：基于反编译源码的 19 篇分册，覆盖架构、网络、签名、文件、IPC、日志、管控、后门与自写 ztp 指南。
+description: 智通平台（ztp）与 MDM 代理（zty）的逆向分析系列总目录：基于反编译源码的 21 篇分册，覆盖架构、网络、签名、文件、IPC、日志、管控、后门与自写 ztp 指南。
 categories:
   - 架构总览
 excerpt: 深入浅出智通平台系列总目录——按"架构 → 子系统 → 专项"组织的智通平台完整逆向规格书。
@@ -39,6 +39,8 @@ sidebar:
 | 15 | [zty 与 ztp 的启动关系、看门狗与安装器](/docs/deep-dive-into-ztp/15-zty-mdm-startup) | 相互启动、文件锁看门狗、健康心跳、内置安装器、自启真相 |
 | 16 | [权限分层与设备身份](/docs/deep-dive-into-ztp/16-permissions-device-identity) | 四层权限模型、AIDL/MdmService 机制、deviceId 链、登记表模型、离线动态码 |
 | 17 | [一键还原、卸载重装与自写 ztp](/docs/deep-dive-into-ztp/17-reinstall-and-rewrite) | unLock 全清单、重装场景推演、数据去留、自写兼容面 |
+| 18 | [管控策略的获取链路与轮询机制](/docs/deep-dive-into-ztp/18-control-policy-fetch) | startControlMode 入口、forbidden-detail 接口、LRequest→OkHttp 网络路径、五套轮询循环的真实周期 |
+| 19 | [推送长连接：control-service 报文与管控下发](/docs/deep-dive-into-ztp/19-push-control-service) | 报文三层结构、payload 语义、零加密举证与硬编码密钥、保活参数、既有文档勘误 |
 | 99 | [入口点索引](/docs/deep-dive-into-ztp/99-entry-points-index) | Application/Activity/Service/Receiver/Provider/路由/IPC 总索引 |
 
 ## 延伸阅读

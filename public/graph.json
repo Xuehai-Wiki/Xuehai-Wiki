@@ -10,13 +10,13 @@
       "id": "docs/deep-dive-into-ztp/01-network-api",
       "title": "学海网络子系统",
       "url": "/docs/deep-dive-into-ztp/01-network-api",
-      "degree": 1
+      "degree": 2
     },
     {
       "id": "docs/deep-dive-into-ztp/02-signing",
       "title": "学海签名与加密体系",
       "url": "/docs/deep-dive-into-ztp/02-signing",
-      "degree": 1
+      "degree": 2
     },
     {
       "id": "docs/deep-dive-into-ztp/03-file-io",
@@ -28,7 +28,7 @@
       "id": "docs/deep-dive-into-ztp/04-ipc-ztcloud",
       "title": "跨进程通信与推送长连接",
       "url": "/docs/deep-dive-into-ztp/04-ipc-ztcloud",
-      "degree": 1
+      "degree": 3
     },
     {
       "id": "docs/deep-dive-into-ztp/05-logging",
@@ -52,7 +52,7 @@
       "id": "docs/deep-dive-into-ztp/08-control-night-ban",
       "title": "夜禁与管控子系统",
       "url": "/docs/deep-dive-into-ztp/08-control-night-ban",
-      "degree": 1
+      "degree": 2
     },
     {
       "id": "docs/deep-dive-into-ztp/09-daily-words",
@@ -109,6 +109,18 @@
       "degree": 1
     },
     {
+      "id": "docs/deep-dive-into-ztp/18-control-policy-fetch",
+      "title": "管控策略的获取链路与轮询机制",
+      "url": "/docs/deep-dive-into-ztp/18-control-policy-fetch",
+      "degree": 7
+    },
+    {
+      "id": "docs/deep-dive-into-ztp/19-push-control-service",
+      "title": "推送长连接：control-service 报文与管控下发",
+      "url": "/docs/deep-dive-into-ztp/19-push-control-service",
+      "degree": 8
+    },
+    {
       "id": "docs/deep-dive-into-ztp/99-entry-points-index",
       "title": "智通平台入口点索引",
       "url": "/docs/deep-dive-into-ztp/99-entry-points-index",
@@ -118,7 +130,7 @@
       "id": "docs/deep-dive-into-ztp",
       "title": "深入浅出智通平台",
       "url": "/docs/deep-dive-into-ztp",
-      "degree": 24
+      "degree": 26
     },
     {
       "id": "docs/gallery",
@@ -190,7 +202,7 @@
       "id": "docs/ztp-control-report",
       "title": "ztp 管控策略（com.xh.zhitongyunstu）",
       "url": "/docs/ztp-control-report",
-      "degree": 3
+      "degree": 7
     },
     {
       "id": "docs/ztp-unlock",
@@ -207,12 +219,48 @@
   ],
   "edges": [
     {
+      "from": "docs/deep-dive-into-ztp/04-ipc-ztcloud",
+      "to": "docs/deep-dive-into-ztp/19-push-control-service"
+    },
+    {
       "from": "docs/deep-dive-into-ztp/11-backdoors",
       "to": "docs/deep-dive-into-ztp/10-remote-assist"
     },
     {
       "from": "docs/deep-dive-into-ztp/11-backdoors",
       "to": "docs/xuehai-brushcode"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp/18-control-policy-fetch",
+      "to": "docs/deep-dive-into-ztp/01-network-api"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp/18-control-policy-fetch",
+      "to": "docs/deep-dive-into-ztp/08-control-night-ban"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp/18-control-policy-fetch",
+      "to": "docs/deep-dive-into-ztp/19-push-control-service"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp/18-control-policy-fetch",
+      "to": "docs/ztp-control-report"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp/19-push-control-service",
+      "to": "docs/deep-dive-into-ztp/02-signing"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp/19-push-control-service",
+      "to": "docs/deep-dive-into-ztp/04-ipc-ztcloud"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp/19-push-control-service",
+      "to": "docs/deep-dive-into-ztp/18-control-policy-fetch"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp/19-push-control-service",
+      "to": "docs/ztp-control-report"
     },
     {
       "from": "docs/deep-dive-into-ztp",
@@ -288,6 +336,14 @@
     },
     {
       "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/18-control-policy-fetch"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
+      "to": "docs/deep-dive-into-ztp/19-push-control-service"
+    },
+    {
+      "from": "docs/deep-dive-into-ztp",
       "to": "docs/deep-dive-into-ztp/99-entry-points-index"
     },
     {
@@ -312,6 +368,14 @@
     },
     {
       "from": "docs/ztp-control-report",
+      "to": "docs/deep-dive-into-ztp/18-control-policy-fetch"
+    },
+    {
+      "from": "docs/ztp-control-report",
+      "to": "docs/deep-dive-into-ztp/19-push-control-service"
+    },
+    {
+      "from": "docs/ztp-control-report",
       "to": "docs/zty-control-report"
     },
     {
@@ -320,6 +384,12 @@
     }
   ],
   "backlinks": {
+    "docs/deep-dive-into-ztp/19-push-control-service": [
+      "docs/deep-dive-into-ztp",
+      "docs/deep-dive-into-ztp/04-ipc-ztcloud",
+      "docs/deep-dive-into-ztp/18-control-policy-fetch",
+      "docs/ztp-control-report"
+    ],
     "docs/deep-dive-into-ztp/10-remote-assist": [
       "docs/deep-dive-into-ztp",
       "docs/deep-dive-into-ztp/11-backdoors"
@@ -328,19 +398,37 @@
       "docs/deep-dive-into-ztp",
       "docs/deep-dive-into-ztp/11-backdoors"
     ],
+    "docs/deep-dive-into-ztp/01-network-api": [
+      "docs/deep-dive-into-ztp",
+      "docs/deep-dive-into-ztp/18-control-policy-fetch"
+    ],
+    "docs/deep-dive-into-ztp/08-control-night-ban": [
+      "docs/deep-dive-into-ztp",
+      "docs/deep-dive-into-ztp/18-control-policy-fetch"
+    ],
+    "docs/ztp-control-report": [
+      "docs/deep-dive-into-ztp",
+      "docs/deep-dive-into-ztp/18-control-policy-fetch",
+      "docs/deep-dive-into-ztp/19-push-control-service",
+      "docs/zty-control-report"
+    ],
+    "docs/deep-dive-into-ztp/02-signing": [
+      "docs/deep-dive-into-ztp",
+      "docs/deep-dive-into-ztp/19-push-control-service"
+    ],
+    "docs/deep-dive-into-ztp/04-ipc-ztcloud": [
+      "docs/deep-dive-into-ztp",
+      "docs/deep-dive-into-ztp/19-push-control-service"
+    ],
+    "docs/deep-dive-into-ztp/18-control-policy-fetch": [
+      "docs/deep-dive-into-ztp",
+      "docs/deep-dive-into-ztp/19-push-control-service",
+      "docs/ztp-control-report"
+    ],
     "docs/deep-dive-into-ztp/00-overview": [
       "docs/deep-dive-into-ztp"
     ],
-    "docs/deep-dive-into-ztp/01-network-api": [
-      "docs/deep-dive-into-ztp"
-    ],
-    "docs/deep-dive-into-ztp/02-signing": [
-      "docs/deep-dive-into-ztp"
-    ],
     "docs/deep-dive-into-ztp/03-file-io": [
-      "docs/deep-dive-into-ztp"
-    ],
-    "docs/deep-dive-into-ztp/04-ipc-ztcloud": [
       "docs/deep-dive-into-ztp"
     ],
     "docs/deep-dive-into-ztp/05-logging": [
@@ -350,9 +438,6 @@
       "docs/deep-dive-into-ztp"
     ],
     "docs/deep-dive-into-ztp/07-app-management": [
-      "docs/deep-dive-into-ztp"
-    ],
-    "docs/deep-dive-into-ztp/08-control-night-ban": [
       "docs/deep-dive-into-ztp"
     ],
     "docs/deep-dive-into-ztp/09-daily-words": [
@@ -388,10 +473,6 @@
     "docs/xuehai-sign": [
       "docs/deep-dive-into-ztp"
     ],
-    "docs/ztp-control-report": [
-      "docs/deep-dive-into-ztp",
-      "docs/zty-control-report"
-    ],
     "docs/zty-control-report": [
       "docs/deep-dive-into-ztp",
       "docs/ztp-control-report"
@@ -402,7 +483,9 @@
     "docs/deep-dive-into-ztp/01-network-api": [],
     "docs/deep-dive-into-ztp/02-signing": [],
     "docs/deep-dive-into-ztp/03-file-io": [],
-    "docs/deep-dive-into-ztp/04-ipc-ztcloud": [],
+    "docs/deep-dive-into-ztp/04-ipc-ztcloud": [
+      "docs/deep-dive-into-ztp/19-push-control-service"
+    ],
     "docs/deep-dive-into-ztp/05-logging": [],
     "docs/deep-dive-into-ztp/06-initialization": [],
     "docs/deep-dive-into-ztp/07-app-management": [],
@@ -419,6 +502,18 @@
     "docs/deep-dive-into-ztp/15-zty-mdm-startup": [],
     "docs/deep-dive-into-ztp/16-permissions-device-identity": [],
     "docs/deep-dive-into-ztp/17-reinstall-and-rewrite": [],
+    "docs/deep-dive-into-ztp/18-control-policy-fetch": [
+      "docs/deep-dive-into-ztp/01-network-api",
+      "docs/deep-dive-into-ztp/08-control-night-ban",
+      "docs/deep-dive-into-ztp/19-push-control-service",
+      "docs/ztp-control-report"
+    ],
+    "docs/deep-dive-into-ztp/19-push-control-service": [
+      "docs/deep-dive-into-ztp/02-signing",
+      "docs/deep-dive-into-ztp/04-ipc-ztcloud",
+      "docs/deep-dive-into-ztp/18-control-policy-fetch",
+      "docs/ztp-control-report"
+    ],
     "docs/deep-dive-into-ztp/99-entry-points-index": [],
     "docs/deep-dive-into-ztp": [
       "docs/deep-dive-into-ztp/00-overview",
@@ -439,6 +534,8 @@
       "docs/deep-dive-into-ztp/15-zty-mdm-startup",
       "docs/deep-dive-into-ztp/16-permissions-device-identity",
       "docs/deep-dive-into-ztp/17-reinstall-and-rewrite",
+      "docs/deep-dive-into-ztp/18-control-policy-fetch",
+      "docs/deep-dive-into-ztp/19-push-control-service",
       "docs/deep-dive-into-ztp/99-entry-points-index",
       "docs/xuehai-brushcode",
       "docs/xuehai-login-api",
@@ -458,6 +555,8 @@
     "docs/xuehai-sign": [],
     "docs/ztp-api": [],
     "docs/ztp-control-report": [
+      "docs/deep-dive-into-ztp/18-control-policy-fetch",
+      "docs/deep-dive-into-ztp/19-push-control-service",
       "docs/zty-control-report"
     ],
     "docs/ztp-unlock": [],

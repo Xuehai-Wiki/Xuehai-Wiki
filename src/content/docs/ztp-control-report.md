@@ -57,19 +57,23 @@ categories:
 
 ## 2. 指令下发与数据同步通道
 
-### 2.1 HTTP 定时轮询（主通道）
-- `com.xuehai.service.control.SyncService`（75 行）：`HandlerThread "SyncServiceThread"`，`onStartCommand` 携带 schoolId/user_id，**立即执行 + 每 120000ms 重复** → `ControlService.syncControlData`。
-- `ControlService.reqControlData`（337 行）：`GET {serviceUrl.getMicroUrl("/api/v1/forbidden/detail")}`，参数 schoolId+userId；成功后 `saveControlData`（写 XmConfig 本地）→ `syncControlData`（分发给其它 App）。
-- 桌面侧 `ControlRepository.startControlMode()`（L534）：受 `CommonControlsManager.hasPermission()` 门控（标志 4096L + 是学生端 + isStudent + getUserId>0）；TOC 用户走 `reqForbiddenDetailV2(modeId)`，TOB 走 `reqForbiddenDetail`。
+### 2.1 HTTP 事件驱动拉取（主通道）
+- `com.xuehai.service.control.SyncService`（75 行）：`HandlerThread "SyncServiceThread"`，`onStartCommand` 携带 schoolId/user_id，**立即执行 + 每 120000ms 重复** → `ControlService.syncControlData`。**注意：这个 120s 循环只做本地反序列化（把 `XmConfig` 里的字符串还原成内存对象），一个网络请求都不发，它不是网络轮询**。
+- `ControlService.reqControlData`（337 行）：`GET {serviceUrl.getMicroUrl("/api/v1/forbidden/detail")}`，参数 schoolId+userId；成功后 `saveControlData`（写 XmConfig 本地）→ `syncControlData`（分发给其它 App）。**这条 service 进程通道已退化为调试入口**：类上标 `@Deprecated`，唯一上层调用是 `DebugViewModel`。
+- 桌面侧 `ControlRepository.startControlMode()`（L2943）：受 `CommonControlsManager.hasPermission()` 门控（权限位 4096L + 学生端 + getUserId>0）；TOC 用户走 `reqForbiddenDetailV2(modeId)`，TOB 走 `reqForbiddenDetail`。由**7 个事件点**驱动（启动 / 回前台 / 网络恢复 / 首页加载 / push `control-service` / 广播 / 安装卸载），**没有固定周期的网络轮询**。
+
+> 详细拆解与勘误见 [[18-control-policy-fetch]]。
 
 ### 2.2 自研 TCP 长连接推送（实时通道）
-`com.xuehai.message`（约 90 个文件）：私有二进制协议（`proto/`：Authorization、Echo、Heartbeat、Message、MessageFeedback、Pull，命令字 `MessageCmd`：HEART_BEAT=1/AUTHORIZATION=2/MESSAGE=3/PULL=5），`TcpClient`(255 行) + `PushClient`(331 行)，靠 `PushAlarmReceiver`+`AlarmWalkman`+`WakeLockUtil`+屏幕/WiFi 广播保活。
+`com.xuehai.message`（约 90 个文件）：私有二进制协议（`proto/`：Authorization、Echo、Heartbeat、Message、MessageFeedback、Pull，命令字 `MessageCmd`：HEART_BEAT=1/AUTHORIZATION=2/MESSAGE=3/PULL=5），`TcpClient`(255 行) + `PushClient`(331 行)，靠 `PushAlarmReceiver`+`AlarmWalkman`+`WakeLockUtil`+屏幕/WiFi 广播保活。**裸 Socket，无 TLS；报文为明文 UTF-8 JSON，仅建连认证有一次 HMAC-SHA256 签名。**
 `LauncherPushService`（业务接收器，`extends PushMessageReceiver`）分发 `MsgType`：
-- **`control-service`（CONTROL_UPDATE）**：收到即 `ControlRepository.startControlMode()` + `reqStudentControlModes`，实现管控策略秒级下发（LauncherPushService L221-237）；
+- **`control-service`（CONTROL_UPDATE）**：命中后 `ControlRepository.startControlMode()` + `reqStudentControlModes`，实现管控策略秒级下发（LauncherPushService L153-161）。**报文里不含任何策略字段**——`payload` 该分支完全不读取，推送只起"缓存失效通知"作用，策略本身仍需再发一次 `forbidden/detail` GET；
 - `assist-notify`：远程协助请求；
 - `app-upgrade` / `app-upgrade-prepare`：应用升级与预下载；
 - `app-notification` / `app-syncMessage`：通知与资源同步。
-过滤包名白名单 `["com.xh.arespunc"]`（课堂 App）。
+过滤规则：`appId == subAppId` 才走平台内部分发（否则转发第三方，白名单 `["com.xh.arespunc"]` 为课堂 App）；`userId` 必须与本地登录用户一致，否则整条丢弃。
+
+> 报文三层结构、payload 语义、加密举证与可注入面见 [[19-push-control-service]]。
 
 ### 2.3 广播分发（跨 App）
 - `ControlReceiver`（65 行，动态注册）：`com.xuehai.control.action.all_control` → `startControlMode()`；`com.xuehai.control.action.app_permission` → `reqAppModulePermission()`。
@@ -276,7 +280,7 @@ categories:
 | 夜间管控窗口 | 22:30 → 次日 06:00 | `NightForbid.getDefaultNightForbid` |
 | 服务端提前提示 | 2 分钟 | `ControlRealTimeManager.FORWARD_TIP_MINUTE` |
 | 实体提前提示 | 5 分钟（TIP_OFFSET=300000） | `ForbidTime`/`LongTimeAndNightForbid` |
-| 策略同步周期 | 120000ms | `SyncService` |
+| 本地策略同步周期（纯本地，不走网络） | 120000ms | `SyncService` |
 | 实时复查最小延迟 | 1000ms / 最大 60000ms | `ControlRealTimeManager` |
 | 全局可用时段 | 06:00(360min) ~ 22:00(1320min)，maxDuration 86400s | `userDuration` |
 | 考试模式上限 | 12 小时 | `ExamModeStatus` |
@@ -290,7 +294,7 @@ categories:
 
 ```
 云端平台(TOB学校/TOC家长)
-   │  HTTP /api/v1/forbidden/detail 等（120s 轮询）+ TCP push(control-service) + 设备状态上报
+   │  HTTP /api/v1|v2/forbidden/detail（7 个事件点触发）+ TCP push(control-service) + 设备状态上报
    ▼
 ControlService/SyncService（服务进程）          ControlRepository（桌面进程）
    ├─ saveControlData → XmConfig                  ├─ startControlMode（权限4096门控）
@@ -309,7 +313,7 @@ PolicyManager（MDM binder）
 ```
 
 **核心特征**：
-1. **双保险下发**——HTTP 轮询兜底 + TCP 推送秒级生效，断网时本地默认策略（22:30-06:00 夜禁）仍生效；
+1. **双保险下发**——事件驱动 HTTP 拉取兜底 + TCP 推送秒级触发（推送只带"去重拉"的通知，不携带策略本体），断网时本地默认策略（22:30-06:00 夜禁）仍生效；
 2. **设备级釜底抽薪**——不是普通 App 层管控，而是通过厂商 MDM 系统服务直接操作系统策略（禁设置、禁时间修改、iptables），普通用户无法从系统设置逃逸；
 3. **防篡改纵深**——加密广播（场景）、防伪造的考试模式、MDM 动态解锁码、签名校验、注销即全禁；
 4. **优先级明确**——Scene > LongTime > Night，模块管控正交叠加，互斥时高优先级胜出；

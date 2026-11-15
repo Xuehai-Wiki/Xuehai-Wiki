@@ -136,7 +136,7 @@ PushApi.initialize(config)
        └─ PushCore.initialize()
             ├─ 注册 PushAlarmReceiver / PushScreenReceiver / NetworkObserver
             └─ new PushClient(config, walkman).connect()
-                 ├─ TcpClient.connect()  // 阻塞建连，timeOut 默认 10s
+                 ├─ TcpClient.connect()  // 阻塞建连，timeOut 默认 15s
                  └─ onEvent(CONNECT_OK=0)
                       ├─ 创建 IDManager
                       ├─ auth()  // 发送 Authorization 报文
@@ -244,10 +244,12 @@ private final void dealMessage(Message message) {
 
 ### 3.5 心跳与保活
 
-- 心跳周期默认 90s（`PushConstants.HEART_DELAY`），`Heartbeat` 报文内容 1 字节（亮屏=1/灭屏=0）。
-- `PushAlarmReceiver` 每 2 个心跳周期设置一次精确闹钟（`AlarmWalkman`，API 23+ 用 `setExactAndAllowWhileIdle`），闹钟触发时若断线立即重连，否则 `checkConnectStatus()` 发 Echo 探测。
-- `PushScreenReceiver` 监听亮灭屏，亮屏时立即心跳。
+- 心跳周期默认 **30s**，由 `PushConfig` 的合成构造函数决定（`(marker & 64) != 0 ? 30000L : heartbeatPeriod`，`PushUtil.initialize` 传入 marker=64）。`PushConstants.HEART_DELAY = 90000` 是**无任何引用的死常量**，不是生效值。`Heartbeat` 报文内容 1 字节（亮屏=1/灭屏=0）。
+- `PushAlarmReceiver` 每 2 个心跳周期（60s）设置一次精确闹钟（`AlarmWalkman`，API 23+ 用 `setExactAndAllowWhileIdle`），闹钟触发时若断线立即重连，否则 `checkConnectStatus()` 发 Echo 探测（3s 未回即强制重连）。
+- `PushScreenReceiver` 监听亮灭屏：两种事件都会重置心跳定时器并立即发一次；亮屏额外在 10s 后发 `PullProto` 拉离线消息。
 - `NetworkObserver` 监听网络变化，恢复时 `restoreConnect()`。
+
+> 业务层（`control-service` 报文内容、payload 语义、加密结论）见 [[19-push-control-service]]。
 
 ### 3.6 推送状态文件（PnServer / PnStatus）
 
