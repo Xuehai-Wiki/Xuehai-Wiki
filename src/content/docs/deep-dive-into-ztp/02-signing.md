@@ -151,7 +151,7 @@ eptim]q34imt5b]-q04i5q=fdkfjfsadlkjfasdfrt573df4pltoy]-pn965498d
 
 ```
 路径: {XhDir}/sec/sec.ini
-内容: {version}|{key}     // 竖线分隔
+内容: {version}$${key}     // 两个 $ 分隔
 ```
 
 - `writeSecretToFile(version, key)`：先删除旧目录再写入
