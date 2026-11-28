@@ -148,7 +148,7 @@ V1 静态签名密钥（从 xhcore.so 中提取）：%%eptim]q34imt5b]-q04i5q=fd
 
 ```
 路径: {XhDir}/sec/sec.ini
-内容: {version}|{key}     // 竖线分隔
+内容: {version}$${key}     // 两个 $ 分隔
 ```
 
 - `writeSecretToFile(version, key)`：先删除旧目录再写入
