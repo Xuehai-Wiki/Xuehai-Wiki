@@ -1,4 +1,49 @@
 {
+  "/docs/research/attack-chain/": {
+    "id": "docs/research/attack-chain",
+    "mode": "full",
+    "h": "fa5ccb3a336fcb33",
+    "tl": 10,
+    "t": "n8OCl+3DgsrdivuT2oed0eLsyPfOl93Lle3Hxbiy",
+    "d": "n8OCl+3DgsrdivuT2oed0eLsyPfOl93Lle3Hxbiy1o72jrHygOPrhcrjjJWY1q6ckf+Al/X7guPL",
+    "e": "nNOjm/DMjd7sheaI17qZ0PTpyPrVl97ClcPpy7uX2pf0j7f2gN3ph+fXjYOs17yGkMadl9jmit3ohu2G1oiY0fbHxfjnlvXlmuTCyqi01bzOjq3zgcvrhPrHjqCc3466nfiGUlIJRYXJ2I6pvdiFmZ3WqZfj6oL79oXfnNeKlN7Wycrc8pfd71IgOm4S1YWTkOGXkeXygdrJhuKM2pG+0M7gxcbcmvbfkePpxK+p243gjYP7jdDghujnjJWW1IqcnfW8keXyjPrEhOqU17eJ3v/CyOLKlP/llcLEyo6m1Zb5j7bcg9Pijs7vjJaX1b28nfSXlPzcgvjPhvig172n0sfGyNbolP/lltn8yYqa1JvdgYfWhvPn"
+  },
+  "/docs/research/dead-ends/": {
+    "id": "docs/research/dead-ends",
+    "mode": "full",
+    "h": "fa5ccb3a336fcb33",
+    "tl": 15,
+    "t": "nsWWmtLcg9n3huW43Yyo0sLkyP/kl9/1lP7JxZCb2pn5jJHYgunhicXMj5eN",
+    "d": "nsWWmtLcg9n3huW43Yyo0sLkyP/kl9/1lP7JxZCb2pn5jJHYgunhicXMj5eN1Iq4nfSXlPzcgs/TheaK",
+    "e": "n8i5lczFgvv2hueL1oiy0/XiycnSluXdl//Ay5+L2oHXh5HogMnxhubLjYO72JGznNCulPjShuHzhNW81Yuu0/XnxdzLlujglP7JzrKx1KrUjbHCgP36hub8jJW8EGd/WI2o2YPuxI7O746Cvdavl5HrkJv894Ha0YTIrNWKldDw/sjf8pvv45XZz8ufi9et2Iut8ID8w4TiyI2ol9W9lZ/qlJX62oz5x4DorNesiNDhx8rcxJXrxpfrzMicqtaO9oyS3IDX6IXI946Al9Oyt5zTiJfq+Ybh/ofTjtWQs9//5Mvu7JbgxJfsy8mPttuh0I+L84PD3YTz5Iutv9iNr5zQrZT584DZyovPrNSdidDL/cro4ZvK1ZT75s6ysg=="
+  },
+  "/docs/research/envspoof/": {
+    "id": "docs/research/envspoof",
+    "mode": "full",
+    "h": "fa5ccb3a336fcb33",
+    "tl": 15,
+    "t": "n+aCl8fwgd3Yi8uo1JiT0+X/yujhm8vfms3JyYq+17n1jo7yg8buhN3ajqel",
+    "d": "n+aCl8fwgd3Yi8uo1JiT0+X/ws7/ltT/lOPPzrKx2pjGjYn1gt3EhuLljbyq07K3nvWum/zjgdn8hueg1JOy0M3jyN3cle/2",
+    "e": "ne2Ald73gd3Yi8uo1aq209bky+fRm8vfms3Jwo6q1YXDj5btgML7h/LEjrmL1bSvm+ismsvNgMX1hMaM1aC00+nwyPrBlsv7m/DWzrKx1Kv7gbTigcvIiOXXjq2z07K3nsutlND4jcb2iumS0bCzXREHXhlFlc3Al9/nyYq+1KHdjZLlgM/chtj0gKqY1bienuO/ld7uhuHwivGp15670/3AyMjwlN/ekePpyquL14vtjoXTg/j6icLggIKn1Y62ne2elt39gNbAhPeI26mi0/DezvLn"
+  },
+  "/docs/research/login-chain-audit/": {
+    "id": "docs/research/login-chain-audit",
+    "mode": "full",
+    "h": "fa5ccb3a336fcb33",
+    "tl": 9,
+    "t": "n/GWl9jmjPLMi9+C1aq23/j4yMrClsvAms3J",
+    "d": "n/GWl9jmjPLMi9+C27Ci08DPyNzEm8vAnd/yyL+x1oz0joDXg/rCidPvgYyI1Yi5nNCjlfnsgM/sheKI1Ka1",
+    "e": "nNOjUiQQEQgEChxUEtW6rZ3Tl5ftw4L97YbGs9qfhdDJ6sj99Jbi253f5MSyoNSr2YCCyYD034T/4oyXvtafk5H/hZXD8ozAyIbSot2Mqd7W2MjP8JT5/pfN9sqri9eL7Y6n14Pl4obo542gs9WprZzQh5fI5IPPx4fQo9ejv9PC/Mj6wZvK2p3f88icqtaL9Yut/oLA3obJ/I2RsNWKjpvooJX8zoDx/4bluNSQi9PjyMLO/pfaz5TOyw1BRRLT8MzI3P+bysyW2uHCjqvXj86Ag8KBy+6FyseMlZjXrqmdxrOU2fyM89uA6K8="
+  },
+  "/docs/research/smp200/": {
+    "id": "docs/research/smp200",
+    "mode": "full",
+    "h": "fa5ccb3a336fcb33",
+    "tl": 24,
+    "t": "KyUAIldDVUGV//fLrorVluyPhMSKz/+ExdGOpKHZsqyf8qma5s6A6+mH0KPXpJ3SwOjI/8SU59g=",
+    "d": "KyUAIldDVUGV//fLrorVuMiNsciC0/GG29WHkajVhYSe4b6b5emC+/aL65DXuqnV+OnI5sqX3eGX7snKsInWjvaNmsCD/feI68ePt7bVv7ed7YaU+NKN1t2E0pI=",
+    "e": "nNCtl+rDgNjBhfWS1oi40eLsyNzplfDVle3YyK6K2pjIjZDnis//iOfcgJKs1ryTnuaIlcvShuHzhd6l1LGd0MvAyPfAkOXgltjTy7a/2oHXjZP2gPX8gvLijJaJ1biXkMmhlNbbgOTXgOis262r38PwyNzsm8bkkePpxKmG1bTBjarJjfTPhOLMi62z2J2Nneaymsreit3+h9OI17+40/XJyO7Nlfnhl/PmyYqw1Jvdj7f2gcvmhtXxi62w2auyneWsl+DYgdnYhfWM2pKZ3tfpyc7PlP/lmtTHyoiP1o72jajZg+7EhvzTjbGI1qSPntu4msvJhuHw"
+  },
   "/docs/xh-lock-demo/": {
     "id": "docs/xh-lock-demo",
     "mode": "full",

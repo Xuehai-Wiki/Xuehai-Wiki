@@ -10,13 +10,13 @@
       "id": "docs/deep-dive-into-ztp/01-network-api",
       "title": "学海网络子系统",
       "url": "/docs/deep-dive-into-ztp/01-network-api",
-      "degree": 2
+      "degree": 3
     },
     {
       "id": "docs/deep-dive-into-ztp/02-signing",
       "title": "学海签名与加密体系",
       "url": "/docs/deep-dive-into-ztp/02-signing",
-      "degree": 2
+      "degree": 3
     },
     {
       "id": "docs/deep-dive-into-ztp/03-file-io",
@@ -28,19 +28,19 @@
       "id": "docs/deep-dive-into-ztp/04-ipc-ztcloud",
       "title": "跨进程通信与推送长连接",
       "url": "/docs/deep-dive-into-ztp/04-ipc-ztcloud",
-      "degree": 3
+      "degree": 5
     },
     {
       "id": "docs/deep-dive-into-ztp/05-logging",
       "title": "学海日志与埋点体系",
       "url": "/docs/deep-dive-into-ztp/05-logging",
-      "degree": 1
+      "degree": 2
     },
     {
       "id": "docs/deep-dive-into-ztp/06-initialization",
       "title": "智通平台初始化流程",
       "url": "/docs/deep-dive-into-ztp/06-initialization",
-      "degree": 1
+      "degree": 2
     },
     {
       "id": "docs/deep-dive-into-ztp/07-app-management",
@@ -64,7 +64,7 @@
       "id": "docs/deep-dive-into-ztp/10-remote-assist",
       "title": "远程协助（Remote Assist）",
       "url": "/docs/deep-dive-into-ztp/10-remote-assist",
-      "degree": 2
+      "degree": 3
     },
     {
       "id": "docs/deep-dive-into-ztp/11-backdoors",
@@ -94,13 +94,13 @@
       "id": "docs/deep-dive-into-ztp/15-zty-mdm-startup",
       "title": "zty 与 ztp 的启动关系、看门狗与安装器",
       "url": "/docs/deep-dive-into-ztp/15-zty-mdm-startup",
-      "degree": 1
+      "degree": 2
     },
     {
       "id": "docs/deep-dive-into-ztp/16-permissions-device-identity",
       "title": "权限分层与设备身份",
       "url": "/docs/deep-dive-into-ztp/16-permissions-device-identity",
-      "degree": 1
+      "degree": 2
     },
     {
       "id": "docs/deep-dive-into-ztp/17-reinstall-and-rewrite",
@@ -130,13 +130,97 @@
       "id": "docs/deep-dive-into-ztp",
       "title": "深入浅出智通平台",
       "url": "/docs/deep-dive-into-ztp",
-      "degree": 26
+      "degree": 28
     },
     {
       "id": "docs/gallery",
       "title": "画廊",
       "url": "/docs/gallery",
       "degree": 0
+    },
+    {
+      "id": "docs/research/assist-channel-repro",
+      "title": "远程协助通道的本地复现",
+      "url": "/docs/research/assist-channel-repro",
+      "degree": 6
+    },
+    {
+      "id": "docs/research/attack-chain",
+      "title": "██████████",
+      "url": "/docs/research/attack-chain",
+      "degree": 11
+    },
+    {
+      "id": "docs/research/binary-manifest",
+      "title": "研究原件登记表",
+      "url": "/docs/research/binary-manifest",
+      "degree": 14
+    },
+    {
+      "id": "docs/research/dead-ends",
+      "title": "███████████████",
+      "url": "/docs/research/dead-ends",
+      "degree": 9
+    },
+    {
+      "id": "docs/research/envspoof",
+      "title": "███████████████",
+      "url": "/docs/research/envspoof",
+      "degree": 7
+    },
+    {
+      "id": "docs/research",
+      "title": "独立研究资料索引",
+      "url": "/docs/research",
+      "degree": 19
+    },
+    {
+      "id": "docs/research/log-upload-endpoints",
+      "title": "日志与埋点的上传端点全谱",
+      "url": "/docs/research/log-upload-endpoints",
+      "degree": 6
+    },
+    {
+      "id": "docs/research/login-chain-audit",
+      "title": "█████████",
+      "url": "/docs/research/login-chain-audit",
+      "degree": 7
+    },
+    {
+      "id": "docs/research/mdm-aidl-guide",
+      "title": "Launcher MDM 能力的 AIDL 调用指南",
+      "url": "/docs/research/mdm-aidl-guide",
+      "degree": 8
+    },
+    {
+      "id": "docs/research/postmortem",
+      "title": "一次刷机事故的分层复盘",
+      "url": "/docs/research/postmortem",
+      "degree": 9
+    },
+    {
+      "id": "docs/research/push-channel-reverse",
+      "title": "推送长连接的协议逆向与服务发现",
+      "url": "/docs/research/push-channel-reverse",
+      "degree": 10
+    },
+    {
+      "id": "docs/research/smp200",
+      "title": "███████ ████████████████",
+      "url": "/docs/research/smp200",
+      "degree": 8
+    },
+    {
+      "id": "docs/research/unlocker-architecture",
+      "title": "Unlocker 工程的架构与服务发现",
+      "url": "/docs/research/unlocker-architecture",
+      "degree": 10
+    },
+    {
+      "id": "docs/research/unlocker-methodology",
+      "title": "逆向研究的证据分级与验证方法",
+      "url": "/docs/research/unlocker-methodology",
+      "degree": 8
     },
     {
       "id": "docs/xh-lock-demo",
@@ -148,13 +232,13 @@
       "id": "docs/xh-lock",
       "title": "文章身份校验使用说明",
       "url": "/docs/xh-lock",
-      "degree": 0
+      "degree": 1
     },
     {
       "id": "docs/xhpe-standard",
       "title": "XHPE 说明",
       "url": "/docs/xhpe-standard",
-      "degree": 0
+      "degree": 1
     },
     {
       "id": "docs/xuehai-abrustu-pk",
@@ -184,7 +268,7 @@
       "id": "docs/xuehai-login-api",
       "title": "登录API",
       "url": "/docs/xuehai-login-api",
-      "degree": 1
+      "degree": 2
     },
     {
       "id": "docs/xuehai-sign",
@@ -206,7 +290,7 @@
     },
     {
       "id": "docs/ztp-unlock",
-      "title": "智通平台中的动态码",
+      "title": "登录暗号：输入星号包裹的数字进入开发者界面",
       "url": "/docs/ztp-unlock",
       "degree": 0
     },
@@ -218,6 +302,10 @@
     }
   ],
   "edges": [
+    {
+      "from": "docs/deep-dive-into-ztp/02-signing",
+      "to": "docs/deep-dive-into-ztp/04-ipc-ztcloud"
+    },
     {
       "from": "docs/deep-dive-into-ztp/04-ipc-ztcloud",
       "to": "docs/deep-dive-into-ztp/19-push-control-service"
@@ -367,6 +455,294 @@
       "to": "docs/zty-control-report"
     },
     {
+      "from": "docs/research/assist-channel-repro",
+      "to": "docs/deep-dive-into-ztp/10-remote-assist"
+    },
+    {
+      "from": "docs/research/assist-channel-repro",
+      "to": "docs/research/attack-chain"
+    },
+    {
+      "from": "docs/research/assist-channel-repro",
+      "to": "docs/research/push-channel-reverse"
+    },
+    {
+      "from": "docs/research/assist-channel-repro",
+      "to": "docs/research/unlocker-architecture"
+    },
+    {
+      "from": "docs/research/attack-chain",
+      "to": "docs/research/dead-ends"
+    },
+    {
+      "from": "docs/research/attack-chain",
+      "to": "docs/research/smp200"
+    },
+    {
+      "from": "docs/research/attack-chain",
+      "to": "docs/research/unlocker-architecture"
+    },
+    {
+      "from": "docs/research/binary-manifest",
+      "to": "docs/research"
+    },
+    {
+      "from": "docs/research/binary-manifest",
+      "to": "docs/research/assist-channel-repro"
+    },
+    {
+      "from": "docs/research/binary-manifest",
+      "to": "docs/research/attack-chain"
+    },
+    {
+      "from": "docs/research/binary-manifest",
+      "to": "docs/research/dead-ends"
+    },
+    {
+      "from": "docs/research/binary-manifest",
+      "to": "docs/research/envspoof"
+    },
+    {
+      "from": "docs/research/binary-manifest",
+      "to": "docs/research/log-upload-endpoints"
+    },
+    {
+      "from": "docs/research/binary-manifest",
+      "to": "docs/research/login-chain-audit"
+    },
+    {
+      "from": "docs/research/binary-manifest",
+      "to": "docs/research/mdm-aidl-guide"
+    },
+    {
+      "from": "docs/research/binary-manifest",
+      "to": "docs/research/postmortem"
+    },
+    {
+      "from": "docs/research/binary-manifest",
+      "to": "docs/research/push-channel-reverse"
+    },
+    {
+      "from": "docs/research/binary-manifest",
+      "to": "docs/research/smp200"
+    },
+    {
+      "from": "docs/research/binary-manifest",
+      "to": "docs/research/unlocker-architecture"
+    },
+    {
+      "from": "docs/research/binary-manifest",
+      "to": "docs/research/unlocker-methodology"
+    },
+    {
+      "from": "docs/research/dead-ends",
+      "to": "docs/research/attack-chain"
+    },
+    {
+      "from": "docs/research/dead-ends",
+      "to": "docs/research/postmortem"
+    },
+    {
+      "from": "docs/research/dead-ends",
+      "to": "docs/research/smp200"
+    },
+    {
+      "from": "docs/research/dead-ends",
+      "to": "docs/research/unlocker-methodology"
+    },
+    {
+      "from": "docs/research/envspoof",
+      "to": "docs/deep-dive-into-ztp/16-permissions-device-identity"
+    },
+    {
+      "from": "docs/research/envspoof",
+      "to": "docs/research/login-chain-audit"
+    },
+    {
+      "from": "docs/research/envspoof",
+      "to": "docs/research/postmortem"
+    },
+    {
+      "from": "docs/research",
+      "to": "docs/deep-dive-into-ztp"
+    },
+    {
+      "from": "docs/research",
+      "to": "docs/research/assist-channel-repro"
+    },
+    {
+      "from": "docs/research",
+      "to": "docs/research/attack-chain"
+    },
+    {
+      "from": "docs/research",
+      "to": "docs/research/binary-manifest"
+    },
+    {
+      "from": "docs/research",
+      "to": "docs/research/dead-ends"
+    },
+    {
+      "from": "docs/research",
+      "to": "docs/research/envspoof"
+    },
+    {
+      "from": "docs/research",
+      "to": "docs/research/log-upload-endpoints"
+    },
+    {
+      "from": "docs/research",
+      "to": "docs/research/login-chain-audit"
+    },
+    {
+      "from": "docs/research",
+      "to": "docs/research/mdm-aidl-guide"
+    },
+    {
+      "from": "docs/research",
+      "to": "docs/research/postmortem"
+    },
+    {
+      "from": "docs/research",
+      "to": "docs/research/push-channel-reverse"
+    },
+    {
+      "from": "docs/research",
+      "to": "docs/research/smp200"
+    },
+    {
+      "from": "docs/research",
+      "to": "docs/research/unlocker-architecture"
+    },
+    {
+      "from": "docs/research",
+      "to": "docs/research/unlocker-methodology"
+    },
+    {
+      "from": "docs/research",
+      "to": "docs/xh-lock"
+    },
+    {
+      "from": "docs/research",
+      "to": "docs/xhpe-standard"
+    },
+    {
+      "from": "docs/research/log-upload-endpoints",
+      "to": "docs/deep-dive-into-ztp/05-logging"
+    },
+    {
+      "from": "docs/research/log-upload-endpoints",
+      "to": "docs/research/envspoof"
+    },
+    {
+      "from": "docs/research/log-upload-endpoints",
+      "to": "docs/research/login-chain-audit"
+    },
+    {
+      "from": "docs/research/log-upload-endpoints",
+      "to": "docs/research/postmortem"
+    },
+    {
+      "from": "docs/research/login-chain-audit",
+      "to": "docs/deep-dive-into-ztp/06-initialization"
+    },
+    {
+      "from": "docs/research/login-chain-audit",
+      "to": "docs/research/envspoof"
+    },
+    {
+      "from": "docs/research/login-chain-audit",
+      "to": "docs/xuehai-login-api"
+    },
+    {
+      "from": "docs/research/mdm-aidl-guide",
+      "to": "docs/deep-dive-into-ztp/15-zty-mdm-startup"
+    },
+    {
+      "from": "docs/research/mdm-aidl-guide",
+      "to": "docs/research/attack-chain"
+    },
+    {
+      "from": "docs/research/mdm-aidl-guide",
+      "to": "docs/research/dead-ends"
+    },
+    {
+      "from": "docs/research/mdm-aidl-guide",
+      "to": "docs/research/unlocker-architecture"
+    },
+    {
+      "from": "docs/research/postmortem",
+      "to": "docs/research"
+    },
+    {
+      "from": "docs/research/postmortem",
+      "to": "docs/research/smp200"
+    },
+    {
+      "from": "docs/research/postmortem",
+      "to": "docs/research/unlocker-methodology"
+    },
+    {
+      "from": "docs/research/push-channel-reverse",
+      "to": "docs/deep-dive-into-ztp/01-network-api"
+    },
+    {
+      "from": "docs/research/push-channel-reverse",
+      "to": "docs/deep-dive-into-ztp/04-ipc-ztcloud"
+    },
+    {
+      "from": "docs/research/push-channel-reverse",
+      "to": "docs/research/attack-chain"
+    },
+    {
+      "from": "docs/research/push-channel-reverse",
+      "to": "docs/research/mdm-aidl-guide"
+    },
+    {
+      "from": "docs/research/push-channel-reverse",
+      "to": "docs/research/unlocker-architecture"
+    },
+    {
+      "from": "docs/research/push-channel-reverse",
+      "to": "docs/research/unlocker-methodology"
+    },
+    {
+      "from": "docs/research/smp200",
+      "to": "docs/research/attack-chain"
+    },
+    {
+      "from": "docs/research/smp200",
+      "to": "docs/research/dead-ends"
+    },
+    {
+      "from": "docs/research/smp200",
+      "to": "docs/research/postmortem"
+    },
+    {
+      "from": "docs/research/unlocker-architecture",
+      "to": "docs/research/attack-chain"
+    },
+    {
+      "from": "docs/research/unlocker-architecture",
+      "to": "docs/research/mdm-aidl-guide"
+    },
+    {
+      "from": "docs/research/unlocker-architecture",
+      "to": "docs/research/push-channel-reverse"
+    },
+    {
+      "from": "docs/research/unlocker-architecture",
+      "to": "docs/research/unlocker-methodology"
+    },
+    {
+      "from": "docs/research/unlocker-methodology",
+      "to": "docs/deep-dive-into-ztp"
+    },
+    {
+      "from": "docs/research/unlocker-methodology",
+      "to": "docs/research"
+    },
+    {
       "from": "docs/ztp-control-report",
       "to": "docs/deep-dive-into-ztp/18-control-policy-fetch"
     },
@@ -384,6 +760,12 @@
     }
   ],
   "backlinks": {
+    "docs/deep-dive-into-ztp/04-ipc-ztcloud": [
+      "docs/deep-dive-into-ztp",
+      "docs/deep-dive-into-ztp/02-signing",
+      "docs/deep-dive-into-ztp/19-push-control-service",
+      "docs/research/push-channel-reverse"
+    ],
     "docs/deep-dive-into-ztp/19-push-control-service": [
       "docs/deep-dive-into-ztp",
       "docs/deep-dive-into-ztp/04-ipc-ztcloud",
@@ -392,7 +774,8 @@
     ],
     "docs/deep-dive-into-ztp/10-remote-assist": [
       "docs/deep-dive-into-ztp",
-      "docs/deep-dive-into-ztp/11-backdoors"
+      "docs/deep-dive-into-ztp/11-backdoors",
+      "docs/research/assist-channel-repro"
     ],
     "docs/xuehai-brushcode": [
       "docs/deep-dive-into-ztp",
@@ -400,7 +783,8 @@
     ],
     "docs/deep-dive-into-ztp/01-network-api": [
       "docs/deep-dive-into-ztp",
-      "docs/deep-dive-into-ztp/18-control-policy-fetch"
+      "docs/deep-dive-into-ztp/18-control-policy-fetch",
+      "docs/research/push-channel-reverse"
     ],
     "docs/deep-dive-into-ztp/08-control-night-ban": [
       "docs/deep-dive-into-ztp",
@@ -416,10 +800,6 @@
       "docs/deep-dive-into-ztp",
       "docs/deep-dive-into-ztp/19-push-control-service"
     ],
-    "docs/deep-dive-into-ztp/04-ipc-ztcloud": [
-      "docs/deep-dive-into-ztp",
-      "docs/deep-dive-into-ztp/19-push-control-service"
-    ],
     "docs/deep-dive-into-ztp/18-control-policy-fetch": [
       "docs/deep-dive-into-ztp",
       "docs/deep-dive-into-ztp/19-push-control-service",
@@ -432,10 +812,12 @@
       "docs/deep-dive-into-ztp"
     ],
     "docs/deep-dive-into-ztp/05-logging": [
-      "docs/deep-dive-into-ztp"
+      "docs/deep-dive-into-ztp",
+      "docs/research/log-upload-endpoints"
     ],
     "docs/deep-dive-into-ztp/06-initialization": [
-      "docs/deep-dive-into-ztp"
+      "docs/deep-dive-into-ztp",
+      "docs/research/login-chain-audit"
     ],
     "docs/deep-dive-into-ztp/07-app-management": [
       "docs/deep-dive-into-ztp"
@@ -456,10 +838,12 @@
       "docs/deep-dive-into-ztp"
     ],
     "docs/deep-dive-into-ztp/15-zty-mdm-startup": [
-      "docs/deep-dive-into-ztp"
+      "docs/deep-dive-into-ztp",
+      "docs/research/mdm-aidl-guide"
     ],
     "docs/deep-dive-into-ztp/16-permissions-device-identity": [
-      "docs/deep-dive-into-ztp"
+      "docs/deep-dive-into-ztp",
+      "docs/research/envspoof"
     ],
     "docs/deep-dive-into-ztp/17-reinstall-and-rewrite": [
       "docs/deep-dive-into-ztp"
@@ -468,7 +852,8 @@
       "docs/deep-dive-into-ztp"
     ],
     "docs/xuehai-login-api": [
-      "docs/deep-dive-into-ztp"
+      "docs/deep-dive-into-ztp",
+      "docs/research/login-chain-audit"
     ],
     "docs/xuehai-sign": [
       "docs/deep-dive-into-ztp"
@@ -476,12 +861,112 @@
     "docs/zty-control-report": [
       "docs/deep-dive-into-ztp",
       "docs/ztp-control-report"
+    ],
+    "docs/research/attack-chain": [
+      "docs/research",
+      "docs/research/assist-channel-repro",
+      "docs/research/binary-manifest",
+      "docs/research/dead-ends",
+      "docs/research/mdm-aidl-guide",
+      "docs/research/push-channel-reverse",
+      "docs/research/smp200",
+      "docs/research/unlocker-architecture"
+    ],
+    "docs/research/push-channel-reverse": [
+      "docs/research",
+      "docs/research/assist-channel-repro",
+      "docs/research/binary-manifest",
+      "docs/research/unlocker-architecture"
+    ],
+    "docs/research/unlocker-architecture": [
+      "docs/research",
+      "docs/research/assist-channel-repro",
+      "docs/research/attack-chain",
+      "docs/research/binary-manifest",
+      "docs/research/mdm-aidl-guide",
+      "docs/research/push-channel-reverse"
+    ],
+    "docs/research/dead-ends": [
+      "docs/research",
+      "docs/research/attack-chain",
+      "docs/research/binary-manifest",
+      "docs/research/mdm-aidl-guide",
+      "docs/research/smp200"
+    ],
+    "docs/research/smp200": [
+      "docs/research",
+      "docs/research/attack-chain",
+      "docs/research/binary-manifest",
+      "docs/research/dead-ends",
+      "docs/research/postmortem"
+    ],
+    "docs/research": [
+      "docs/research/binary-manifest",
+      "docs/research/postmortem",
+      "docs/research/unlocker-methodology"
+    ],
+    "docs/research/assist-channel-repro": [
+      "docs/research",
+      "docs/research/binary-manifest"
+    ],
+    "docs/research/envspoof": [
+      "docs/research",
+      "docs/research/binary-manifest",
+      "docs/research/log-upload-endpoints",
+      "docs/research/login-chain-audit"
+    ],
+    "docs/research/log-upload-endpoints": [
+      "docs/research",
+      "docs/research/binary-manifest"
+    ],
+    "docs/research/login-chain-audit": [
+      "docs/research",
+      "docs/research/binary-manifest",
+      "docs/research/envspoof",
+      "docs/research/log-upload-endpoints"
+    ],
+    "docs/research/mdm-aidl-guide": [
+      "docs/research",
+      "docs/research/binary-manifest",
+      "docs/research/push-channel-reverse",
+      "docs/research/unlocker-architecture"
+    ],
+    "docs/research/postmortem": [
+      "docs/research",
+      "docs/research/binary-manifest",
+      "docs/research/dead-ends",
+      "docs/research/envspoof",
+      "docs/research/log-upload-endpoints",
+      "docs/research/smp200"
+    ],
+    "docs/research/unlocker-methodology": [
+      "docs/research",
+      "docs/research/binary-manifest",
+      "docs/research/dead-ends",
+      "docs/research/postmortem",
+      "docs/research/push-channel-reverse",
+      "docs/research/unlocker-architecture"
+    ],
+    "docs/deep-dive-into-ztp": [
+      "docs/research",
+      "docs/research/unlocker-methodology"
+    ],
+    "docs/research/binary-manifest": [
+      "docs/research"
+    ],
+    "docs/xh-lock": [
+      "docs/research"
+    ],
+    "docs/xhpe-standard": [
+      "docs/research"
     ]
   },
   "outbound": {
     "docs/deep-dive-into-ztp/00-overview": [],
     "docs/deep-dive-into-ztp/01-network-api": [],
-    "docs/deep-dive-into-ztp/02-signing": [],
+    "docs/deep-dive-into-ztp/02-signing": [
+      "docs/deep-dive-into-ztp/04-ipc-ztcloud"
+    ],
     "docs/deep-dive-into-ztp/03-file-io": [],
     "docs/deep-dive-into-ztp/04-ipc-ztcloud": [
       "docs/deep-dive-into-ztp/19-push-control-service"
@@ -544,6 +1029,106 @@
       "docs/zty-control-report"
     ],
     "docs/gallery": [],
+    "docs/research/assist-channel-repro": [
+      "docs/deep-dive-into-ztp/10-remote-assist",
+      "docs/research/attack-chain",
+      "docs/research/push-channel-reverse",
+      "docs/research/unlocker-architecture"
+    ],
+    "docs/research/attack-chain": [
+      "docs/research/dead-ends",
+      "docs/research/smp200",
+      "docs/research/unlocker-architecture"
+    ],
+    "docs/research/binary-manifest": [
+      "docs/research",
+      "docs/research/assist-channel-repro",
+      "docs/research/attack-chain",
+      "docs/research/dead-ends",
+      "docs/research/envspoof",
+      "docs/research/log-upload-endpoints",
+      "docs/research/login-chain-audit",
+      "docs/research/mdm-aidl-guide",
+      "docs/research/postmortem",
+      "docs/research/push-channel-reverse",
+      "docs/research/smp200",
+      "docs/research/unlocker-architecture",
+      "docs/research/unlocker-methodology"
+    ],
+    "docs/research/dead-ends": [
+      "docs/research/attack-chain",
+      "docs/research/postmortem",
+      "docs/research/smp200",
+      "docs/research/unlocker-methodology"
+    ],
+    "docs/research/envspoof": [
+      "docs/deep-dive-into-ztp/16-permissions-device-identity",
+      "docs/research/login-chain-audit",
+      "docs/research/postmortem"
+    ],
+    "docs/research": [
+      "docs/deep-dive-into-ztp",
+      "docs/research/assist-channel-repro",
+      "docs/research/attack-chain",
+      "docs/research/binary-manifest",
+      "docs/research/dead-ends",
+      "docs/research/envspoof",
+      "docs/research/log-upload-endpoints",
+      "docs/research/login-chain-audit",
+      "docs/research/mdm-aidl-guide",
+      "docs/research/postmortem",
+      "docs/research/push-channel-reverse",
+      "docs/research/smp200",
+      "docs/research/unlocker-architecture",
+      "docs/research/unlocker-methodology",
+      "docs/xh-lock",
+      "docs/xhpe-standard"
+    ],
+    "docs/research/log-upload-endpoints": [
+      "docs/deep-dive-into-ztp/05-logging",
+      "docs/research/envspoof",
+      "docs/research/login-chain-audit",
+      "docs/research/postmortem"
+    ],
+    "docs/research/login-chain-audit": [
+      "docs/deep-dive-into-ztp/06-initialization",
+      "docs/research/envspoof",
+      "docs/xuehai-login-api"
+    ],
+    "docs/research/mdm-aidl-guide": [
+      "docs/deep-dive-into-ztp/15-zty-mdm-startup",
+      "docs/research/attack-chain",
+      "docs/research/dead-ends",
+      "docs/research/unlocker-architecture"
+    ],
+    "docs/research/postmortem": [
+      "docs/research",
+      "docs/research/smp200",
+      "docs/research/unlocker-methodology"
+    ],
+    "docs/research/push-channel-reverse": [
+      "docs/deep-dive-into-ztp/01-network-api",
+      "docs/deep-dive-into-ztp/04-ipc-ztcloud",
+      "docs/research/attack-chain",
+      "docs/research/mdm-aidl-guide",
+      "docs/research/unlocker-architecture",
+      "docs/research/unlocker-methodology"
+    ],
+    "docs/research/smp200": [
+      "docs/research/attack-chain",
+      "docs/research/dead-ends",
+      "docs/research/postmortem"
+    ],
+    "docs/research/unlocker-architecture": [
+      "docs/research/attack-chain",
+      "docs/research/mdm-aidl-guide",
+      "docs/research/push-channel-reverse",
+      "docs/research/unlocker-methodology"
+    ],
+    "docs/research/unlocker-methodology": [
+      "docs/deep-dive-into-ztp",
+      "docs/research"
+    ],
     "docs/xh-lock-demo": [],
     "docs/xh-lock": [],
     "docs/xhpe-standard": [],
