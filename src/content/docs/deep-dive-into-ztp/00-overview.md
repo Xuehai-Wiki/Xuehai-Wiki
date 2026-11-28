@@ -5,6 +5,7 @@ description: "智通平台是学海教育安装在学生平板上的管控/桌�
 
 categories:
   - 架构总览
+password: xh-research-2026
 excerpt: 智通平台（学生端 com.xh.zhitongyunstu）的总体架构：包名标识、服务器、入口点、初始化链、Welcome/Home/Login 路由与子系统文档索引。
 ---
 
@@ -30,8 +31,8 @@ excerpt: 智通平台（学生端 com.xh.zhitongyunstu）的总体架构：包�
 | 客户端形态 | 由 `isStudentClient("student")` 判定：学生端 / 教师端 | 本包为 `com.xh.zhitongyunstu`（`...stu`），故取 zty_stu |
 | 组件名 | `智通云组件` | 界面文字 |
 | mdmCode | `zty_stu`（学生端）/ `zty_tea`（教师端） | MDM 代码 |
-| appKey | `dsjiqw495soisoss`（学生端）/ `asdf8934589sdfsa`（教师端） | 密钥 |
-| secret | `5ec34bbc9eecc360c02484ba`（学生端）/ `5ec34bc7b57f7d40cbd9ec9e`（教师端） | 密钥 |
+| appKey | %%dsjiqw495soisoss%%（学生端）/ %%asdf8934589sdfsa%%（教师端） | 密钥 |
+| secret | `5ec34bbc9eecc360c02484ba`（学生端）/ `5ec34bc7b57f7d40cbd9ec9e`（教师端） | 密钥；注意这两个值与注册表里的 appId 相同，属公开标识而非机密 |
 
 ## 主要 Server
 
@@ -96,7 +97,7 @@ excerpt: 智通平台（学生端 com.xh.zhitongyunstu）的总体架构：包�
 
 ### 2. Application.onCreate
 
-- `App.onCreate()`：`FileCheckUtil.autoCheckXhDir()`（校验/初始化 xh 目录）、`super.onCreate()`、`EduOauth.registInstance(this, "0fd67f5b189d40b0bad2981db58ef9f8", "http://dn.yqer.cn", ...)`。
+- `App.onCreate()`：`FileCheckUtil.autoCheckXhDir()`（校验/初始化 xh 目录）、`super.onCreate()`、`EduOauth.registInstance(this, "<EDU_OAUTH_APPID>", "http://dn.yqer.cn", ...)`。
 - `XhApplication.onCreate()`：
   - `super.onCreate()`（基类启动 xhcore/日志）
   - `new MyUncaughtExceptionHandler().init(this)` — 全局未捕获异常处理

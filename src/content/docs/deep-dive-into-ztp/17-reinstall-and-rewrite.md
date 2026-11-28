@@ -5,6 +5,7 @@ description: "zty 的 DeviceResetActivity 一键还原（unLock 全清单）与�
 
 categories:
   - 安全分析
+password: xh-research-2026
 excerpt: 一键还原 = PolicyManager.unLock() 逐条撤销 lock() 的全部系统策略（删除自身前的硬性前置）；卸掉两个 app 只装 ztp 会被 checkMDM 拦在登录；自写 ztp 配合原 zty 只需包名+启动 action+provider 兼容。
 ---
 
@@ -106,7 +107,7 @@ app 本身能跑（登录 UI、业务 API、SD 数据复用、本地 TOTP），�
 | 启动 action | `com.xh.zhitongyun.launcher`（WelcomeActivity） |
 | ContentProvider | authority `com.xh.zhitongyun.provider`，四张表：`/cache`（真表）、`/client`、`/control`、`/appModelPermission`（虚拟表），并处理数据码通知 |
 | 签名体系 | V1 `MD5(method+url+t+key...)` / V2 nonce（`xuehai-sign.md`、`02-signing.md`；密钥在 libxhcore） |
-| 客户端标识 | appId `CA106004`、appKey `dsjiqw495soisoss`、secret `5ec34bbc9eecc360c02484ba`、mdmCode `zty_stu`（`App.createAppClientArgs`） |
+| 客户端标识 | appId `CA106004`、appKey %%dsjiqw495soisoss%%、secret `5ec34bbc9eecc360c02484ba`（= 注册表 appId，公开标识）、mdmCode `zty_stu`（`App.createAppClientArgs`） |
 | 登录 | `POST /api/v2/platform/login` + 登录后处理链（密钥文件、权限位、时间同步、推送注册） |
 | 管控消费 | `/api/v1/forbidden/detail` 轮询 + `control-service` 推送 + 广播/Provider 分发 |
 | AIDL | 照抄 `MdmAidlInterface` stub 借 zty 特权 |

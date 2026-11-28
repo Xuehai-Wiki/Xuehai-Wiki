@@ -5,6 +5,7 @@ description: "请求签名（V1/V2）、响应签名校验、JNI 密钥管理、
 
 categories:
   - 技术解析
+password: xh-research-2026
 excerpt: 学海客户端的完整签名与加密体系：MD5 请求签名、V2 动态密钥、响应 MD5 校验、JNI 密钥、AK/SK 与文件安全。
 ---
 
@@ -137,13 +138,9 @@ native boolean isStaticKey(String version); // 判断版本是否为静态密钥
 
 ### 3.3 已知密钥
 
-V1 静态签名密钥（从 xhcore.so 中提取）：
+V1 静态签名密钥（从 xhcore.so 中提取）：%%eptim]q34imt5b]-q04i5q=fdkfjfsadlkjfasdfrt573df4pltoy]-pn965498d%%
 
-```
-eptim]q34imt5b]-q04i5q=fdkfjfsadlkjfasdfrt573df4pltoy]-pn965498d
-```
-
-详见 `xuehai-sign.md`。
+该密钥同时被推送通道的 `EncryptUtils` 复用（见 [[04-ipc-ztcloud]] §4.3），也是 `xuehai-sign.md` 里那个签名算法的 key。
 
 ## 四、密钥文件存储（XhSecretKeyUtils）
 

@@ -4,6 +4,7 @@ title: "学海请求签名"
 description: "请求签名是学海对服务器的一种加固手段"
 categories:
   - 技术解析
+password: xh-research-2026
 excerpt: 通过反编译 OkHttp 拦截器解析学海 REST API 的请求签名方式。
 ---
 
@@ -107,18 +108,18 @@ public static String addRestfulVerifyData(String method,String url,String
 请求方式是待签名请求方法的大写名字，如 `GET`、`PATCH`。
 
 其中，signatureKey通过JNI层访问xhcore.so中 `Java_com_xh_xhcore_jni_XHCoreJni_getSignatureKey` 的获取，
-它就是 `eptim]q34imt5b]-q04i5q=fdkfjfsadlkjfasdfrt573df4pltoy]-pn965498d`⁽⁵⁾，_~~我们有理由怀疑这是学海程序猿手在键盘上滚出来的~~_
+它就是 %%eptim]q34imt5b]-q04i5q=fdkfjfsadlkjfasdfrt573df4pltoy]-pn965498d%%⁽⁵⁾，_~~我们有理由怀疑这是学海程序猿手在键盘上滚出来的~~_
 
 一个签名示例
 ```bash
-[*] 待签名串: GEThttps://ztp.yunzuoye.net/api/v2/platform/apk?appId=mdm_stu_to_c&versionCode=10210061770653399094eptim]q34imt5b]-q04i5q=fdkfjfsadlkjfasdfrt573df4pltoy]-pn965498d
-[*] 最终 URL: https://ztp.yunzuoye.net/api/v2/platform/apk?appId=mdm_stu_to_c&versionCode=1021006&sign=314aafb4083bcfef7ed0ffba1bd0334f&t=1770653399094
+[*] 待签名串: GEThttps://ztp.yunzuoye.net/api/v2/platform/apk?appId=mdm_stu_to_c&versionCode=10210061770653399094<SIGNATURE_KEY>
+[*] 最终 URL: https://ztp.yunzuoye.net/api/v2/platform/apk?appId=mdm_stu_to_c&versionCode=1021006&sign=<MD5>&t=<毫秒时间戳>
 ```
 
 Python实现
 ```python
 def get_zty_sign_url_3(method, url, request_body=None, auth_header=None):
-    signature_key="eptim]q34imt5b]-q04i5q=fdkfjfsadlkjfasdfrt573df4pltoy]-pn965498d"
+    signature_key="<SIGNATURE_KEY>"
     timestamp = str(int(time.time() * 1000))
     raw_sign_string = f"{method}{url}{timestamp}{signature_key}"
     if method not in ["GET", "DELETE"] and request_body and len(request_body.encode('utf-8')) < 1048576:

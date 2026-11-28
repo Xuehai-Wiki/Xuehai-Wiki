@@ -46,7 +46,7 @@ com.p017xh.xhcore.common.base.XhBaseApplication  (xhcore 框架基类)
 ### 3.1 App.onCreate
 - `FileCheckUtil.autoCheckXhDir()` — 校验/初始化 xh 目录结构
 - `super.onCreate()`（进入 XhApplication / ModuleApplication 逻辑）
-- `EduOauth.registInstance(this, "0fd67f5b189d40b0bad2981db58ef9f8", "http://dn.yqer.cn", OBS)` — 注册教育云 OAuth SDK
+- `EduOauth.registInstance(this, "<EDU_OAUTH_APPID>", "http://dn.yqer.cn", OBS)` — 注册教育云 OAuth SDK
 
 ### 3.2 XhApplication.onCreate
 - `super.onCreate()`（xhcore 基类初始化）

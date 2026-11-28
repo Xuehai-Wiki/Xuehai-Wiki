@@ -5,6 +5,7 @@ description: "ztp 自研 TCP 推送的业务层拆解：control-service 报文�
 
 categories:
   - 技术解析
+password: xh-research-2026
 excerpt: control-service 推送报文的完整三层结构（帧头/Message/PushMessage JSON）、零加密举证（裸 Socket + 明文 UTF-8）、仅一次性 HMAC 认证与硬编码密钥、ACK 先于处理的可靠性缺口，以及 04/ztp-control-report 中的心跳与轮询勘误。
 ---
 
@@ -166,7 +167,7 @@ if (SessionData.isLogin()) {
 String signature = Signer.computeSignature(config.getSecurityKey(), config.getDeviceId());
 // = Base64( HMAC-SHA256( key = securityKey, data = deviceId ) )
 Authorization auth = new Authorization(
-    accessKey,            // "3f025ad519274a6795aaf5161efd7726"
+    accessKey,            // 32 位十六进制，值见下方涂黑片段
     deviceId,             // 设备号
     clientId,             // 上次服务端下发的 clientId，首连为空
     signature,            // 上面那一串
@@ -183,16 +184,18 @@ Authorization auth = new Authorization(
 ```java
 // PushUtil.initialize L66
 new PushConfig(ctx, host, port, deviceId,
-    "3f025ad519274a6795aaf5161efd7726",
-    "M2YwMjVhZDUxOTI3NGE2Nzk1YWFmNTE2MWVmZDc3MjY=",
+    "<accessKey>",
+    "<securityKey = Base64(accessKey)>",
     0L, userId, schoolId, 64, null);
 ```
 
 `securityKey` 就是 `Base64(accessKey)`：
 
 ```
-base64_decode("M2YwMjVhZDUxOTI3NGE2Nzk1YWFmNTE2MWVmZDc3MjY=") == "3f025ad519274a6795aaf5161efd7726"
+base64_decode("<securityKey>") == "<accessKey>"
 ```
+
+两个凭据的原始值：accessKey = %%3f025ad519274a6795aaf5161efd7726%%，securityKey = %%M2YwMjVhZDUxOTI3NGE2Nzk1YWFmNTE2MWVmZDc3MjY=%%。
 
 也就是说 HMAC 的 key 是 accessKey 的一次 base64 变形，两个"凭据"实际只有一个秘密，且静态躺在 APK 的字符串池里。任何拿到安装包的人都能算出任意 deviceId 的合法签名。
 

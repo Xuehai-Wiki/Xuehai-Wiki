@@ -3,6 +3,7 @@ title: "跨进程通信与推送长连接"
 description: "智通平台的 ContentProvider IPC、Messenger 消息与推送 TCP 长连接"
 categories:
   - 技术解析
+password: xh-research-2026
 excerpt: 通过反编译解析智通平台的 MyContentProvider 跨进程数据交换、IpcHelper Messenger 消息与自研推送长连接协议。
 ---
 
@@ -306,7 +307,7 @@ public static void startWatching(PnObserver pnObserver2) {
 
 ### 4.3 加密工具
 
-- **EncryptUtils**：XOR 加密。密钥为 `XH_SIGNATURE_KEY = "eptim]q34imt5b]-q04i5q=fdkfjfsadlkjfasdfrt573df4pltoy]-pn965498d"`（与 `xuehai-sign.md` 中的签名密钥相同），逐字节异或后 Base64。
+- **EncryptUtils**：XOR 加密。密钥为常量 `XH_SIGNATURE_KEY`，%%其值与 `xuehai-sign.md` 中的签名密钥 / `xhcore.so` 里 `getSignatureKey` 的返回值完全相同%%（同一把钥匙被三处复用），逐字节异或后 Base64。
 - **PasswordEncryptor**：`Random(seed=当前毫秒时间戳)` 生成伪随机流逐字节异或，末尾追加 8 字节时间戳，Base64 输出。解密时取末 8 字节还原种子。
 - **StringEncryptUtils**：混淆 Base64。96 字符的置换表 + 校验码（`9 - (sum % 10)`）+ 13 位时间戳，**解密有效期 5 分钟**。
 - **SecretUtil**：随机字符串生成器（`createRandomText`），用于动态码等场景。
