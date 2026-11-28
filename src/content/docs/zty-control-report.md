@@ -2,8 +2,10 @@
 title: "zty MDM 管控体系（com.xuehai.launcher）"
 
 description: "zty(com.xuehai.launcher)MDM 代理层逆向分析:厂商适配与锁机序列、解锁凭证、AIDL 控制面、网络平面与风险清单。"
+
 categories:
   - 应用
+excerpt: MDM 代理层全量拆解：四层管控栈、厂商适配与锁机序列、解锁凭证的生成与校验、AIDL 控制面的能力边界、网络平面，以及一份风险清单。本文是管控的"执行方"视角。
 ---
 
 # 学海智通云 MDM 管控体系逆向分析报告

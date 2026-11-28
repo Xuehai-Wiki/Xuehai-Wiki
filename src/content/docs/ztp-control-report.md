@@ -2,8 +2,10 @@
 title: "ztp 管控策略（com.xh.zhitongyunstu）"
 
 description: "ztp(com.xh.zhitongyunstu)应用端管控策略全量分析:权限位、时段/场景/考试管控、应用禁用、远程协助与推送通道。"
+
 categories:
   - 应用
+excerpt: 学生端管控能力全量拆解：4096 权限位门控、长期时段与夜禁、场景管控、考试模式、应用禁用名单、远程协助与推送通道。本文是这类管控的"消费方"视角，配套 zty 报告看"执行方"。
 ---
 
 # 学海智通云学生端（com.xh.zhitongyunstu）管控策略全量分析报告

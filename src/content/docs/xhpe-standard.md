@@ -3,10 +3,7 @@ title: "XHPE 说明"
 description: XHPE是学海特性(bug)追踪器使用的特性记录单位
 categories:
   - XHPE
-excerpt: XHPE的含义，标准
-badge:
-  text: 示例
-  variant: note
+excerpt: XHPE 是本 wiki 特性追踪器使用的记录单位，一个 XHPE 对应一个 bug 或特性。本文说明编号规则、七个字段的含义与取值，并附一条完整示例。
 ---
 
 # XHPE 说明
