@@ -84,17 +84,32 @@ for (const file of htmlFiles) {
 	distHtmlTexts.push([file, await readFile(file, 'utf8')]);
 }
 const xhLeaks = [];
+/** 声明了 password(part) 却没有任何 %%……%% 片段的文档:横幅会显示但无内容可解。 */
+const xhEmptyPartials = [];
 let xhLockedDocs = 0;
 {
-	const { readdirSync } = await import('node:fs');
+	const { readdirSync, readFileSync } = await import('node:fs');
+	const path = await import('node:path');
 	const docsDir = 'src/content/docs';
+	// 递归收集所有 .md(子目录如 deep-dive-into-ztp/、research/ 下的加密文档同样要检查),
+	// 只跳过 '_' 开头的文件与目录(约定为草稿/片段)。
+	const collectDocs = (dir) => {
+		const out = [];
+		for (const entry of readdirSync(dir, { withFileTypes: true })) {
+			if (entry.name.startsWith('_') || entry.name.startsWith('.')) continue;
+			const full = path.join(dir, entry.name);
+			if (entry.isDirectory()) out.push(...collectDocs(full));
+			else if (entry.name.endsWith('.md')) out.push(full);
+		}
+		return out;
+	};
 	if (readdirSync(docsDir).includes('xh-lock.md')) {
-		const { readFileSync } = await import('node:fs');
 		const cryptoPath = new URL('../src/utils/xh-crypto.mjs', import.meta.url);
 		const { parseScalarFrontmatter } = await import(cryptoPath.href);
-		for (const name of readdirSync(docsDir)) {
-			if (!name.endsWith('.md') || name.startsWith('_')) continue;
-			const fm = parseScalarFrontmatter(readFileSync(`${docsDir}/${name}`, 'utf8'));
+		for (const docPath of collectDocs(docsDir)) {
+			const name = docPath.replaceAll('\\', '/').replace('src/content/docs/', '');
+			const raw = readFileSync(docPath, 'utf8');
+			const fm = parseScalarFrontmatter(raw);
 			if (!fm.password) continue;
 			xhLockedDocs++;
 			const full = fm.protect === 'full';
@@ -107,9 +122,14 @@ let xhLockedDocs = 0;
 				}
 			} else {
 				// 部分模式:抽取正文里的 %%……%% 明文段。
-				const raw = readFileSync(`${docsDir}/${name}`, 'utf8');
 				const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---/, '');
-				for (const m of body.matchAll(/%%([\s\S]+?)%%/g)) {
+				const segs = [...body.matchAll(/%%([\s\S]+?)%%/g)];
+				// 只设了 password 却没有任何 %%……%% 片段时,页面会渲染出解锁横幅,
+				// 但解锁后内容毫无变化——视为配置错误,构建期直接拦下。
+				if (segs.length === 0) {
+					xhEmptyPartials.push(name);
+				}
+				for (const m of segs) {
 					if (m[1].trim().length >= 4) plains.push(m[1].trim());
 				}
 			}
@@ -125,6 +145,12 @@ let xhLockedDocs = 0;
 }
 if (xhLeaks.length > 0) {
 	throw new Error(`Protected doc plaintext leaked into dist (${xhLeaks.length}):\n` + xhLeaks.join('\n'));
+}
+if (xhEmptyPartials.length > 0) {
+	throw new Error(
+		`Partial-locked docs declare password but contain no %%...%% segment (unlock banner would show with nothing to reveal):\n` +
+			xhEmptyPartials.join('\n'),
+	);
 }
 
 const preloadCount = (
